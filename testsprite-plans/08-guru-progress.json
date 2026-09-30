@@ -11,7 +11,7 @@
     },
     {
       "type": "assertion",
-      "description": "Verify the eyebrow 'Kelas Harapan Bersama · Paket B' and heading 'Progress siswa.' are visible"
+      "description": "Verify the eyebrow 'Kelas Kesetaraan Harapan Bersama · Paket B' and heading 'Progress siswa.' are visible"
     },
     {
       "type": "assertion",

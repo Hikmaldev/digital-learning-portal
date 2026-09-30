@@ -3,14 +3,25 @@ import Link from "next/link";
 import { FooterSimple } from "@/components/footer-simple";
 import { TopBar } from "@/components/top-bar";
 import { StatusBadge } from "@/components/ui";
-import { getKelasAktifDb, getRingkasanKelas } from "@/lib/queries";
+import {
+  getKelasAktifDb,
+  getKelasByKode,
+  getRingkasanKelas,
+} from "@/lib/queries";
 
 export const metadata: Metadata = { title: "Progress Siswa" };
 
 export const dynamic = "force-dynamic";
 
-export default async function DashboardProgressPage() {
-  const kelas = await getKelasAktifDb();
+interface Props {
+  searchParams: Promise<{ kode?: string }>;
+}
+
+export default async function DashboardProgressPage({ searchParams }: Props) {
+  const params = await searchParams;
+  const kelas = params.kode
+    ? (await getKelasByKode(params.kode)) ?? (await getKelasAktifDb())
+    : await getKelasAktifDb();
   const daftarSiswa = await getRingkasanKelas(kelas.id);
   const selesai = daftarSiswa.filter(
     (s) => s.status === "SUDAH_MENGERJAKAN"
@@ -38,7 +49,7 @@ export default async function DashboardProgressPage() {
         <div className="mb-8 flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
           <div>
             <p className="eyebrow eyebrow-muted mb-2.5">
-              Kelas Harapan Bersama · Paket B
+              {kelas.nama_kelas} · {kelas.jenjang}
             </p>
             <h1 className="text-[38px] leading-none tracking-[-2px]">
               Progress <em className="font-display text-coral">siswa.</em>
@@ -55,7 +66,7 @@ export default async function DashboardProgressPage() {
 
         <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
           {[
-            { label: "Sudah mengerjakan semua", nilai: selesai, tag: "75% dari 24 siswa", naik: true },
+            { label: "Sudah mengerjakan semua", nilai: selesai, tag: `${selesai} dari ${daftarSiswa.length} siswa`, naik: true },
             { label: "Masih berjalan", nilai: berjalan, tag: "sedang mengerjakan", naik: false },
             { label: "Belum mulai", nilai: belum, tag: "perlu diingatkan", naik: false },
           ].map((m) => (

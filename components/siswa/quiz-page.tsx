@@ -23,12 +23,22 @@ interface Props {
   babId: string;
   mapel: string;
   labelBab: string;
+  kelasNama: string;
+  kodeKelas: string;
 }
 
 const KUNCI_DRAFT = "rb_draft_latihan";
 const KUNCI_HASIL = "rb_hasil_latihan";
 
-export function QuizPage({ soal, kunciLokal, babId, mapel, labelBab }: Props) {
+export function QuizPage({
+  soal,
+  kunciLokal,
+  babId,
+  mapel,
+  labelBab,
+  kelasNama,
+  kodeKelas,
+}: Props) {
   const router = useRouter();
   const [jawaban, setJawaban] = useSessionState<Record<string, string>>(
     KUNCI_DRAFT,
@@ -117,10 +127,10 @@ export function QuizPage({ soal, kunciLokal, babId, mapel, labelBab }: Props) {
       <TopBar
         nav={[
           { href: "/siswa/kelas", label: "Kelas saya" },
-          { href: "/siswa/materi", label: "Materi" },
-          { href: "/siswa/latihan", label: "Latihan", aktif: true },
+          { href: `/siswa/materi?kode=${kodeKelas}`, label: "Materi" },
+          { href: `/siswa/latihan?kode=${kodeKelas}`, label: "Latihan", aktif: true },
         ]}
-        aksi={{ href: "/siswa/materi", label: "Kembali ke materi" }}
+        aksi={{ href: `/siswa/materi?kode=${kodeKelas}`, label: "Kembali ke materi" }}
       />
       <main className="mx-auto max-w-[1180px] px-5 py-12 md:px-10">
         <nav
@@ -128,10 +138,13 @@ export function QuizPage({ soal, kunciLokal, babId, mapel, labelBab }: Props) {
           className="mb-7 flex items-center gap-2.5 text-[11px] text-muted"
         >
           <Link className="hover:underline" href="/siswa/kelas">
-            Kelas Harapan Bersama
+            {kelasNama}
           </Link>
           <span className="text-[#a3aaa1]">/</span>
-          <Link className="hover:underline" href="/siswa/materi">
+          <Link
+            className="hover:underline"
+            href={`/siswa/materi?kode=${kodeKelas}`}
+          >
             {mapel} · {labelBab}
           </Link>
           <span className="text-[#a3aaa1]">/</span>
@@ -233,7 +246,10 @@ export function QuizPage({ soal, kunciLokal, babId, mapel, labelBab }: Props) {
                 Baca kembali materi bab ini sebelum mengirim jawaban. Kamu bisa
                 kembali tanpa kehilangan jawaban sementara.
               </p>
-              <Link href="/siswa/materi" className="text-xs font-bold text-coral">
+              <Link
+                href={`/siswa/materi?kode=${kodeKelas}`}
+                className="text-xs font-bold text-coral"
+              >
                 Baca materi lagi <span className="pl-1 text-base">→</span>
               </Link>
             </div>

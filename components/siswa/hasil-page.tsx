@@ -7,6 +7,7 @@ import { FooterSimple } from "@/components/footer-simple";
 import { TopBar } from "@/components/top-bar";
 import { ProgressBar } from "@/components/ui";
 import { bacaSessionStorage } from "@/lib/session-state";
+import { bacaKodeKelas } from "@/lib/siswa-session";
 import type { HasilLatihan } from "@/lib/data";
 
 const KUNCI_HASIL = "rb_hasil_latihan";
@@ -25,6 +26,7 @@ export function HasilLatihanPage() {
   const [hasil] = useState<HasilLatihan | null>(() =>
     bacaSessionStorage<HasilLatihan | null>(KUNCI_HASIL, null)
   );
+  const kodeKelas = bacaKodeKelas();
 
   useEffect(() => {
     if (!hasil) router.replace("/siswa/latihan");
@@ -43,8 +45,8 @@ export function HasilLatihanPage() {
       <TopBar
         nav={[
           { href: "/siswa/kelas", label: "Kelas saya" },
-          { href: "/siswa/materi", label: "Materi" },
-          { href: "/siswa/latihan", label: "Latihan", aktif: true },
+          { href: `/siswa/materi?kode=${kodeKelas}`, label: "Materi" },
+          { href: `/siswa/latihan?kode=${kodeKelas}`, label: "Latihan", aktif: true },
         ]}
         aksi={{ href: "/siswa/kelas", label: "Kembali ke kelas" }}
       />
@@ -111,7 +113,7 @@ export function HasilLatihanPage() {
         </div>
 
         <div className="mt-7 flex justify-center gap-3">
-          <Link href="/siswa/materi" className="btn btn-outline">
+          <Link href={`/siswa/materi?kode=${kodeKelas}`} className="btn btn-outline">
             Baca materi lagi
           </Link>
           <Link href="/siswa/kelas" className="btn btn-coral">

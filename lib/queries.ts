@@ -139,7 +139,7 @@ export interface InfoBabLatihan {
 }
 
 /** Pilih bab latihan kelas aktif: DB → bab ber-soal (prefer Bahasa Indonesia); tanpa DB → demo. */
-export async function getBabLatihan(): Promise<InfoBabLatihan> {
+export async function getBabLatihan(kodeKelas?: string): Promise<InfoBabLatihan> {
   const fallback: InfoBabLatihan = {
     babId: "bab-bindo-3",
     mataPelajaran: "Bahasa Indonesia",
@@ -148,8 +148,9 @@ export async function getBabLatihan(): Promise<InfoBabLatihan> {
   };
   if (!dbTersedia()) return fallback;
   try {
+    const kode = (kodeKelas ?? kelasAktif.kode_akses).toUpperCase();
     const kelas = await prisma!.kelas.findUnique({
-      where: { kode_akses: kelasAktif.kode_akses },
+      where: { kode_akses: kode },
       select: { id: true },
     });
     if (!kelas) return fallback;
@@ -264,6 +265,21 @@ export async function getMetrics(kelasId: string): Promise<MetricRingkasan[]> {
       { label: "Rata-rata progres", nilai: 72, delta: "sementara", naik: true },
     ];
   }, fallback);
+}
+
+/** Rata-rata skor latihan di sebuah kelas (null jika belum ada latihan). */
+export async function getProgressRataKelas(
+  kelasId: string
+): Promise<number | null> {
+  return cobaDb(async () => {
+    const agg = await prisma!.progressSiswa.aggregate({
+      where: { kelas_id: kelasId },
+      _count: { _all: true },
+      _avg: { skor: true },
+    });
+    if (agg._count._all === 0) return null;
+    return Math.round(agg._avg.skor ?? 0);
+  }, null);
 }
 
 export async function getKelasList(guruId?: string) {

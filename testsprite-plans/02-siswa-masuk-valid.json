@@ -19,7 +19,7 @@
     },
     {
       "type": "assertion",
-      "description": "Verify the URL becomes the student class dashboard (/siswa/kelas) and the heading 'Kelas Harapan Bersama' is visible"
+      "description": "Verify the URL becomes the student class dashboard (/siswa/kelas) and the heading shows the real class name 'Kelas Kesetaraan Harapan Bersama'"
     },
     {
       "type": "assertion",

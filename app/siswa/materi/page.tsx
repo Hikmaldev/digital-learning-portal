@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { FooterSimple } from "@/components/footer-simple";
 import { TopBar } from "@/components/top-bar";
 import { StatusBadge } from "@/components/ui";
 import { peringatanKunci } from "@/lib/data";
-import { getBabLatihan, getBabList, getKelasAktifDb } from "@/lib/queries";
+import { getBabLatihan, getBabList, getKelasAktifDb, getKelasByKode } from "@/lib/queries";
 import type { Bab } from "@/lib/types";
 
 export const metadata: Metadata = { title: "Materi Bab" };
@@ -58,9 +57,43 @@ function VideoMateri({ url }: { url?: string }) {
 
 export default async function BabMateriPage({ searchParams }: Props) {
   const params = await searchParams;
-  const [kelas, infoBab] = await Promise.all([getKelasAktifDb(), getBabLatihan()]);
-  const babList = await getBabList(kelas.id);
-  if (babList.length === 0) notFound();
+  const kelas = params.kode
+    ? (await getKelasByKode(params.kode)) ?? (await getKelasAktifDb())
+    : await getKelasAktifDb();
+  const kodeKelas = kelas.kode_akses;
+  const [infoBab, babList] = await Promise.all([
+    getBabLatihan(kodeKelas),
+    getBabList(kelas.id),
+  ]);
+  if (babList.length === 0) {
+    return (
+      <>
+        <TopBar
+          nav={[
+            { href: "/siswa/kelas", label: "Kelas saya" },
+            { href: `/siswa/materi?kode=${kodeKelas}`, label: "Materi", aktif: true },
+            { href: `/siswa/latihan?kode=${kodeKelas}`, label: "Latihan" },
+          ]}
+          aksi={{ href: "/siswa/kelas", label: "Kembali ke kelas" }}
+        />
+        <main className="mx-auto max-w-[780px] px-5 py-20 text-center">
+          <div className="mx-auto mb-5 grid size-[66px] place-items-center rounded-full bg-soft text-3xl">
+            📚
+          </div>
+          <p className="eyebrow eyebrow-muted mb-2">Materi bab</p>
+          <h1 className="text-[38px] leading-none tracking-[-2px]">
+            Materi belum{" "}
+            <em className="font-display text-coral">tersedia.</em>
+          </h1>
+          <p className="mt-3 text-[13px] text-muted">
+            Guru di kelas {kelas.nama_kelas} belum menambahkan materi. Cek lagi
+            nanti ya.
+          </p>
+        </main>
+        <FooterSimple />
+      </>
+    );
+  }
 
   const target: Bab =
     babList.find((b) => b.id === params.id) ??
@@ -81,8 +114,8 @@ export default async function BabMateriPage({ searchParams }: Props) {
       <TopBar
         nav={[
           { href: "/siswa/kelas", label: "Kelas saya" },
-          { href: "/siswa/materi", label: "Materi", aktif: true },
-          { href: "/siswa/latihan", label: "Latihan" },
+          { href: `/siswa/materi?kode=${kodeKelas}`, label: "Materi", aktif: true },
+          { href: `/siswa/latihan?kode=${kodeKelas}`, label: "Latihan" },
         ]}
         aksi={{ href: "/siswa/kelas", label: "Kembali ke kelas" }}
       />
@@ -92,7 +125,7 @@ export default async function BabMateriPage({ searchParams }: Props) {
           className="mb-7 flex items-center gap-2.5 text-[11px] text-muted"
         >
           <Link className="hover:underline" href="/siswa/kelas">
-            Kelas Harapan Bersama
+            {kelas.nama_kelas}
           </Link>
           <span className="text-[#a3aaa1]">/</span>
           <span>{target.mata_pelajaran}</span>
@@ -165,7 +198,7 @@ export default async function BabMateriPage({ searchParams }: Props) {
                 {babList.map((bab) => (
                   <Link
                     key={bab.id}
-                    href={`/siswa/materi?id=${bab.id}`}
+                    href={`/siswa/materi?id=${bab.id}&kode=${kodeKelas}`}
                     className={`flex items-start gap-2.5 border-t border-line py-3 text-[11px] ${
                       bab.id === target.id ? "font-bold text-coral" : "text-ink"
                     }`}
@@ -185,7 +218,7 @@ export default async function BabMateriPage({ searchParams }: Props) {
               <p className="mb-4 text-[11px] text-muted">
                 Uji pemahamanmu lewat latihan soal bab ini.
               </p>
-              <Link href="/siswa/latihan" className="btn btn-coral w-full">
+              <Link href={`/siswa/latihan?kode=${kodeKelas}`} className="btn btn-coral w-full">
                 Mulai latihan <span className="pl-1 text-base">→</span>
               </Link>
             </div>

@@ -119,7 +119,9 @@ export function MateriBaruPage() {
         <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="eyebrow eyebrow-muted mb-2.5">
-              Kelola materi · Kelas Harapan Bersama
+              Kelola materi ·{" "}
+              {pilihanKelas.find((k) => k.id === kelasId)?.nama ??
+                (pilihanKelas.length > 0 ? "Pilih kelas di bawah" : "Kelas pilihanmu")}
             </p>
             <h1 className="text-[38px] leading-none tracking-[-2px]">
               Buat materi{" "}

@@ -40,13 +40,20 @@ export function SiswaKelasPage() {
   const total = bab.length;
   const prosentase = total === 0 ? 0 : Math.round((selesai / total) * 100);
 
+  const kodeParam = `?kode=${encodeURIComponent(kelas.kode_akses)}`;
+  const [kataDepan, kataAkhir] = (() => {
+    const kata = kelas.nama_kelas.trim().split(/\s+/).filter(Boolean);
+    if (kata.length <= 1) return ["", kata[0] ?? kelas.nama_kelas];
+    return [kata.slice(0, -1).join(" "), kata[kata.length - 1]];
+  })();
+
   return (
     <>
       <TopBar
         nav={[
           { href: "/siswa/kelas", label: "Kelas saya", aktif: true },
-          { href: "/siswa/materi", label: "Materi" },
-          { href: "/siswa/latihan", label: "Latihan" },
+          { href: `/siswa/materi${kodeParam}`, label: "Materi" },
+          { href: `/siswa/latihan${kodeParam}`, label: "Latihan" },
         ]}
         aksi={{ href: "/", label: "Keluar" }}
       />
@@ -57,8 +64,9 @@ export function SiswaKelasPage() {
               Selamat datang kembali, {nama}
             </p>
             <h1 className="text-[39px] leading-none tracking-[-2px] md:text-[42px]">
-              Kelas Harapan{" "}
-              <em className="font-display text-coral">Bersama.</em>
+              {kataDepan}
+              {kataDepan ? " " : ""}
+              <em className="font-display text-coral">{kataAkhir}.</em>
             </h1>
             <p className="mt-2.5 text-xs text-muted">
               {kelas.jenjang} · {kelas.guru_nama}
@@ -117,7 +125,7 @@ export function SiswaKelasPage() {
           {bab.map((item: Bab) => (
             <Link
               key={item.id}
-              href={`/siswa/materi?id=${item.id}`}
+              href={`/siswa/materi?id=${item.id}&kode=${encodeURIComponent(kelas.kode_akses)}`}
               className="group flex min-h-[206px] flex-col border border-line bg-paper p-6 hover:border-coral"
             >
               <span className="text-[10px] font-bold tracking-[1px] text-coral">

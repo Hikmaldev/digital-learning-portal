@@ -4,15 +4,28 @@ import { FooterSimple } from "@/components/footer-simple";
 import { TopBar } from "@/components/top-bar";
 import { ProgressBar } from "@/components/ui";
 import { BuatKelasDialog } from "@/components/guru/buat-kelas-dialog";
-import { kelasAktif } from "@/lib/data";
-import { getKelasAktifDb, getMetrics, getRingkasanPelajaranDb } from "@/lib/queries";
+import { kelasAktif, kelassRingkasan } from "@/lib/data";
+import { auth } from "@/auth";
+import {
+  getKelasAktifDb,
+  getKelasList,
+  getMetrics,
+  getProgressRataKelas,
+  getRingkasanPelajaranDb,
+} from "@/lib/queries";
 
 export const metadata: Metadata = { title: "Dashboard Guru" };
 
 export const dynamic = "force-dynamic";
 
 export default async function DashboardGuruPage() {
-  const kelas = await getKelasAktifDb();
+  const [session, kelas] = await Promise.all([auth(), getKelasAktifDb()]);
+  const guruId = session?.user?.id;
+  // Tanpa sesi (mode demo) tampilkan data contoh; dengan sesi ambil kelas milik guru.
+  const daftarKelas = guruId ? await getKelasList(guruId) : kelassRingkasan;
+  const progressKelas = await Promise.all(
+    daftarKelas.map((k) => getProgressRataKelas(k.id))
+  );
   const [metrics, ringkasanMapel] = await Promise.all([
     getMetrics(kelas.id),
     getRingkasanPelajaranDb(),
@@ -103,41 +116,47 @@ export default async function DashboardGuruPage() {
                 <p className="eyebrow eyebrow-muted mb-2">Kelas yang kamu ajar</p>
                 <h2 className="text-xl tracking-tight">Pilih ruang kelas.</h2>
               </div>
-              <p className="mb-1 text-[11px] text-muted">1 kelas aktif</p>
+              <p className="mb-1 text-[11px] text-muted">
+                {daftarKelas.length} {daftarKelas.length === 1 ? "kelas aktif" : "kelas aktif"}
+              </p>
             </div>
             <div className="overflow-x-auto border border-line bg-paper">
               <table className="w-full min-w-[420px] border-collapse text-left text-[11px]">
                 <thead>
                   <tr className="text-[10px] text-muted">
                     <th className="px-4 py-3.5 font-medium">Kelas</th>
-                    <th className="px-4 py-3.5 font-medium">Siswa</th>
+                    <th className="px-4 py-3.5 font-medium">Bab</th>
                     <th className="px-4 py-3.5 font-medium">Progress</th>
                     <th className="px-4 py-3.5" />
                   </tr>
                 </thead>
                 <tbody>
-                  <tr className="border-t border-line">
-                    <td className="px-4 py-3.5">
-                      <strong className="block text-xs">
-                        Kelas Kesetaraan Harapan Bersama
-                      </strong>
-                      <small className="text-[10px] text-muted">
-                        Paket B · kode {kelasAktif.kode_akses}
-                      </small>
-                    </td>
-                    <td className="px-4 py-3.5">24 siswa</td>
-                    <td className="px-4 py-3.5">
-                      <b>72%</b>
-                    </td>
-                    <td className="px-4 py-3.5 text-right">
-                      <Link
-                        href="/guru/progress"
-                        className="text-xs font-bold text-coral"
-                      >
-                        Lihat →
-                      </Link>
-                    </td>
-                  </tr>
+                  {daftarKelas.map((k, i) => (
+                    <tr key={k.id} className="border-t border-line">
+                      <td className="px-4 py-3.5">
+                        <strong className="block text-xs">{k.nama}</strong>
+                        <small className="text-[10px] text-muted">
+                          {k.jenjang} · kode {k.kode}
+                        </small>
+                      </td>
+                      <td className="px-4 py-3.5">{k.jumlahBab} bab</td>
+                      <td className="px-4 py-3.5">
+                        {progressKelas[i] !== null ? (
+                          <b>{progressKelas[i]}%</b>
+                        ) : (
+                          <span className="text-muted">belum ada</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3.5 text-right">
+                        <Link
+                          href={`/guru/progress?kode=${k.kode}`}
+                          className="text-xs font-bold text-coral"
+                        >
+                          Lihat →
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>

@@ -19,7 +19,7 @@
     },
     {
       "type": "assertion",
-      "description": "Verify the class table shows the row 'Kelas Kesetaraan Harapan Bersama' with 'Paket B · kode HB2026' and 24 siswa"
+      "description": "Verify the class table shows the row 'Kelas Kesetaraan Harapan Bersama' with 'Paket B · kode HB2026' and the bab count '6 bab'"
     },
     {
       "type": "assertion",
