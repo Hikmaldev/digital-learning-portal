@@ -4,18 +4,18 @@ import { FooterSimple } from "@/components/footer-simple";
 import { TopBar } from "@/components/top-bar";
 import { ProgressBar } from "@/components/ui";
 import { kelasAktif } from "@/lib/data";
-import { getMetrics, getRingkasanPelajaranDb } from "@/lib/queries";
+import { getKelasAktifDb, getMetrics, getRingkasanPelajaranDb } from "@/lib/queries";
 
 export const metadata: Metadata = { title: "Dashboard Guru" };
 
 export const dynamic = "force-dynamic";
 
 export default async function DashboardGuruPage() {
+  const kelas = await getKelasAktifDb();
   const [metrics, ringkasanMapel] = await Promise.all([
-    getMetrics(kelasAktif.id),
+    getMetrics(kelas.id),
     getRingkasanPelajaranDb(),
   ]);
-
   return (
     <>
       <TopBar

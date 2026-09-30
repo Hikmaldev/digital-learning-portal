@@ -33,26 +33,53 @@ export function SoalBaruPage() {
   const [pesan, setPesan] = useState<{ jenis: "ok" | "info" | "eror"; teks: string } | null>(null);
 
   useEffect(() => {
-    // Default kelas demo; saat DB aktif daftar bab diambil dari database.
-    fetch("/api/guru/bab?kelasId=kls-1")
-      .then((r) => (r.ok ? r.json() : null))
-      .then((j) => {
-        if (j?.ok && Array.isArray(j.data.bab)) {
-          const daftar: BabRingkas[] = j.data.bab;
-          setBabList(daftar);
-          setBabId(String(daftar[0]?.id ?? ""));
-        }
-      })
-      .catch(() => {
+    let aktif = true;
+    (async () => {
+      const fallback = () => {
         const daftar: BabRingkas[] = babSiswa.map((b) => ({
           id: b.id,
           judul: b.judul,
           mataPelajaran: b.mata_pelajaran,
           urutan: b.urutan,
         }));
-        setBabList(daftar);
-        setBabId(String(daftar[0]?.id ?? ""));
-      });
+        if (aktif) {
+          setBabList(daftar);
+          setBabId(String(daftar[0]?.id ?? ""));
+        }
+      };
+      try {
+        // Ambil kelas (DB bila tersedia), lalu bab untuk kelas pertama.
+        const rk = await fetch("/api/guru/kelas");
+        const jk = (await rk.json()) as {
+          ok?: boolean;
+          data?: { kelas?: { id: string }[] };
+        };
+        const kelasId =
+          jk?.ok && Array.isArray(jk.data?.kelas) && jk.data.kelas.length > 0
+            ? jk.data.kelas[0].id
+            : "kls-1";
+
+        const rb = await fetch(
+          `/api/guru/bab?kelasId=${encodeURIComponent(kelasId)}`
+        );
+        const jb = (await rb.json()) as {
+          ok?: boolean;
+          data?: { bab?: BabRingkas[] };
+        };
+        if (!aktif) return;
+        if (jb?.ok && Array.isArray(jb.data?.bab) && jb.data.bab.length > 0) {
+          setBabList(jb.data.bab);
+          setBabId(String(jb.data.bab[0].id));
+        } else {
+          fallback();
+        }
+      } catch {
+        if (aktif) fallback();
+      }
+    })();
+    return () => {
+      aktif = false;
+    };
   }, []);
 
   function ubah(id: number, field: string, nilai: string) {

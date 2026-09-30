@@ -4,8 +4,8 @@ import { notFound } from "next/navigation";
 import { FooterSimple } from "@/components/footer-simple";
 import { TopBar } from "@/components/top-bar";
 import { StatusBadge } from "@/components/ui";
-import { kelasAktif, peringatanKunci } from "@/lib/data";
-import { getBabList } from "@/lib/queries";
+import { peringatanKunci } from "@/lib/data";
+import { getBabLatihan, getBabList, getKelasAktifDb } from "@/lib/queries";
 import type { Bab } from "@/lib/types";
 
 export const metadata: Metadata = { title: "Materi Bab" };
@@ -58,19 +58,22 @@ function VideoMateri({ url }: { url?: string }) {
 
 export default async function BabMateriPage({ searchParams }: Props) {
   const params = await searchParams;
-  const babList = await getBabList(kelasAktif.id);
+  const [kelas, infoBab] = await Promise.all([getKelasAktifDb(), getBabLatihan()]);
+  const babList = await getBabList(kelas.id);
   if (babList.length === 0) notFound();
 
   const target: Bab =
     babList.find((b) => b.id === params.id) ??
-    babList.find((b) => b.id === BAB_DEMO) ??
+    babList.find((b) => b.id === infoBab.babId) ??
     babList[0];
 
   const paragraf = target.konten_materi
     .split(/\n+/)
     .map((p) => p.trim())
     .filter(Boolean);
-  const showCallout = target.id === BAB_DEMO;
+  const showCallout =
+    target.id === BAB_DEMO ||
+    target.mata_pelajaran?.toUpperCase().includes("BAHASA INDONESIA");
   const labelBab = `Bab ${String(target.urutan ?? 0).padStart(2, "0")}`;
 
   return (

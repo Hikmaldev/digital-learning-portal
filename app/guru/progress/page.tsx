@@ -3,15 +3,15 @@ import Link from "next/link";
 import { FooterSimple } from "@/components/footer-simple";
 import { TopBar } from "@/components/top-bar";
 import { StatusBadge } from "@/components/ui";
-import { kelasAktif } from "@/lib/data";
-import { getRingkasanKelas } from "@/lib/queries";
+import { getKelasAktifDb, getRingkasanKelas } from "@/lib/queries";
 
 export const metadata: Metadata = { title: "Progress Siswa" };
 
 export const dynamic = "force-dynamic";
 
 export default async function DashboardProgressPage() {
-  const daftarSiswa = await getRingkasanKelas(kelasAktif.id);
+  const kelas = await getKelasAktifDb();
+  const daftarSiswa = await getRingkasanKelas(kelas.id);
   const selesai = daftarSiswa.filter(
     (s) => s.status === "SUDAH_MENGERJAKAN"
   ).length;

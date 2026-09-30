@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
 import { QuizPage, type QuizSoal } from "@/components/siswa/quiz-page";
-import { getSoalBab } from "@/lib/queries";
+import { getBabLatihan, getSoalBab } from "@/lib/queries";
 import { soalLatihan } from "@/lib/data";
 
 export const metadata: Metadata = { title: "Latihan Soal" };
 
 export const dynamic = "force-dynamic";
 
-/** Halaman latihan: soal diambil dari database (fallback ke data contoh). */
+/** Halaman latihan: bab + soal diambil dari database (fallback ke data contoh). */
 export default async function LatihanSoalPage() {
-  const dariDb = await getSoalBab("bab-bindo-3");
+  const infoBab = await getBabLatihan();
+  const dariDb = await getSoalBab(infoBab.babId);
 
   const soal: QuizSoal[] = (dariDb ?? soalLatihan).map(
     ({ id, pertanyaan, opsi }) => ({
@@ -29,5 +30,13 @@ export default async function LatihanSoalPage() {
           .filter((pair): pair is [string, string] => Boolean(pair[1]))
       );
 
-  return <QuizPage soal={soal} kunciLokal={kunciLokal} />;
+  return (
+    <QuizPage
+      soal={soal}
+      kunciLokal={kunciLokal}
+      babId={infoBab.babId}
+      mapel={infoBab.mataPelajaran}
+      labelBab={`Bab ${String(infoBab.urutan ?? 0).padStart(2, "0")}`}
+    />
+  );
 }

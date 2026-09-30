@@ -38,6 +38,12 @@ async function cobaDb<T>(query: () => Promise<T>, fallback: T): Promise<T> {
 
 // --- Kelas ---
 
+/** Kelas "aktif" (kode demo HB2026): id asli dari DB bila tersedia, fallback data contoh. */
+export async function getKelasAktifDb(): Promise<Kelas> {
+  const kelas = await getKelasByKode(kelasAktif.kode_akses);
+  return kelas ?? kelasAktif;
+}
+
 export async function getKelasByKode(kode: string): Promise<Kelas | null> {
   if (!dbTersedia()) {
     return kode.toUpperCase() === kelasAktif.kode_akses ? kelasAktif : null;
@@ -123,6 +129,52 @@ export async function getSoalBab(babId: string): Promise<SoalDenganBenar[] | nul
       opsi: s.opsi.map((o) => ({ id: o.id, teks: o.teks, is_benar: o.is_benar })),
     }));
   }, null);
+}
+
+export interface InfoBabLatihan {
+  babId: string;
+  mataPelajaran: string;
+  urutan: number;
+  judul: string;
+}
+
+/** Pilih bab latihan kelas aktif: DB → bab ber-soal (prefer Bahasa Indonesia); tanpa DB → demo. */
+export async function getBabLatihan(): Promise<InfoBabLatihan> {
+  const fallback: InfoBabLatihan = {
+    babId: "bab-bindo-3",
+    mataPelajaran: "Bahasa Indonesia",
+    urutan: 3,
+    judul: "Menemukan gagasan utama",
+  };
+  if (!dbTersedia()) return fallback;
+  try {
+    const kelas = await prisma!.kelas.findUnique({
+      where: { kode_akses: kelasAktif.kode_akses },
+      select: { id: true },
+    });
+    if (!kelas) return fallback;
+
+    const bab = await prisma!.bab.findMany({
+      where: { kelas_id: kelas.id },
+      include: { _count: { select: { soal: true } } },
+      orderBy: { urutan: "asc" },
+    });
+    const berSoal = bab.filter((b) => b._count.soal > 0);
+    const pilihan =
+      berSoal.find((b) => b.mata_pelajaran === "Bahasa Indonesia") ??
+      berSoal[0] ??
+      bab[0];
+    if (!pilihan) return fallback;
+
+    return {
+      babId: pilihan.id,
+      mataPelajaran: pilihan.mata_pelajaran,
+      urutan: pilihan.urutan,
+      judul: pilihan.judul,
+    };
+  } catch {
+    return fallback;
+  }
 }
 
 // --- Dashboard guru ---

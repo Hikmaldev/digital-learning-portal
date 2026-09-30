@@ -19,13 +19,16 @@ interface Props {
   soal: QuizSoal[];
   /** Kunci jawaban hanya tersedia saat soal dari data contoh (tanpa DB). */
   kunciLokal: Record<string, string> | null;
+  /** ID bab asli (database) tempat hasil latihan disimpan. */
+  babId: string;
+  mapel: string;
+  labelBab: string;
 }
 
 const KUNCI_DRAFT = "rb_draft_latihan";
 const KUNCI_HASIL = "rb_hasil_latihan";
-const BAB_ID = "bab-bindo-3";
 
-export function QuizPage({ soal, kunciLokal }: Props) {
+export function QuizPage({ soal, kunciLokal, babId, mapel, labelBab }: Props) {
   const router = useRouter();
   const [jawaban, setJawaban] = useSessionState<Record<string, string>>(
     KUNCI_DRAFT,
@@ -69,7 +72,7 @@ export function QuizPage({ soal, kunciLokal }: Props) {
         body: JSON.stringify({
           kodeKelas,
           namaSiswa,
-          babId: BAB_ID,
+          babId,
           jawaban,
         }),
       });
@@ -94,8 +97,8 @@ export function QuizPage({ soal, kunciLokal }: Props) {
       });
       hasil = {
         nama: namaSiswa,
-        mataPelajaran: "Bahasa Indonesia",
-        bab: "Bab 03",
+        mataPelajaran: mapel,
+        bab: labelBab,
         skor: Math.round((benar / Math.max(soal.length, 1)) * 100),
         benar,
         jumlahSoal: soal.length,
@@ -129,7 +132,7 @@ export function QuizPage({ soal, kunciLokal }: Props) {
           </Link>
           <span className="text-[#a3aaa1]">/</span>
           <Link className="hover:underline" href="/siswa/materi">
-            Bahasa Indonesia · Bab 03
+            {mapel} · {labelBab}
           </Link>
           <span className="text-[#a3aaa1]">/</span>
           <span>Latihan</span>
@@ -138,7 +141,9 @@ export function QuizPage({ soal, kunciLokal }: Props) {
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_245px]">
           <form onSubmit={kumpulkan} className="panel px-6 py-8 md:px-9">
             <div className="mb-6 flex items-center justify-between border-b border-line pb-5 text-[11px] text-muted">
-              <span>BAHASA INDONESIA · BAB 03</span>
+              <span>
+                {mapel.toUpperCase()} · {labelBab}
+              </span>
               <strong className="text-ink">
                 {terjawab} dari {soal.length} soal
               </strong>
