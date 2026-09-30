@@ -26,6 +26,7 @@
 
 ### 🧑‍🏫 Panel Guru (login Auth.js)
 - **Dashboard** — metrik ringkas: siswa aktif, latihan terkumpul, rata-rata progres
+- **Buat kelas baru** — kelas semester berikutnya dengan kode akses otomatis 6 karakter, langsung dibagikan ke siswa
 - **Progress per siswa** — status sudak mengerjakan / sedang berjalan / belum mulai
 - **Editor materi** — tambah bab lengkap dengan ringkasan, konten, video & sumber buku
 - **Builder latihan soal** — susun soal pilihan ganda + tandai kunci jawaban

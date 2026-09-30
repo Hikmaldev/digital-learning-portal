@@ -3,6 +3,7 @@ import Link from "next/link";
 import { FooterSimple } from "@/components/footer-simple";
 import { TopBar } from "@/components/top-bar";
 import { ProgressBar } from "@/components/ui";
+import { BuatKelasDialog } from "@/components/guru/buat-kelas-dialog";
 import { kelasAktif } from "@/lib/data";
 import { getKelasAktifDb, getMetrics, getRingkasanPelajaranDb } from "@/lib/queries";
 
@@ -152,9 +153,7 @@ export default async function DashboardGuruPage() {
             <p className="text-xs leading-relaxed text-[#bdc8bf]">
               Atur kode akses baru, lalu undang siswa masuk tanpa akun.
             </p>
-            <button type="button" className="btn btn-yellow mt-3">
-              + Buat kelas baru
-            </button>
+            <BuatKelasDialog />
           </aside>
         </div>
 

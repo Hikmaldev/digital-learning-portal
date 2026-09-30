@@ -266,10 +266,12 @@ export async function getMetrics(kelasId: string): Promise<MetricRingkasan[]> {
   }, fallback);
 }
 
-export async function getKelasList() {
+export async function getKelasList(guruId?: string) {
   return cobaDb(async () => {
     const kelas = await prisma!.kelas.findMany({
+      where: guruId ? { guru_id: guruId } : undefined,
       include: { _count: { select: { bab: true } } },
+      orderBy: { createdAt: "asc" },
     });
     return kelas.map((k) => ({
       id: k.id,
