@@ -1,0 +1,113 @@
+// Prisma schema — Portal Belajar Digital
+// Mengikuti skema data PRD §9 (PostgreSQL/Neon).
+
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/// Guru
+model User {
+  id           String   @id @default(cuid())
+  nama         String
+  email        String   @unique
+  password_hash String
+  kelas        Kelas[]  @relation("GuruKelas")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+/// Kelas (Paket A/B/C) dengan kode akses untuk siswa
+model Kelas {
+  id        String  @id @default(cuid())
+  nama_kelas String
+  jenjang   String // "Paket A" | "Paket B" | "Paket C"
+  kode_akses String @unique
+  guru_id   String
+  guru      User    @relation("GuruKelas", fields: [guru_id], references: [id])
+  bab       Bab[]
+  progress  ProgressSiswa[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+/// Bab materi per kelas
+model Bab {
+  id           String  @id @default(cuid())
+  kelas_id     String
+  kelas        Kelas   @relation(fields: [kelas_id], references: [id])
+  mata_pelajaran String
+  judul        String
+  ringkasan    String?
+  konten_materi String
+  url_video    String? // ID video YouTube (embed), opsional
+  link_sumber  String? // URL buku asli, opsional
+  urutan       Int
+  gambar       Gambar[]
+  soal         Soal[]
+  progress     ProgressSiswa[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([kelas_id])
+}
+
+/// Gambar materi (disimpan di Vercel Blob, meta saja di DB)
+model Gambar {
+  id         String @id @default(cuid())
+  bab_id     String
+  bab        Bab    @relation(fields: [bab_id], references: [id])
+  url        String
+  ukuran_file Int
+  createdAt  DateTime @default(now())
+
+  @@index([bab_id])
+}
+
+/// Soal latihan
+model Soal {
+  id         String  @id @default(cuid())
+  bab_id     String
+  bab        Bab     @relation(fields: [bab_id], references: [id])
+  pertanyaan String
+  tipe       String  @default("PILIHAN_GANDA") // PILIHAN_GANDA | ESAI
+  urutan     Int     @default(0)
+  opsi       OpsiJawaban[]
+  progress   ProgressSiswa[]
+
+  @@index([bab_id])
+}
+
+/// Pilihan jawaban soal pilihan ganda
+model OpsiJawaban {
+  id     String @id @default(cuid())
+  soal_id String
+  soal   Soal   @relation(fields: [soal_id], references: [id])
+  teks   String
+  is_benar Boolean @default(false)
+
+  @@index([soal_id])
+}
+
+/// Progress pengerjaan latihan siswa
+model ProgressSiswa {
+  id         String   @id @default(cuid())
+  kelas_id   String
+  kelas      Kelas    @relation(fields: [kelas_id], references: [id])
+  nama_siswa String
+  bab_id     String
+  bab        Bab      @relation(fields: [bab_id], references: [id], onDelete: Cascade)
+  soal_id    String
+  soal       Soal     @relation(fields: [soal_id], references: [id], onDelete: Cascade)
+  jawaban    String   // id opsi yang dipilih siswa
+  benar      Boolean
+  skor       Int
+  waktu_submit DateTime @default(now())
+
+  @@index([kelas_id, bab_id])
+  @@index([nama_siswa])
+}

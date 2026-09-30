@@ -1,0 +1,98 @@
+@import "tailwindcss";
+
+/*
+ * Desain Portal Belajar Digital (arahan PRD §12):
+ * palet hangat dari konteks kelas kesetaraan, bukan warna SaaS korporat.
+ */
+@theme {
+  --color-ink: #253733;
+  --color-cream: #f7f3e9;
+  --color-paper: #fffdf8;
+  --color-coral: #e7755d;
+  --color-yellow: #f2c858;
+  --color-blue: #aec8c6;
+  --color-sage: #cbd5b6;
+  --color-line: #d8d5c8;
+  --color-muted: #6e7871;
+  --color-soft: #e8e6da;
+  --color-leafgreen: #719077;
+
+  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-fraunces), Georgia, serif;
+}
+
+body {
+  background: var(--color-cream);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+/* --- utilitas bersama (komponen ringan, bukan framework UI) --- */
+
+.panel {
+  @apply border border-line bg-paper;
+}
+
+.panel-dark {
+  @apply bg-ink text-paper;
+}
+
+.eyebrow {
+  @apply text-[11px] font-bold uppercase tracking-[0.13em] text-coral;
+}
+
+.eyebrow-muted {
+  @apply text-muted;
+}
+
+.btn {
+  @apply inline-flex cursor-pointer items-center justify-center border border-ink bg-ink px-4 py-2.5 text-xs font-bold text-paper transition-colors;
+}
+
+.btn:hover {
+  @apply border-coral bg-coral;
+}
+
+.btn-coral {
+  @apply border-coral bg-coral;
+}
+
+.btn-outline {
+  @apply border-ink bg-transparent text-ink;
+}
+
+.btn-outline:hover {
+  @apply border-coral bg-coral text-paper;
+}
+
+.btn-yellow {
+  @apply border-yellow bg-yellow text-ink;
+}
+
+.btn-yellow:hover {
+  @apply border-ink bg-ink text-paper;
+}
+
+.field {
+  @apply w-full border border-[#bfc3b7] bg-paper px-3.5 py-3 text-[13px] text-ink outline-none;
+}
+
+.field:focus {
+  @apply border-coral;
+}
+
+.badge-status {
+  @apply inline-flex items-center gap-1.5 bg-[#e2ead8] px-2 py-1 text-[10px] font-bold text-[#536b55];
+}
+
+.badge-status::before {
+  content: "✓";
+}
+
+.badge-status-pending {
+  @apply bg-[#f9efc9] text-[#846a23];
+}
+
+.badge-status-pending::before {
+  content: "•";
+}

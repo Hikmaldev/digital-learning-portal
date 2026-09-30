@@ -1,0 +1,29 @@
+{
+  "$schema": "https://raw.githubusercontent.com/TestSprite/testsprite-cli/v0.13.0/schemas/plan.schema.json",
+  "projectId": "266eea75-778c-4792-844d-74c9c431cb1e",
+  "type": "frontend",
+  "name": "Draft jawaban latihan bertahan saat reload",
+  "priority": "p2",
+  "planSteps": [
+    {
+      "type": "action",
+      "description": "Navigate to /siswa/latihan"
+    },
+    {
+      "type": "action",
+      "description": "Answer the first and second questions by selecting one radio option each"
+    },
+    {
+      "type": "assertion",
+      "description": "Verify the counter shows '2 dari 5 soal' and the 'Kirim jawaban' button is still disabled"
+    },
+    {
+      "type": "action",
+      "description": "Reload the page (F5 / browser refresh)"
+    },
+    {
+      "type": "assertion",
+      "description": "Verify after reload the same two answers are still selected, the counter still shows '2 dari 5 soal', and the draft indicator text is visible"
+    }
+  ]
+}

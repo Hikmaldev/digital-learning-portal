@@ -1,0 +1,25 @@
+{
+  "$schema": "https://raw.githubusercontent.com/TestSprite/testsprite-cli/v0.13.0/schemas/plan.schema.json",
+  "projectId": "266eea75-778c-4792-844d-74c9c431cb1e",
+  "type": "frontend",
+  "name": "Progress siswa menampilkan daftar siswa",
+  "priority": "p2",
+  "planSteps": [
+    {
+      "type": "action",
+      "description": "Navigate to /guru/progress"
+    },
+    {
+      "type": "assertion",
+      "description": "Verify the eyebrow 'Kelas Harapan Bersama · Paket B' and heading 'Progress siswa.' are visible"
+    },
+    {
+      "type": "assertion",
+      "description": "Verify the three summary metric cards 'Sudah mengerjakan semua', 'Masih berjalan', and 'Belum mulai' are visible"
+    },
+    {
+      "type": "assertion",
+      "description": "Verify the student table lists students such as 'Andi Pratama' and 'Dina Nuraini' with their last active bab and nilai"
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "$schema": "https://raw.githubusercontent.com/TestSprite/testsprite-cli/v0.13.0/schemas/plan.schema.json",
+  "projectId": "266eea75-778c-4792-844d-74c9c431cb1e",
+  "type": "frontend",
+  "name": "Dashboard guru menampilkan metrik kelas",
+  "priority": "p2",
+  "planSteps": [
+    {
+      "type": "action",
+      "description": "Navigate to /guru/dashboard"
+    },
+    {
+      "type": "assertion",
+      "description": "Verify the heading 'Selamat datang, Hikmal' is visible together with three metric cards"
+    },
+    {
+      "type": "assertion",
+      "description": "Verify the class code HB2026 is displayed in the share banner"
+    },
+    {
+      "type": "assertion",
+      "description": "Verify the class table shows the row 'Kelas Kesetaraan Harapan Bersama' with 'Paket B · kode HB2026' and 24 siswa"
+    },
+    {
+      "type": "assertion",
+      "description": "Verify the 'Progress kelas minggu ini' section lists pelajaran with progress percentages"
+    }
+  ]
+}

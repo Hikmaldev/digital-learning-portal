@@ -1,0 +1,29 @@
+{
+  "$schema": "https://raw.githubusercontent.com/TestSprite/testsprite-cli/v0.13.0/schemas/plan.schema.json",
+  "projectId": "266eea75-778c-4792-844d-74c9c431cb1e",
+  "type": "frontend",
+  "name": "Halaman login guru dan jalur demo",
+  "priority": "p2",
+  "planSteps": [
+    {
+      "type": "action",
+      "description": "Navigate to /guru/masuk"
+    },
+    {
+      "type": "assertion",
+      "description": "Verify the heading 'Selamat datang kembali' is visible and the form has Email and Password inputs"
+    },
+    {
+      "type": "assertion",
+      "description": "Verify a 'Mode demo' banner is visible with a button 'Lanjut sebagai demo'"
+    },
+    {
+      "type": "action",
+      "description": "Click the 'Lanjut sebagai demo' button"
+    },
+    {
+      "type": "assertion",
+      "description": "Verify the URL becomes /guru/dashboard and the heading 'Selamat datang, Hikmal' is visible"
+    }
+  ]
+}

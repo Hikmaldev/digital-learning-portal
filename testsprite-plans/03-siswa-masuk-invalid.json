@@ -1,0 +1,21 @@
+{
+  "$schema": "https://raw.githubusercontent.com/TestSprite/testsprite-cli/v0.13.0/schemas/plan.schema.json",
+  "projectId": "266eea75-778c-4792-844d-74c9c431cb1e",
+  "type": "frontend",
+  "name": "Siswa masuk kelas kode salah ditolak",
+  "priority": "p1",
+  "planSteps": [
+    {
+      "type": "action",
+      "description": "Navigate to /siswa/masuk"
+    },
+    {
+      "type": "action",
+      "description": "Fill the 'Kode kelas' input with ZZZZ and the 'Namamu' input with 'Hikmal', then click the button 'Masuk ke kelas'"
+    },
+    {
+      "type": "assertion",
+      "description": "Verify an inline error message appears (mentions kode kelas tidak ditemukan / tidak valid) and the page stays on /siswa/masuk"
+    }
+  ]
+}
