@@ -115,7 +115,7 @@ export function MateriBaruPage() {
         ]}
         aksi={{ href: "/guru/dashboard", label: "Dashboard" }}
       />
-      <main className="mx-auto max-w-[1180px] px-5 py-12 md:px-10">
+      <main className="mx-auto w-full max-w-[1180px] px-5 py-12 md:px-10">
         <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="eyebrow eyebrow-muted mb-2.5">
@@ -280,7 +280,7 @@ export function MateriBaruPage() {
             </div>
 
             <aside className="flex flex-col gap-4">
-              <div className="panel self-start p-5">
+              <div className="panel p-5">
                 <p className="eyebrow eyebrow-muted mb-4">Pengaturan terbit</p>
                 <div className="flex flex-col gap-3.5">
                   <label className="flex items-start gap-2.5 text-[11px] text-muted">

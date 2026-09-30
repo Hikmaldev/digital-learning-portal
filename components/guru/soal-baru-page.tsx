@@ -211,7 +211,7 @@ export function SoalBaruPage() {
         ]}
         aksi={{ href: "/guru/dashboard", label: "Dashboard" }}
       />
-      <main className="mx-auto max-w-[1280px] px-5 py-12 md:px-10">
+      <main className="mx-auto w-full max-w-[1280px] px-5 py-12 md:px-10">
         <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="eyebrow eyebrow-muted mb-2.5">
