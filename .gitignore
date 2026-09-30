@@ -44,5 +44,5 @@ next-env.d.ts
 # prisma generated client
 /lib/generated/prisma/
 
-#PRD
+# dokumen internal (PRD) — tidak ikut di-commit
 PRD_Portal_Belajar_Digital.md
