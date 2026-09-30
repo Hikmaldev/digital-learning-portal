@@ -4,7 +4,8 @@ import { FooterSimple } from "@/components/footer-simple";
 import { TopBar } from "@/components/top-bar";
 import { ProgressBar } from "@/components/ui";
 import { BuatKelasDialog } from "@/components/guru/buat-kelas-dialog";
-import { kelasAktif, kelassRingkasan } from "@/lib/data";
+import { BagikanKode } from "@/components/guru/bagikan-kode";
+import { kelassRingkasan } from "@/lib/data";
 import { auth } from "@/auth";
 import {
   getKelasAktifDb,
@@ -96,16 +97,10 @@ export default async function DashboardGuruPage() {
           <div>
             <strong className="text-sm">Bagikan kode kelasmu</strong>
             <p className="m-0 mt-1 text-[11px] text-[#73633a]">
-              Siswa baru bisa masuk menggunakan kode ini.
+              Pilih kelas, lalu beri tahu kode ini ke siswanya.
             </p>
           </div>
-          <div className="inline-flex items-center gap-2.5 text-xs">
-            <span className="text-muted">KODE</span>
-            <strong className="text-2xl tracking-[2px] text-coral">
-              {kelasAktif.kode_akses}
-            </strong>
-            <span className="text-[11px]">Salin</span>
-          </div>
+          <BagikanKode kelas={daftarKelas} />
           <span className="block text-[11px] md:hidden">Bagikan ↗</span>
         </div>
 

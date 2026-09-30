@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { FooterSimple } from "../footer-simple";
 import { TopBar } from "../top-bar";
-import { babSiswa } from "@/lib/data";
 
 const OPSI = 4;
 const DRAFT_KUNCI = "rb_draft_soal";
@@ -13,6 +12,13 @@ interface SoalDraft {
   pertanyaan: string;
   benar: number;
   [key: string]: number | string;
+}
+
+interface KelasRingkas {
+  id: string;
+  nama: string;
+  jenjang: string;
+  kode: string;
 }
 
 interface BabRingkas {
@@ -27,60 +33,61 @@ export function SoalBaruPage() {
     { id: 1, pertanyaan: "Apa yang dimaksud dengan gagasan utama?", benar: 0, o0: "Ide pokok atau inti pembahasan paragraf", o1: "Kalimat yang paling panjang", o2: "Contoh dalam bacaan", o3: "Kata-kata sulit" },
     { id: 2, pertanyaan: "", benar: 0, o0: "", o1: "", o2: "", o3: "" },
   ]);
+  const [kelasList, setKelasList] = useState<KelasRingkas[]>([]);
+  const [kelasId, setKelasId] = useState("");
   const [babList, setBabList] = useState<BabRingkas[]>([]);
   const [babId, setBabId] = useState("");
   const [memuat, setMemuat] = useState(false);
   const [pesan, setPesan] = useState<{ jenis: "ok" | "info" | "eror"; teks: string } | null>(null);
 
+  // Muat daftar kelas (dari sesi guru; fallback demo bila tanpa DB).
   useEffect(() => {
     let aktif = true;
-    (async () => {
-      const fallback = () => {
-        const daftar: BabRingkas[] = babSiswa.map((b) => ({
-          id: b.id,
-          judul: b.judul,
-          mataPelajaran: b.mata_pelajaran,
-          urutan: b.urutan,
-        }));
-        if (aktif) {
-          setBabList(daftar);
-          setBabId(String(daftar[0]?.id ?? ""));
-        }
-      };
-      try {
-        // Ambil kelas (DB bila tersedia), lalu bab untuk kelas pertama.
-        const rk = await fetch("/api/guru/kelas");
-        const jk = (await rk.json()) as {
-          ok?: boolean;
-          data?: { kelas?: { id: string }[] };
-        };
-        const kelasId =
-          jk?.ok && Array.isArray(jk.data?.kelas) && jk.data.kelas.length > 0
-            ? jk.data.kelas[0].id
-            : "kls-1";
-
-        const rb = await fetch(
-          `/api/guru/bab?kelasId=${encodeURIComponent(kelasId)}`
-        );
-        const jb = (await rb.json()) as {
-          ok?: boolean;
-          data?: { bab?: BabRingkas[] };
-        };
+    fetch("/api/guru/kelas")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((jk) => {
         if (!aktif) return;
-        if (jb?.ok && Array.isArray(jb.data?.bab) && jb.data.bab.length > 0) {
-          setBabList(jb.data.bab);
-          setBabId(String(jb.data.bab[0].id));
-        } else {
-          fallback();
+        const daftar = Array.isArray(jk?.data?.kelas)
+          ? (jk.data.kelas as KelasRingkas[])
+          : [];
+        if (daftar.length > 0) {
+          setKelasList(daftar);
+          setKelasId(daftar[0].id);
         }
-      } catch {
-        if (aktif) fallback();
-      }
-    })();
+      })
+      .catch(() => undefined);
     return () => {
       aktif = false;
     };
   }, []);
+
+  // Bab untuk kelas terpilih.
+  useEffect(() => {
+    let aktif = true;
+    if (!kelasId) return;
+    fetch(`/api/guru/bab?kelasId=${encodeURIComponent(kelasId)}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((jb) => {
+        if (!aktif) return;
+        if (jb?.ok && Array.isArray(jb.data?.bab) && jb.data.bab.length > 0) {
+          setBabList(jb.data.bab as BabRingkas[]);
+          setBabId(String(jb.data.bab[0].id));
+          setPesan(null);
+        } else {
+          setBabList([]);
+          setBabId("");
+        }
+      })
+      .catch(() => {
+        if (aktif) {
+          setBabList([]);
+          setBabId("");
+        }
+      });
+    return () => {
+      aktif = false;
+    };
+  }, [kelasId]);
 
   function ubah(id: number, field: string, nilai: string) {
     setSoal((prev) =>
@@ -112,11 +119,17 @@ export function SoalBaruPage() {
     setMemuat(true);
     setPesan(null);
 
+    if (!babId) {
+      setMemuat(false);
+      setPesan({
+        jenis: "eror",
+        teks: "Pilih kelas dan bab dulu — kelas ini belum punya bab, buat materi lebih dulu.",
+      });
+      return;
+    }
+
     const payload = {
-      babId:
-        babId ||
-        String(babList[0]?.id ?? "") ||
-        "bab-bindo-3",
+      babId,
       soal: soal.map((s) => ({
         pertanyaan: String(s.pertanyaan).trim(),
         opsi: Array.from({ length: OPSI }, (_, i) => String(s[`o${i}`] ?? "").trim())
@@ -160,6 +173,21 @@ export function SoalBaruPage() {
     }
   }
 
+  const namaKelasTerpilih =
+    kelasList.find((k) => k.id === kelasId)?.nama ?? "Kelas pilihanmu";
+  const pilihanKelas =
+    kelasList.length > 0
+      ? kelasList.map((k) => (
+          <option key={k.id} value={k.id}>
+            {k.nama} · {k.jenjang}
+          </option>
+        ))
+      : [
+          <option key="memuat" value="">
+            Memuat kelas…
+          </option>,
+        ];
+
   const pilihanBab =
     babList.length > 0
       ? babList.map((b) => (
@@ -168,8 +196,8 @@ export function SoalBaruPage() {
           </option>
         ))
       : [
-          <option key="demo" value="bab-bindo-3">
-            Bahasa Indonesia · Menemukan gagasan utama (demo)
+          <option key="kosong" value="">
+            Belum ada bab — buat materi dulu di kelas ini
           </option>,
         ];
 
@@ -183,12 +211,11 @@ export function SoalBaruPage() {
         ]}
         aksi={{ href: "/guru/dashboard", label: "Dashboard" }}
       />
-      <main className="mx-auto max-w-[1180px] px-5 py-12 md:px-10">
+      <main className="mx-auto max-w-[1280px] px-5 py-12 md:px-10">
         <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="eyebrow eyebrow-muted mb-2.5">
-              Kelola latihan · {babList.find((b) => b.id === babId)?.mataPelajaran ?? "Bahasa Indonesia"} ·{" "}
-              {babList.find((b) => b.id === babId)?.judul ?? "Menemukan gagasan utama"}
+              Kelola latihan · {namaKelasTerpilih}
             </p>
             <h1 className="text-[38px] leading-none tracking-[-2px]">
               Buat latihan <em className="font-display text-coral">soal.</em>
@@ -205,8 +232,8 @@ export function SoalBaruPage() {
         </div>
 
         <form id="form-soal" onSubmit={simpan}>
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_285px]">
-            <div className="panel p-6">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_300px]">
+            <div className="panel p-6 md:p-8">
               <div className="mb-5 flex items-center justify-between">
                 <h2 className="text-xl tracking-tight">Soal latihan</h2>
                 <button type="button" onClick={tambahSoal} className="btn btn-outline px-3 py-2">
@@ -217,9 +244,9 @@ export function SoalBaruPage() {
               {soal.map((s, idx) => (
                 <fieldset
                   key={s.id}
-                  className="border-t border-line py-5 first:border-t-0 first:pt-0"
+                  className="border-t border-line py-6 first:border-t-0 first:pt-0"
                 >
-                  <div className="mb-3 flex items-center justify-between text-[11px] font-bold">
+                  <div className="mb-4 flex items-center justify-between text-[11px] font-bold">
                     <span>SOAL {String(idx + 1).padStart(2, "0")}</span>
                     <span className="flex items-center gap-4">
                       <span className="font-normal text-muted">Pilihan ganda</span>
@@ -238,16 +265,16 @@ export function SoalBaruPage() {
                     Pertanyaan
                   </label>
                   <textarea
-                    className="field min-h-[80px]"
+                    className="field min-h-[90px]"
                     placeholder="Tulis pertanyaan..."
                     value={s.pertanyaan}
                     onChange={(e) => ubah(s.id, "pertanyaan", e.target.value)}
                   />
-                  <label className="mt-3 block text-[10px] text-muted">
+                  <label className="mt-4 block text-[10px] text-muted">
                     Pilihan jawaban · tandai satu jawaban yang benar
                   </label>
                   {Array.from({ length: OPSI }, (_, i) => (
-                    <div key={i} className="mt-2 flex gap-2">
+                    <div key={i} className="mt-2.5 flex items-center gap-2.5">
                       <input
                         type="radio"
                         name={`benar-${s.id}`}
@@ -258,7 +285,7 @@ export function SoalBaruPage() {
                       />
                       <input
                         type="text"
-                        className="min-w-0 flex-1 border border-line bg-paper px-2.5 py-2 text-[11px] outline-none focus:border-coral"
+                        className="min-w-0 flex-1 border border-line bg-paper px-3 py-2.5 text-xs outline-none focus:border-coral"
                         placeholder={`Pilihan ${String.fromCharCode(65 + i)}`}
                         value={String(s[`o${i}`])}
                         onChange={(e) => ubah(s.id, `o${i}`, e.target.value)}
@@ -272,6 +299,23 @@ export function SoalBaruPage() {
             <aside className="flex flex-col gap-4">
               <div className="panel self-start p-5">
                 <p className="eyebrow eyebrow-muted mb-4">Pengaturan latihan</p>
+                <div className="mb-4 flex flex-col gap-2">
+                  <label htmlFor="kelas" className="text-[11px] font-bold">
+                    Kelas
+                  </label>
+                  <select
+                    id="kelas"
+                    className="field"
+                    value={kelasId}
+                    onChange={(e) => {
+                      setKelasId(e.target.value);
+                      setBabId("");
+                      setPesan(null);
+                    }}
+                  >
+                    {pilihanKelas}
+                  </select>
+                </div>
                 <div className="mb-4 flex flex-col gap-2">
                   <label htmlFor="bab" className="text-[11px] font-bold">
                     Bab terkait
@@ -309,7 +353,7 @@ export function SoalBaruPage() {
                   </label>
                 </div>
               </div>
-              <div className="panel p-5">
+              <div className="panel self-start p-5">
                 <p className="eyebrow eyebrow-muted mb-3">Ringkasan</p>
                 <p className="text-[11px] leading-relaxed text-muted">
                   {soal.length} soal dibuat

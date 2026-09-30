@@ -9,6 +9,7 @@ import {
   getKelasByKode,
   getSoalBab,
 } from "@/lib/queries";
+import { prisma } from "@/lib/prisma";
 import { soalLatihan } from "@/lib/data";
 
 export const metadata: Metadata = { title: "Latihan Soal" };
@@ -64,6 +65,12 @@ export default async function LatihanSoalPage({ searchParams }: Props) {
 
   const infoBab = await getBabLatihan(kelasSiswa.kode_akses);
   const dariDb = await getSoalBab(infoBab.babId);
+
+  // DB aktif tetapi bab ini belum punya soal → tampilkan keadaan kosong,
+  // jangan bocorkan soal demo/latihan dari kelas lain.
+  if (dariDb === null && prisma !== null) {
+    return <BelumAdaLatihan namaKelas={kelasSiswa.nama_kelas} />;
+  }
 
   const soal: QuizSoal[] = (dariDb ?? soalLatihan).map(
     ({ id, pertanyaan, opsi }) => ({
