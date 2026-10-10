@@ -6,8 +6,11 @@ import { StatusBadge } from "@/components/ui";
 import {
   getKelasAktifDb,
   getKelasByKode,
+  getKelasList,
   getRingkasanKelas,
 } from "@/lib/queries";
+import { demoMode } from "@/lib/runtime";
+import { getGuruSession } from "@/lib/authorization";
 
 export const metadata: Metadata = { title: "Progress Siswa" };
 
@@ -19,9 +22,29 @@ interface Props {
 
 export default async function DashboardProgressPage({ searchParams }: Props) {
   const params = await searchParams;
-  const kelas = params.kode
-    ? (await getKelasByKode(params.kode)) ?? (await getKelasAktifDb())
-    : await getKelasAktifDb();
+  const guru = await getGuruSession();
+  let kelas = params.kode
+    ? await getKelasByKode(params.kode, guru?.guruId)
+    : null;
+  if (!kelas && guru) {
+    const daftarKelas = await getKelasList(guru.guruId);
+    if (daftarKelas.length > 0) {
+      kelas = await getKelasByKode(daftarKelas[0].kode, guru.guruId);
+    }
+  }
+  if (!kelas && demoMode) kelas = await getKelasAktifDb();
+  if (!kelas) {
+    return (
+      <>
+        <TopBar nav={[{ href: "/guru/dashboard", label: "Dashboard" }]} aksi={{ href: "/guru/dashboard", label: "Kembali" }} />
+        <main className="mx-auto max-w-[780px] px-5 py-20 text-center">
+          <h1 className="text-[38px] leading-none tracking-[-2px]">Belum ada <em className="font-display text-coral">kelas.</em></h1>
+          <p className="mt-3 text-[13px] text-muted">Buat kelas terlebih dahulu untuk melihat progress siswa.</p>
+        </main>
+        <FooterSimple />
+      </>
+    );
+  }
   const daftarSiswa = await getRingkasanKelas(kelas.id);
   const selesai = daftarSiswa.filter(
     (s) => s.status === "SUDAH_MENGERJAKAN"

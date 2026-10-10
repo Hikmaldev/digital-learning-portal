@@ -6,6 +6,7 @@ import { StatusBadge } from "@/components/ui";
 import { peringatanKunci } from "@/lib/data";
 import { getBabLatihan, getBabList, getKelasAktifDb, getKelasByKode } from "@/lib/queries";
 import type { Bab } from "@/lib/types";
+import { demoMode } from "@/lib/runtime";
 
 export const metadata: Metadata = { title: "Materi Bab" };
 
@@ -55,11 +56,38 @@ function VideoMateri({ url }: { url?: string }) {
   );
 }
 
+function BelumMasukKelas() {
+  return (
+    <>
+      <TopBar
+        nav={[]}
+        aksi={{ href: "/siswa/masuk", label: "Masuk ke kelas" }}
+      />
+      <main className="mx-auto max-w-[780px] px-5 py-20 text-center">
+        <div className="mx-auto mb-5 grid size-[66px] place-items-center rounded-full bg-soft text-3xl">
+          🔑
+        </div>
+        <p className="eyebrow eyebrow-muted mb-2">Materi bab</p>
+        <h1 className="text-[38px] leading-none tracking-[-2px]">
+          Masuk ke <em className="font-display text-coral">kelas dulu.</em>
+        </h1>
+        <p className="mt-3 text-[13px] text-muted">
+          Masukkan kode kelas dari gurumu untuk membuka materi.
+        </p>
+      </main>
+      <FooterSimple />
+    </>
+  );
+}
+
 export default async function BabMateriPage({ searchParams }: Props) {
   const params = await searchParams;
   const kelas = params.kode
-    ? (await getKelasByKode(params.kode)) ?? (await getKelasAktifDb())
-    : await getKelasAktifDb();
+    ? await getKelasByKode(params.kode)
+    : demoMode
+      ? await getKelasAktifDb()
+      : null;
+  if (!kelas) return <BelumMasukKelas />;
   const kodeKelas = kelas.kode_akses;
   const [infoBab, babList] = await Promise.all([
     getBabLatihan(kodeKelas),
@@ -97,7 +125,7 @@ export default async function BabMateriPage({ searchParams }: Props) {
 
   const target: Bab =
     babList.find((b) => b.id === params.id) ??
-    babList.find((b) => b.id === infoBab.babId) ??
+    (infoBab ? babList.find((b) => b.id === infoBab.babId) : undefined) ??
     babList[0];
 
   const paragraf = target.konten_materi

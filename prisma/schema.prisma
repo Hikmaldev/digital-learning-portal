@@ -28,7 +28,7 @@ model Kelas {
   jenjang   String // "Paket A" | "Paket B" | "Paket C"
   kode_akses String @unique
   guru_id   String
-  guru      User    @relation("GuruKelas", fields: [guru_id], references: [id])
+  guru      User    @relation("GuruKelas", fields: [guru_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
   bab       Bab[]
   progress  ProgressSiswa[]
   createdAt DateTime @default(now())
@@ -39,7 +39,7 @@ model Kelas {
 model Bab {
   id           String  @id @default(cuid())
   kelas_id     String
-  kelas        Kelas   @relation(fields: [kelas_id], references: [id])
+  kelas        Kelas   @relation(fields: [kelas_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
   mata_pelajaran String
   judul        String
   ringkasan    String?
@@ -60,7 +60,7 @@ model Bab {
 model Gambar {
   id         String @id @default(cuid())
   bab_id     String
-  bab        Bab    @relation(fields: [bab_id], references: [id])
+  bab        Bab    @relation(fields: [bab_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   url        String
   ukuran_file Int
   createdAt  DateTime @default(now())
@@ -72,7 +72,7 @@ model Gambar {
 model Soal {
   id         String  @id @default(cuid())
   bab_id     String
-  bab        Bab     @relation(fields: [bab_id], references: [id])
+  bab        Bab     @relation(fields: [bab_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   pertanyaan String
   tipe       String  @default("PILIHAN_GANDA") // PILIHAN_GANDA | ESAI
   urutan     Int     @default(0)
@@ -86,7 +86,7 @@ model Soal {
 model OpsiJawaban {
   id     String @id @default(cuid())
   soal_id String
-  soal   Soal   @relation(fields: [soal_id], references: [id])
+  soal   Soal   @relation(fields: [soal_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   teks   String
   is_benar Boolean @default(false)
 
@@ -97,12 +97,12 @@ model OpsiJawaban {
 model ProgressSiswa {
   id         String   @id @default(cuid())
   kelas_id   String
-  kelas      Kelas    @relation(fields: [kelas_id], references: [id])
+  kelas      Kelas    @relation(fields: [kelas_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
   nama_siswa String
   bab_id     String
-  bab        Bab      @relation(fields: [bab_id], references: [id], onDelete: Cascade)
+  bab        Bab      @relation(fields: [bab_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   soal_id    String
-  soal       Soal     @relation(fields: [soal_id], references: [id], onDelete: Cascade)
+  soal       Soal     @relation(fields: [soal_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   jawaban    String   // id opsi yang dipilih siswa
   benar      Boolean
   skor       Int

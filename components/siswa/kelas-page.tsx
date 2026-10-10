@@ -9,6 +9,7 @@ import { useSessionState } from "@/lib/session-state";
 import { babSiswa, kelasAktif, namaSiswaDemo } from "@/lib/data";
 import { bacaKodeKelas } from "@/lib/siswa-session";
 import type { Bab, Kelas } from "@/lib/types";
+import { publicDemoMode } from "@/lib/runtime";
 
 interface DataKelas {
   kelas: Kelas;
@@ -18,9 +19,17 @@ interface DataKelas {
 export function SiswaKelasPage() {
   const [nama] = useSessionState("rb_nama_siswa", namaSiswaDemo);
   const [data, setData] = useState<DataKelas | null>(null);
+  const [memuat, setMemuat] = useState(true);
 
   useEffect(() => {
-    const kode = bacaKodeKelas() ?? kelasAktif.kode_akses;
+    const kode =
+      bacaKodeKelas() ?? (publicDemoMode ? kelasAktif.kode_akses : null);
+    if (!kode) {
+      // Tidak ada kode kelas — selesaikan status memuat pada microtask
+      // berikutnya agar tidak memicu cascading render di dalam efek.
+      queueMicrotask(() => setMemuat(false));
+      return;
+    }
     fetch(`/api/siswa/kelas?kode=${encodeURIComponent(kode)}`)
       .then((r) => (r.ok ? r.json() : null))
       .then((json) => {
@@ -28,13 +37,34 @@ export function SiswaKelasPage() {
           setData({ kelas: json.data.kelas, bab: json.data.bab });
         }
       })
-      .catch(() => {
-        /* pakai data contoh */
-      });
+      .catch(() => undefined)
+      .finally(() => setMemuat(false));
   }, []);
 
-  const kelas = data?.kelas ?? kelasAktif;
-  const bab = data?.bab ?? babSiswa;
+  const kelas = data?.kelas ?? (publicDemoMode ? kelasAktif : null);
+  const bab = data?.bab ?? (publicDemoMode ? babSiswa : []);
+
+  if (memuat) {
+    return (
+      <main className="grid min-h-[60vh] place-items-center text-sm text-muted">
+        Memuat kelas...
+      </main>
+    );
+  }
+
+  if (!kelas) {
+    return (
+      <>
+        <TopBar nav={[]} aksi={{ href: "/siswa/masuk", label: "Masuk ke kelas" }} />
+        <main className="mx-auto max-w-[780px] px-5 py-20 text-center">
+          <div className="mx-auto mb-5 grid size-[66px] place-items-center rounded-full bg-soft text-3xl">📭</div>
+          <h1 className="text-[38px] leading-none tracking-[-2px]">Belum masuk <em className="font-display text-coral">kelas.</em></h1>
+          <p className="mt-3 text-[13px] text-muted">Masukkan kode kelas yang dibagikan oleh gurumu.</p>
+        </main>
+        <FooterSimple />
+      </>
+    );
+  }
 
   const selesai = bab.filter((b) => b.status === "SELESAI").length;
   const total = bab.length;

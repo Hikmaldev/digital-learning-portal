@@ -1,17 +1,21 @@
 {
-  "$schema": "https://raw.githubusercontent.com/TestSprite/testsprite-cli/v0.13.0/schemas/plan.schema.json",
+  "$schema": "https://raw.githubusercontent.com/TestSprite/testsprite-cli/v0.14.0/schemas/plan.schema.json",
   "projectId": "266eea75-778c-4792-844d-74c9c431cb1e",
   "type": "frontend",
-  "name": "Dashboard guru menampilkan metrik kelas",
-  "priority": "p2",
+  "name": "Dashboard guru menampilkan metrik & progres kelas (login database)",
+  "priority": "p1",
   "planSteps": [
     {
       "type": "action",
-      "description": "Navigate to /guru/dashboard"
+      "description": "Navigate to /guru/masuk"
+    },
+    {
+      "type": "action",
+      "description": "Fill the Email input with hikmal@ruangbelajar.id and the Password input with demo1234, then click the submit button 'Masuk ke dashboard'"
     },
     {
       "type": "assertion",
-      "description": "Verify the heading 'Selamat datang, Hikmal' is visible together with three metric cards"
+      "description": "Verify the URL becomes /guru/dashboard and the heading 'Selamat datang, Hikmal' is visible together with three metric cards (Siswa aktif, Latihan terkumpul, Rata-rata progres)"
     },
     {
       "type": "assertion",
@@ -23,7 +27,7 @@
     },
     {
       "type": "assertion",
-      "description": "Verify the 'Progress kelas minggu ini' section lists pelajaran with progress percentages"
+      "description": "Verify the 'Progress kelas minggu ini' section lists pelajaran rows (e.g. 'Bahasa Indonesia', 'Matematika') and the 'Bahasa Indonesia' row shows the completion label '100% selesai' next to its progress bar"
     }
   ]
 }

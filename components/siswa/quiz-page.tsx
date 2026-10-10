@@ -72,7 +72,10 @@ export function QuizPage({
     setMengirim(true);
     setGagal("");
     const namaSiswa = sessionStorage.getItem("rb_nama_siswa") ?? namaSiswaDemo;
-    const kodeKelas = sessionStorage.getItem("rb_kode_kelas") ?? kelasAktif.kode_akses;
+    // Kode dari URL halaman adalah konteks kelas yang benar; sessionStorage
+    // hanya dipakai bila prop tidak tersedia.
+    const kodeKirim =
+      kodeKelas || sessionStorage.getItem("rb_kode_kelas") || kelasAktif.kode_akses;
 
     let hasil: HasilLatihan;
     try {
@@ -80,7 +83,7 @@ export function QuizPage({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          kodeKelas,
+          kodeKelas: kodeKirim,
           namaSiswa,
           babId,
           jawaban,

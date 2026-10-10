@@ -33,7 +33,7 @@ export function MateriBaruPage() {
         }
       })
       .catch(() => {
-        /* fallback: daftar kelas diisi lewat select 'Kelas demo' */
+        setPesan({ jenis: "eror", teks: "Daftar kelas tidak dapat dimuat dari database." });
       });
   }, []);
 
@@ -44,8 +44,7 @@ export function MateriBaruPage() {
     const form = new FormData(e.currentTarget);
 
     const payload = {
-      kelasId:
-        kelasId || String(form.get("kelas") ?? "") || "kls-1",
+      kelasId: kelasId || String(form.get("kelas") ?? ""),
       mataPelajaran: String(form.get("mapel") ?? "Bahasa Indonesia"),
       judul: String(form.get("judul") ?? "").trim(),
       ringkasan: String(form.get("ringkasan") ?? "").trim(),
@@ -91,7 +90,7 @@ export function MateriBaruPage() {
     }
   }
 
-  const pilihanKelas = kelasList.length > 0 ? kelasList : [];
+  const pilihanKelas = kelasList;
   const selectKelas =
     pilihanKelas.length > 0
       ? pilihanKelas.map((k) => (
@@ -100,8 +99,8 @@ export function MateriBaruPage() {
           </option>
         ))
       : [
-          <option key="demo" value="kls-1">
-            Kelas Kesetaraan Harapan Bersama · Paket B (demo)
+          <option key="kosong" value="">
+            Belum ada kelas — buat kelas dulu di dashboard
           </option>,
         ];
 

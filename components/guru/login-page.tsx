@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { signIn } from "next-auth/react";
+import { publicDemoMode } from "@/lib/runtime";
 import { FooterSimple } from "../footer-simple";
 import { TopBar } from "../top-bar";
 
@@ -73,7 +74,7 @@ export function GuruLoginPage() {
               kelasmu.
             </p>
 
-            {dbAktif === false && (
+            {dbAktif === false && publicDemoMode && (
               <div className="mb-4 border-l-[3px] border-yellow bg-[#f9efc9] px-3 py-2.5 text-[11px] leading-relaxed text-[#73633a]">
                 <b>Mode demo.</b> Database belum tersambung — akun login baru
                 aktif setelah mengisi <code className="font-mono">DATABASE_URL</code>{" "}

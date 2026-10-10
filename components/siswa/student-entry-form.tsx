@@ -2,10 +2,10 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { kelasAktif } from "@/lib/data";
 import { simpanSesiSiswa } from "@/lib/siswa-session";
+import { publicDemoMode } from "@/lib/runtime";
 
-export const KODE_DEMO = kelasAktif.kode_akses;
+export const KODE_DEMO = "HB2026";
 
 /** Form masuk siswa: validasi kode via API, lalu simpan session & arahkan ke kelas. */
 export function StudentEntryForm({ kodeAwal = "" }: { kodeAwal?: string }) {
@@ -31,12 +31,10 @@ export function StudentEntryForm({ kodeAwal = "" }: { kodeAwal?: string }) {
       const json = (await res.json()) as {
         ok: boolean;
         error?: string;
-        data?: { kelas?: { kode_akses?: string } };
       };
 
       if (!res.ok || !json.ok) {
-        // Fallback: kode demo tetap diterima saat database belum tersedia.
-        if (kodeBersih !== KODE_DEMO) {
+        if (!(publicDemoMode && kodeBersih === KODE_DEMO)) {
           setPesan(json.error ?? "Kode kelas tidak ditemukan. Coba periksa lagi.");
           return;
         }
@@ -44,8 +42,7 @@ export function StudentEntryForm({ kodeAwal = "" }: { kodeAwal?: string }) {
       simpanSesiSiswa(kodeBersih, namaBersih);
       router.push("/siswa/kelas");
     } catch {
-      // Jaringan gagal total — pakai kode demo agar demo tetap berjalan.
-      if (kodeBersih === KODE_DEMO) {
+      if (publicDemoMode && kodeBersih === KODE_DEMO) {
         simpanSesiSiswa(kodeBersih, namaBersih);
         router.push("/siswa/kelas");
       } else {
@@ -73,10 +70,7 @@ export function StudentEntryForm({ kodeAwal = "" }: { kodeAwal?: string }) {
           onChange={(e) => setKode(e.target.value)}
           required
         />
-        <small className="text-muted">
-          Gunakan kode yang dibagikan oleh gurumu. Contoh demo:{" "}
-          <b className="text-ink">{KODE_DEMO}</b>
-        </small>
+        <small className="text-muted">Gunakan kode yang dibagikan oleh gurumu.</small>
       </div>
       <div className="mb-5 flex flex-col gap-2">
         <label htmlFor="student" className="text-[11px] font-bold">
@@ -91,9 +85,7 @@ export function StudentEntryForm({ kodeAwal = "" }: { kodeAwal?: string }) {
           onChange={(e) => setNama(e.target.value)}
           required
         />
-        <small className="text-muted">
-          Nama ini akan muncul di catatan latihanmu.
-        </small>
+        <small className="text-muted">Nama ini akan muncul di catatan latihanmu.</small>
       </div>
       {pesan && (
         <p

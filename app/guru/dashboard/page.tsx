@@ -6,6 +6,7 @@ import { ProgressBar } from "@/components/ui";
 import { BuatKelasDialog } from "@/components/guru/buat-kelas-dialog";
 import { BagikanKode } from "@/components/guru/bagikan-kode";
 import { kelassRingkasan } from "@/lib/data";
+import { demoMode } from "@/lib/runtime";
 import { auth } from "@/auth";
 import {
   getKelasAktifDb,
@@ -20,17 +21,24 @@ export const metadata: Metadata = { title: "Dashboard Guru" };
 export const dynamic = "force-dynamic";
 
 export default async function DashboardGuruPage() {
-  const [session, kelas] = await Promise.all([auth(), getKelasAktifDb()]);
+  const [session, kelasDemo] = await Promise.all([
+    auth(),
+    demoMode ? getKelasAktifDb() : Promise.resolve(null),
+  ]);
   const guruId = session?.user?.id;
-  // Tanpa sesi (mode demo) tampilkan data contoh; dengan sesi ambil kelas milik guru.
-  const daftarKelas = guruId ? await getKelasList(guruId) : kelassRingkasan;
+  // Hanya mode demo eksplisit yang boleh menggunakan data contoh.
+  const daftarKelas = guruId ? await getKelasList(guruId) : demoMode ? kelassRingkasan : [];
   const progressKelas = await Promise.all(
     daftarKelas.map((k) => getProgressRataKelas(k.id))
   );
-  const [metrics, ringkasanMapel] = await Promise.all([
-    getMetrics(kelas.id),
-    getRingkasanPelajaranDb(),
-  ]);
+  // Kelas utama untuk metrik: kelas guru pertama, atau kelas demo saat mode demo.
+  const kelasUtama = kelasDemo ?? daftarKelas[0] ?? null;
+  const [metrics, ringkasanMapel] = kelasUtama
+    ? await Promise.all([
+        getMetrics(kelasUtama.id),
+        getRingkasanPelajaranDb(guruId),
+      ])
+    : [[], []];
   return (
     <>
       <TopBar
@@ -126,6 +134,13 @@ export default async function DashboardGuruPage() {
                   </tr>
                 </thead>
                 <tbody>
+                  {daftarKelas.length === 0 && (
+                    <tr className="border-t border-line">
+                      <td colSpan={4} className="px-4 py-6 text-center text-muted">
+                        Belum ada kelas. Buat kelas barumu lewat panel di samping.
+                      </td>
+                    </tr>
+                  )}
                   {daftarKelas.map((k, i) => (
                     <tr key={k.id} className="border-t border-line">
                       <td className="px-4 py-3.5">
@@ -181,19 +196,30 @@ export default async function DashboardGuruPage() {
               Lihat detail <span className="pl-1 text-base">→</span>
             </Link>
           </div>
+          {ringkasanMapel.length === 0 && (
+            <p className="border-t border-line pt-4 text-[11px] leading-relaxed text-muted">
+              Belum ada materi. Tambahkan materi di kelasmu agar progres per
+              mata pelajaran muncul di sini.
+            </p>
+          )}
           {ringkasanMapel.map((p) => (
             <div
               key={p.mata_pelajaran}
-              className="grid grid-cols-[190px_1fr_42px] items-center gap-4 border-t border-line py-4 text-[11px] first:mt-3"
+              className="grid grid-cols-[190px_1fr_auto] items-center gap-4 border-t border-line py-4 text-[11px] first:mt-3"
             >
               <span>
                 <strong>{p.mata_pelajaran}</strong>
                 <small className="block text-[9px] text-muted">
-                  {p.jumlah_bab} bab · 24 siswa
+                  {p.jumlah_bab} bab · {p.jumlah_siswa} siswa
                 </small>
               </span>
-              <ProgressBar progres={p.progres} />
-              <b className="text-[11px]">{p.progres}%</b>
+              <ProgressBar
+                progres={p.progres}
+                label={`Progres ${p.mata_pelajaran}`}
+              />
+              <b className="whitespace-nowrap text-[11px]">
+                {p.progres}% selesai
+              </b>
             </div>
           ))}
         </div>

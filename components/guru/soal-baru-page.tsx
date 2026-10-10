@@ -40,7 +40,7 @@ export function SoalBaruPage() {
   const [memuat, setMemuat] = useState(false);
   const [pesan, setPesan] = useState<{ jenis: "ok" | "info" | "eror"; teks: string } | null>(null);
 
-  // Muat daftar kelas (dari sesi guru; fallback demo bila tanpa DB).
+  // Muat daftar kelas milik guru aktif dari Neon.
   useEffect(() => {
     let aktif = true;
     fetch("/api/guru/kelas")
@@ -76,12 +76,14 @@ export function SoalBaruPage() {
         } else {
           setBabList([]);
           setBabId("");
+          setPesan({ jenis: "info", teks: "Belum ada bab pada kelas ini. Buat materi terlebih dahulu." });
         }
       })
       .catch(() => {
         if (aktif) {
           setBabList([]);
           setBabId("");
+          setPesan({ jenis: "eror", teks: "Daftar bab tidak dapat dimuat dari database." });
         }
       });
     return () => {

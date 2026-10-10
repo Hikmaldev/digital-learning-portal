@@ -90,6 +90,7 @@ export interface RingkasanPelajaran {
   mata_pelajaran: string;
   jumlah_bab: number;
   jumlah_latihan: number;
+  jumlah_siswa: number;
   progres: number;
 }
 

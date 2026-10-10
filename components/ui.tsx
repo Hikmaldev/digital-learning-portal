@@ -27,15 +27,18 @@ export function ProgressBar({
   progres,
   color = "bg-coral",
   className = "h-1.5",
+  label,
 }: {
   progres: number;
   color?: string;
   className?: string;
+  label?: string;
 }) {
   return (
     <div
       className={`w-full overflow-hidden bg-[#e1e1d8] ${className}`}
       role="progressbar"
+      aria-label={label}
       aria-valuenow={progres}
       aria-valuemin={0}
       aria-valuemax={100}

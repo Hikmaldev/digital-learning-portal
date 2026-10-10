@@ -211,9 +211,9 @@ export const peringatanKunci =
   "Gagasan utama biasanya dapat ditemukan di awal atau akhir paragraf. Kalimat yang menjelaskan gagasan utama disebut kalimat penjelas.";
 
 export const ringkasanPelajaran: RingkasanPelajaran[] = [
-  { mata_pelajaran: "Matematika", jumlah_bab: 4, jumlah_latihan: 18, progres: 86 },
-  { mata_pelajaran: "Bahasa Indonesia", jumlah_bab: 3, jumlah_latihan: 12, progres: 68 },
-  { mata_pelajaran: "Ilmu Pengetahuan Alam", jumlah_bab: 5, jumlah_latihan: 20, progres: 45 },
+  { mata_pelajaran: "Matematika", jumlah_bab: 4, jumlah_latihan: 18, jumlah_siswa: 24, progres: 86 },
+  { mata_pelajaran: "Bahasa Indonesia", jumlah_bab: 3, jumlah_latihan: 12, jumlah_siswa: 24, progres: 68 },
+  { mata_pelajaran: "Ilmu Pengetahuan Alam", jumlah_bab: 5, jumlah_latihan: 20, jumlah_siswa: 24, progres: 45 },
 ];
 
 export const daftarSiswa: RingkasanSiswa[] = [

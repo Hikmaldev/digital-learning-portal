@@ -9,8 +9,8 @@ import {
   getKelasByKode,
   getSoalBab,
 } from "@/lib/queries";
-import { prisma } from "@/lib/prisma";
 import { soalLatihan } from "@/lib/data";
+import { demoMode } from "@/lib/runtime";
 
 export const metadata: Metadata = { title: "Latihan Soal" };
 
@@ -50,12 +50,36 @@ function BelumAdaLatihan({ namaKelas }: { namaKelas: string }) {
   );
 }
 
-/** Halaman latihan: bab + soal diambil dari database (fallback ke data contoh). */
+function BelumMasukKelas() {
+  return (
+    <>
+      <TopBar nav={[]} aksi={{ href: "/siswa/masuk", label: "Masuk ke kelas" }} />
+      <main className="mx-auto max-w-[780px] px-5 py-20 text-center">
+        <div className="mx-auto mb-5 grid size-[66px] place-items-center rounded-full bg-soft text-3xl">
+          🔑
+        </div>
+        <p className="eyebrow eyebrow-muted mb-2">Latihan soal</p>
+        <h1 className="text-[38px] leading-none tracking-[-2px]">
+          Masuk ke <em className="font-display text-coral">kelas dulu.</em>
+        </h1>
+        <p className="mt-3 text-[13px] text-muted">
+          Masukkan kode kelas dari gurumu untuk membuka latihan.
+        </p>
+      </main>
+      <FooterSimple />
+    </>
+  );
+}
+
+/** Halaman latihan: bab + soal diambil dari database (fallback hanya di mode demo). */
 export default async function LatihanSoalPage({ searchParams }: Props) {
   const params = await searchParams;
   const kelasSiswa = params.kode
-    ? (await getKelasByKode(params.kode)) ?? (await getKelasAktifDb())
-    : await getKelasAktifDb();
+    ? await getKelasByKode(params.kode)
+    : demoMode
+      ? await getKelasAktifDb()
+      : null;
+  if (!kelasSiswa) return <BelumMasukKelas />;
 
   const babKelas = await getBabList(kelasSiswa.id);
   // Kelas asli tanpa bab (baru dibuat) → jangan tampilkan soal demo.
@@ -64,15 +88,16 @@ export default async function LatihanSoalPage({ searchParams }: Props) {
   }
 
   const infoBab = await getBabLatihan(kelasSiswa.kode_akses);
+  if (!infoBab) return <BelumAdaLatihan namaKelas={kelasSiswa.nama_kelas} />;
   const dariDb = await getSoalBab(infoBab.babId);
 
   // DB aktif tetapi bab ini belum punya soal → tampilkan keadaan kosong,
   // jangan bocorkan soal demo/latihan dari kelas lain.
-  if (dariDb === null && prisma !== null) {
+  if (dariDb === null && !demoMode) {
     return <BelumAdaLatihan namaKelas={kelasSiswa.nama_kelas} />;
   }
 
-  const soal: QuizSoal[] = (dariDb ?? soalLatihan).map(
+  const soal: QuizSoal[] = (dariDb ?? (demoMode ? soalLatihan : [])).map(
     ({ id, pertanyaan, opsi }) => ({
       id,
       pertanyaan,
@@ -82,7 +107,7 @@ export default async function LatihanSoalPage({ searchParams }: Props) {
 
   // Kunci hanya tersedia saat memakai data contoh (tanpa DB) supaya fallback
   // penilaian tetap bisa jalan; jawaban dari database tidak bocor ke klien.
-  const kunciLokal: Record<string, string> | null = dariDb
+  const kunciLokal: Record<string, string> | null = dariDb || !demoMode
     ? null
     : Object.fromEntries(
         soalLatihan
