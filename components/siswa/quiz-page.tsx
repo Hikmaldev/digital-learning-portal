@@ -127,7 +127,7 @@ export function QuizPage({
   }
 
   const urlMateri = `/siswa/materi?id=${encodeURIComponent(babId)}&kode=${encodeURIComponent(kodeKelas)}`;
-  const urlLatihan = `/siswa/latihan?kode=${encodeURIComponent(kodeKelas)}&babId=${encodeURIComponent(babId)}`;
+  const urlLatihan = `/siswa/latihan?kode=${encodeURIComponent(kodeKelas)}`;
 
   return (
     <>
@@ -253,12 +253,20 @@ export function QuizPage({
                 Baca kembali materi bab ini sebelum mengirim jawaban. Kamu bisa
                 kembali tanpa kehilangan jawaban sementara.
               </p>
-              <Link
-                href={urlMateri}
-                className="text-xs font-bold text-coral"
-              >
-                Baca materi lagi <span className="pl-1 text-base">→</span>
-              </Link>
+              <div className="flex flex-col gap-2.5">
+                <Link
+                  href={urlMateri}
+                  className="text-xs font-bold text-coral"
+                >
+                  Baca materi lagi <span className="pl-1 text-base">→</span>
+                </Link>
+                <Link
+                  href={urlLatihan}
+                  className="text-xs font-bold text-coral"
+                >
+                  Latihan bab lain <span className="pl-1 text-base">→</span>
+                </Link>
+              </div>
             </div>
           </aside>
         </div>

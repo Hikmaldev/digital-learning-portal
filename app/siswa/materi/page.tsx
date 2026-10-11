@@ -4,7 +4,7 @@ import { FooterSimple } from "@/components/footer-simple";
 import { TopBar } from "@/components/top-bar";
 import { StatusBadge } from "@/components/ui";
 import { peringatanBahasaUmum, peringatanKunci } from "@/lib/data";
-import { getBabLatihan, getBabList, getKelasAktifDb, getKelasByKode } from "@/lib/queries";
+import { getBabList, getKelasAktifDb, getKelasByKode } from "@/lib/queries";
 import type { Bab } from "@/lib/types";
 import { demoMode } from "@/lib/runtime";
 
@@ -91,10 +91,7 @@ export default async function BabMateriPage({ searchParams }: Props) {
   const kodeKelas = kelas.kode_akses;
   const namaSiswa = params.nama?.trim() || undefined;
   const namaParam = namaSiswa ? `&nama=${encodeURIComponent(namaSiswa)}` : "";
-  const [infoBab, babList] = await Promise.all([
-    getBabLatihan(kodeKelas),
-    getBabList(kelas.id, namaSiswa),
-  ]);
+  const babList = await getBabList(kelas.id, namaSiswa);
   if (babList.length === 0) {
     return (
       <>
@@ -125,10 +122,8 @@ export default async function BabMateriPage({ searchParams }: Props) {
     );
   }
 
-  const target: Bab =
-    babList.find((b) => b.id === params.id) ??
-    (infoBab ? babList.find((b) => b.id === infoBab.babId) : undefined) ??
-    babList[0];
+  // Tanpa ?id= tampilkan bab pertama (sesuai urutan daftar di sidebar).
+  const target: Bab = babList.find((b) => b.id === params.id) ?? babList[0];
 
   const paragraf = target.konten_materi
     .split(/\n+/)
@@ -148,7 +143,7 @@ export default async function BabMateriPage({ searchParams }: Props) {
       <TopBar
         nav={[
           { href: "/siswa/kelas", label: "Kelas saya" },
-          { href: `/siswa/materi?kode=${kodeKelas}${namaParam}`, label: "Materi", aktif: true },
+          { href: `/siswa/materi?id=${encodeURIComponent(target.id)}&kode=${kodeKelas}${namaParam}`, label: "Materi", aktif: true },
           { href: `/siswa/latihan?kode=${kodeKelas}`, label: "Latihan" },
         ]}
         aksi={{ href: "/siswa/kelas", label: "Kembali ke kelas" }}
@@ -256,7 +251,7 @@ export default async function BabMateriPage({ searchParams }: Props) {
                     bab ini.
                   </p>
                   <Link
-                    href={`/siswa/latihan?kode=${encodeURIComponent(kodeKelas)}&babId=${encodeURIComponent(target.id)}`}
+                    href={`/siswa/latihan?kode=${encodeURIComponent(kodeKelas)}&babId=${encodeURIComponent(target.id)}${namaParam}`}
                     className="btn btn-coral w-full"
                   >
                     Mulai latihan <span className="pl-1 text-base">→</span>

@@ -88,7 +88,7 @@ export function SiswaKelasPage() {
         nav={[
           { href: "/siswa/kelas", label: "Kelas saya", aktif: true },
           { href: `/siswa/materi${kodeParam}${namaParam}`, label: "Materi" },
-          { href: `/siswa/latihan${kodeParam}`, label: "Latihan" },
+          { href: `/siswa/latihan${kodeParam}${namaParam}`, label: "Latihan" },
         ]}
         aksi={{ href: "/", label: "Keluar" }}
       />
