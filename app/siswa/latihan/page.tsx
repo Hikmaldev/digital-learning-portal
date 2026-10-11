@@ -8,6 +8,7 @@ import {
   getKelasAktifDb,
   getKelasByKode,
   getSoalBab,
+  type InfoBabLatihan,
 } from "@/lib/queries";
 import { soalLatihan } from "@/lib/data";
 import { demoMode } from "@/lib/runtime";
@@ -17,17 +18,31 @@ export const metadata: Metadata = { title: "Latihan Soal" };
 export const dynamic = "force-dynamic";
 
 interface Props {
-  searchParams: Promise<{ kode?: string }>;
+  searchParams: Promise<{ kode?: string; babId?: string }>;
 }
 
-function BelumAdaLatihan({ namaKelas }: { namaKelas: string }) {
+function BelumAdaLatihan({
+  namaKelas,
+  judulBab,
+  kodeKelas,
+}: {
+  namaKelas?: string;
+  judulBab?: string;
+  kodeKelas?: string;
+}) {
+  const urlMateri = kodeKelas
+    ? `/siswa/materi?kode=${encodeURIComponent(kodeKelas)}`
+    : "/siswa/materi";
+  const urlLatihan = kodeKelas
+    ? `/siswa/latihan?kode=${encodeURIComponent(kodeKelas)}`
+    : "/siswa/latihan";
   return (
     <>
       <TopBar
         nav={[
           { href: "/siswa/kelas", label: "Kelas saya" },
-          { href: "/siswa/materi", label: "Materi" },
-          { href: "/siswa/latihan", label: "Latihan", aktif: true },
+          { href: urlMateri, label: "Materi" },
+          { href: urlLatihan, label: "Latihan", aktif: true },
         ]}
         aksi={{ href: "/siswa/kelas", label: "Kembali ke kelas" }}
       />
@@ -41,8 +56,17 @@ function BelumAdaLatihan({ namaKelas }: { namaKelas: string }) {
           <em className="font-display text-coral">latihan.</em>
         </h1>
         <p className="mt-3 text-[13px] text-muted">
-          Guru di kelas {namaKelas} belum menambahkan latihan soal. Cek lagi
-          nanti ya.
+          {judulBab ? (
+            <>
+              Latihan untuk bab <b>“{judulBab}”</b> belum disiapkan guru. Cek
+              bab lain yang sudah punya latihan di halaman materi.
+            </>
+          ) : (
+            <>
+              Guru di kelas {namaKelas} belum menambahkan latihan soal. Cek lagi
+              nanti ya.
+            </>
+          )}
         </p>
       </main>
       <FooterSimple />
@@ -71,7 +95,7 @@ function BelumMasukKelas() {
   );
 }
 
-/** Halaman latihan: bab + soal diambil dari database (fallback hanya di mode demo). */
+/** Halaman latihan: soal selalu mengikuti bab yang dipilih, bukan bab pertama. */
 export default async function LatihanSoalPage({ searchParams }: Props) {
   const params = await searchParams;
   const kelasSiswa = params.kode
@@ -84,36 +108,65 @@ export default async function LatihanSoalPage({ searchParams }: Props) {
   const babKelas = await getBabList(kelasSiswa.id);
   // Kelas asli tanpa bab (baru dibuat) → jangan tampilkan soal demo.
   if (babKelas.length === 0) {
-    return <BelumAdaLatihan namaKelas={kelasSiswa.nama_kelas} />;
+    return (
+      <BelumAdaLatihan
+        namaKelas={kelasSiswa.nama_kelas}
+        kodeKelas={kelasSiswa.kode_akses}
+      />
+    );
   }
 
-  const infoBab = await getBabLatihan(kelasSiswa.kode_akses);
-  if (!infoBab) return <BelumAdaLatihan namaKelas={kelasSiswa.nama_kelas} />;
+  // Bab dari URL (dikirim halaman materi) diprioritaskan dan wajib bagian
+  // dari kelas ini; tanpa itu, pakai bab pertama yang punya soal (tautan umum).
+  const babDiminta = params.babId
+    ? babKelas.find((b) => b.id === params.babId)
+    : undefined;
+  const infoBab: InfoBabLatihan | null = babDiminta
+    ? {
+        babId: babDiminta.id,
+        mataPelajaran: babDiminta.mata_pelajaran,
+        urutan: babDiminta.urutan,
+        judul: babDiminta.judul,
+      }
+    : await getBabLatihan(kelasSiswa.kode_akses);
+  if (!infoBab) {
+    return (
+      <BelumAdaLatihan
+        namaKelas={kelasSiswa.nama_kelas}
+        kodeKelas={kelasSiswa.kode_akses}
+      />
+    );
+  }
+
   const dariDb = await getSoalBab(infoBab.babId);
-
-  // DB aktif tetapi bab ini belum punya soal → tampilkan keadaan kosong,
-  // jangan bocorkan soal demo/latihan dari kelas lain.
-  if (dariDb === null && !demoMode) {
-    return <BelumAdaLatihan namaKelas={kelasSiswa.nama_kelas} />;
+  // Bab terpilih belum punya soal → tampilkan keadaan kosong untuk bab itu,
+  // jangan tampilkan soal dari bab lain.
+  if (!dariDb) {
+    return (
+      <BelumAdaLatihan
+        namaKelas={kelasSiswa.nama_kelas}
+        judulBab={infoBab.judul}
+        kodeKelas={kelasSiswa.kode_akses}
+      />
+    );
   }
 
-  const soal: QuizSoal[] = (dariDb ?? (demoMode ? soalLatihan : [])).map(
-    ({ id, pertanyaan, opsi }) => ({
-      id,
-      pertanyaan,
-      opsi: opsi.map(({ id: oid, teks }) => ({ id: oid, teks })),
-    })
-  );
+  const soal: QuizSoal[] = dariDb.map(({ id, pertanyaan, opsi }) => ({
+    id,
+    pertanyaan,
+    opsi: opsi.map(({ id: oid, teks }) => ({ id: oid, teks })),
+  }));
 
-  // Kunci hanya tersedia saat memakai data contoh (tanpa DB) supaya fallback
-  // penilaian tetap bisa jalan; jawaban dari database tidak bocor ke klien.
-  const kunciLokal: Record<string, string> | null = dariDb || !demoMode
-    ? null
-    : Object.fromEntries(
+  // Kunci lokal hanya untuk mode demo (penilaian cadangan saat server tak
+  // terjangkau); data dari database tidak pernah membocorkan kunci ke klien.
+  const kunciLokal: Record<string, string> | null = demoMode
+    ? Object.fromEntries(
         soalLatihan
+          .filter((s) => s.bab_id === infoBab.babId)
           .map((s) => [s.id, s.opsi.find((o) => o.is_benar)?.id])
           .filter((pair): pair is [string, string] => Boolean(pair[1]))
-      );
+      )
+    : null;
 
   return (
     <QuizPage

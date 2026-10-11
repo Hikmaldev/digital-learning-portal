@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { soalLatihan } from "@/lib/data";
+import { babSiswa, soalLatihan } from "@/lib/data";
 import { demoMode, DatabaseUnavailableError } from "@/lib/runtime";
 import type { SubmitLatihanInput } from "@/lib/validations";
 
@@ -8,11 +8,32 @@ export async function nilaiDanSimpanLatihan(input: SubmitLatihanInput) {
   const db = prisma;
   if (!db && !demoMode) throw new DatabaseUnavailableError();
 
-  const soalSumber = db
-    ? await getSoalDb(db, input.kodeKelas, input.babId)
-    : soalLatihan
-        .filter((s) => s.bab_id === input.babId)
-        .map((s) => ({ id: s.id, pertanyaan: s.pertanyaan, opsi: s.opsi }));
+  let soalSumber: {
+    id: string;
+    pertanyaan: string;
+    opsi: { id: string; is_benar: boolean }[];
+  }[];
+  let infoBab = { mataPelajaran: "Latihan", judul: "Bab latihan" };
+
+  if (db) {
+    const data = await getBabDanSoalDb(db, input.kodeKelas, input.babId);
+    soalSumber = data.soal;
+    infoBab = {
+      mataPelajaran: data.mata_pelajaran,
+      judul: `Bab ${String(data.urutan).padStart(2, "0")} · ${data.judul}`,
+    };
+  } else {
+    soalSumber = soalLatihan
+      .filter((s) => s.bab_id === input.babId)
+      .map((s) => ({ id: s.id, pertanyaan: s.pertanyaan, opsi: s.opsi }));
+    const demoBab = babSiswa.find((b) => b.id === input.babId);
+    if (demoBab) {
+      infoBab = {
+        mataPelajaran: demoBab.mata_pelajaran,
+        judul: `Bab ${String(demoBab.urutan).padStart(2, "0")} · ${demoBab.judul}`,
+      };
+    }
+  }
 
   if (soalSumber.length === 0) throw new Error("Bab atau soal tidak ditemukan.");
 
@@ -28,8 +49,9 @@ export async function nilaiDanSimpanLatihan(input: SubmitLatihanInput) {
 
   const hasil = {
     nama: input.namaSiswa,
-    mataPelajaran: "Bahasa Indonesia",
-    bab: "Bab latihan",
+    mataPelajaran: infoBab.mataPelajaran,
+    bab: infoBab.judul,
+    babId: input.babId,
     skor,
     benar,
     jumlahSoal: soalSumber.length,
@@ -41,23 +63,36 @@ export async function nilaiDanSimpanLatihan(input: SubmitLatihanInput) {
   return hasil;
 }
 
-async function getSoalDb(db: NonNullable<typeof prisma>, kodeKelas: string, babId: string) {
+async function getBabDanSoalDb(
+  db: NonNullable<typeof prisma>,
+  kodeKelas: string,
+  babId: string
+) {
   const kelas = await db.kelas.findUnique({
     where: { kode_akses: kodeKelas },
     select: { id: true },
   });
   if (!kelas) throw new Error("Kode kelas tidak ditemukan.");
 
+  const bab = await db.bab.findFirst({
+    where: { id: babId, kelas_id: kelas.id },
+    select: { id: true, mata_pelajaran: true, judul: true, urutan: true },
+  });
+  if (!bab) throw new Error("Bab tidak termasuk dalam kelas ini.");
+
   const soal = await db.soal.findMany({
-    where: { bab_id: babId, bab: { kelas_id: kelas.id } },
+    where: { bab_id: bab.id },
     include: { opsi: true },
     orderBy: { urutan: "asc" },
   });
-  return soal.map((s) => ({
-    id: s.id,
-    pertanyaan: s.pertanyaan,
-    opsi: s.opsi.map((o) => ({ id: o.id, teks: o.teks, is_benar: o.is_benar })),
-  }));
+  return {
+    ...bab,
+    soal: soal.map((s) => ({
+      id: s.id,
+      pertanyaan: s.pertanyaan,
+      opsi: s.opsi.map((o) => ({ id: o.id, teks: o.teks, is_benar: o.is_benar })),
+    })),
+  };
 }
 
 async function simpanProgress(

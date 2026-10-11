@@ -249,12 +249,25 @@ export default async function BabMateriPage({ searchParams }: Props) {
               <h3 className="mb-2 text-base tracking-tight">
                 Sudah selesai membaca?
               </h3>
-              <p className="mb-4 text-[11px] text-muted">
-                Uji pemahamanmu lewat latihan soal bab ini.
-              </p>
-              <Link href={`/siswa/latihan?kode=${kodeKelas}`} className="btn btn-coral w-full">
-                Mulai latihan <span className="pl-1 text-base">→</span>
-              </Link>
+              {target.jumlah_latihan > 0 ? (
+                <>
+                  <p className="mb-4 text-[11px] text-muted">
+                    Uji pemahamanmu lewat {target.jumlah_latihan} latihan soal
+                    bab ini.
+                  </p>
+                  <Link
+                    href={`/siswa/latihan?kode=${encodeURIComponent(kodeKelas)}&babId=${encodeURIComponent(target.id)}`}
+                    className="btn btn-coral w-full"
+                  >
+                    Mulai latihan <span className="pl-1 text-base">→</span>
+                  </Link>
+                </>
+              ) : (
+                <p className="text-[11px] leading-relaxed text-muted">
+                  Latihan untuk bab ini belum disiapkan guru. Cek bab lain yang
+                  sudah punya latihan.
+                </p>
+              )}
             </div>
           </aside>
         </div>

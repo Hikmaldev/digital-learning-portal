@@ -200,6 +200,8 @@ export interface HasilLatihan {
   nama: string;
   mataPelajaran: string;
   bab: string;
+  /** ID bab asli (database) agar navigasi hasil tetap terikat ke bab ini. */
+  babId?: string;
   skor: number;
   benar: number;
   jumlahSoal: number;

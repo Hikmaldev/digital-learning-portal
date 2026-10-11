@@ -113,7 +113,14 @@ export function HasilLatihanPage() {
         </div>
 
         <div className="mt-7 flex justify-center gap-3">
-          <Link href={`/siswa/materi?kode=${kodeKelas}`} className="btn btn-outline">
+          <Link
+            href={
+              hasil.babId
+                ? `/siswa/materi?id=${encodeURIComponent(hasil.babId)}&kode=${kodeKelas}`
+                : `/siswa/materi?kode=${kodeKelas}`
+            }
+            className="btn btn-outline"
+          >
             Baca materi lagi
           </Link>
           <Link href="/siswa/kelas" className="btn btn-coral">

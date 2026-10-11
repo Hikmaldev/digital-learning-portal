@@ -112,6 +112,7 @@ export function QuizPage({
         nama: namaSiswa,
         mataPelajaran: mapel,
         bab: labelBab,
+        babId,
         skor: Math.round((benar / Math.max(soal.length, 1)) * 100),
         benar,
         jumlahSoal: soal.length,
@@ -125,15 +126,18 @@ export function QuizPage({
     router.push("/siswa/latihan/hasil");
   }
 
+  const urlMateri = `/siswa/materi?id=${encodeURIComponent(babId)}&kode=${encodeURIComponent(kodeKelas)}`;
+  const urlLatihan = `/siswa/latihan?kode=${encodeURIComponent(kodeKelas)}&babId=${encodeURIComponent(babId)}`;
+
   return (
     <>
       <TopBar
         nav={[
           { href: "/siswa/kelas", label: "Kelas saya" },
-          { href: `/siswa/materi?kode=${kodeKelas}`, label: "Materi" },
-          { href: `/siswa/latihan?kode=${kodeKelas}`, label: "Latihan", aktif: true },
+          { href: urlMateri, label: "Materi" },
+          { href: urlLatihan, label: "Latihan", aktif: true },
         ]}
-        aksi={{ href: `/siswa/materi?kode=${kodeKelas}`, label: "Kembali ke materi" }}
+        aksi={{ href: urlMateri, label: "Kembali ke materi" }}
       />
       <main className="mx-auto max-w-[1180px] px-5 py-12 md:px-10">
         <nav
@@ -146,7 +150,7 @@ export function QuizPage({
           <span className="text-[#a3aaa1]">/</span>
           <Link
             className="hover:underline"
-            href={`/siswa/materi?kode=${kodeKelas}`}
+            href={urlMateri}
           >
             {mapel} · {labelBab}
           </Link>
@@ -250,7 +254,7 @@ export function QuizPage({
                 kembali tanpa kehilangan jawaban sementara.
               </p>
               <Link
-                href={`/siswa/materi?kode=${kodeKelas}`}
+                href={urlMateri}
                 className="text-xs font-bold text-coral"
               >
                 Baca materi lagi <span className="pl-1 text-base">→</span>
