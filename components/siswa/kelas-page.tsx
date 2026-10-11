@@ -7,7 +7,7 @@ import { TopBar } from "../top-bar";
 import { StatusBadge } from "../ui";
 import { useSessionState } from "@/lib/session-state";
 import { babSiswa, kelasAktif, namaSiswaDemo } from "@/lib/data";
-import { bacaKodeKelas } from "@/lib/siswa-session";
+import { bacaKodeKelas, bacaNamaSiswa } from "@/lib/siswa-session";
 import type { Bab, Kelas } from "@/lib/types";
 import { publicDemoMode } from "@/lib/runtime";
 
@@ -30,7 +30,10 @@ export function SiswaKelasPage() {
       queueMicrotask(() => setMemuat(false));
       return;
     }
-    fetch(`/api/siswa/kelas?kode=${encodeURIComponent(kode)}`)
+    const namaSiswa = bacaNamaSiswa();
+    const qs = new URLSearchParams({ kode });
+    if (namaSiswa) qs.set("nama", namaSiswa);
+    fetch(`/api/siswa/kelas?${qs.toString()}`)
       .then((r) => (r.ok ? r.json() : null))
       .then((json) => {
         if (json?.ok && json.data) {
@@ -71,6 +74,7 @@ export function SiswaKelasPage() {
   const prosentase = total === 0 ? 0 : Math.round((selesai / total) * 100);
 
   const kodeParam = `?kode=${encodeURIComponent(kelas.kode_akses)}`;
+  const namaParam = nama ? `&nama=${encodeURIComponent(nama)}` : "";
   const [kataDepan, kataAkhir] = (() => {
     const kata = kelas.nama_kelas.trim().split(/\s+/).filter(Boolean);
     if (kata.length <= 1) return ["", kata[0] ?? kelas.nama_kelas];
@@ -82,7 +86,7 @@ export function SiswaKelasPage() {
       <TopBar
         nav={[
           { href: "/siswa/kelas", label: "Kelas saya", aktif: true },
-          { href: `/siswa/materi${kodeParam}`, label: "Materi" },
+          { href: `/siswa/materi${kodeParam}${namaParam}`, label: "Materi" },
           { href: `/siswa/latihan${kodeParam}`, label: "Latihan" },
         ]}
         aksi={{ href: "/", label: "Keluar" }}
@@ -155,7 +159,7 @@ export function SiswaKelasPage() {
           {bab.map((item: Bab) => (
             <Link
               key={item.id}
-              href={`/siswa/materi?id=${item.id}&kode=${encodeURIComponent(kelas.kode_akses)}`}
+              href={`/siswa/materi?id=${item.id}&kode=${encodeURIComponent(kelas.kode_akses)}${namaParam}`}
               className="group flex min-h-[206px] flex-col border border-line bg-paper p-6 hover:border-coral"
             >
               <span className="text-[10px] font-bold tracking-[1px] text-coral">

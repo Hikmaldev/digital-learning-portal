@@ -32,11 +32,29 @@ export async function getKelasByKode(kode: string, guruId?: string): Promise<Kel
   return { id: kelas.id, nama_kelas: kelas.nama_kelas, jenjang: kelas.jenjang as Kelas["jenjang"], kode_akses: kelas.kode_akses, guru_id: kelas.guru_id, guru_nama: kelas.guru.nama };
 }
 
-export async function getBabList(kelasId: string): Promise<Bab[]> {
+export async function getBabList(kelasId: string, namaSiswa?: string): Promise<Bab[]> {
   const db = requireDb();
   if (!db) return fallback(babSiswa);
   const bab = await db.bab.findMany({ where: { kelas_id: kelasId }, include: { _count: { select: { soal: true } } }, orderBy: [{ mata_pelajaran: "asc" }, { urutan: "asc" }] });
-  return bab.map((b) => ({ id: b.id, kelas_id: b.kelas_id, mata_pelajaran: b.mata_pelajaran, judul: b.judul, ringkasan: b.ringkasan ?? `${b._count.soal} latihan tersedia`, konten_materi: b.konten_materi, url_video: b.url_video ?? undefined, link_sumber: b.link_sumber ?? undefined, urutan: b.urutan, jumlah_latihan: b._count.soal, progres: 0, status: "BELUM_MULAI" }));
+
+  // Progres milik satu siswa (opsional): jumlah soal yang sudah dijawab per bab.
+  const progresSiswa = namaSiswa
+    ? await db.progressSiswa.groupBy({
+        by: ["bab_id"],
+        where: { kelas_id: kelasId, nama_siswa: namaSiswa },
+        _count: { soal_id: true },
+      })
+    : [];
+  const perBab = new Map<string, number>();
+  for (const p of progresSiswa) perBab.set(p.bab_id, p._count.soal_id);
+
+  return bab.map((b) => {
+    const totalSoal = b._count.soal;
+    const dijawab = perBab.get(b.id) ?? 0;
+    const progres = totalSoal > 0 && dijawab > 0 ? Math.min(100, Math.round((dijawab / totalSoal) * 100)) : 0;
+    const status: Bab["status"] = dijawab === 0 ? "BELUM_MULAI" : dijawab >= totalSoal ? "SELESAI" : "SEDANG_DIPELAJARI";
+    return { id: b.id, kelas_id: b.kelas_id, mata_pelajaran: b.mata_pelajaran, judul: b.judul, ringkasan: b.ringkasan ?? `${totalSoal} latihan tersedia`, konten_materi: b.konten_materi, url_video: b.url_video ?? undefined, link_sumber: b.link_sumber ?? undefined, urutan: b.urutan, jumlah_latihan: totalSoal, progres, status };
+  });
 }
 
 export interface OpsiDenganBenar { id: string; teks: string; is_benar: boolean; }
@@ -70,36 +88,48 @@ export async function getBabLatihan(kodeKelas?: string): Promise<InfoBabLatihan 
 export async function getRingkasanKelas(kelasId: string): Promise<RingkasanSiswa[]> {
   const db = requireDb();
   if (!db) return fallback(daftarSiswa);
-  // Satu siswa punya banyak baris progress (per soal). Ambil aktivitas terbaru tiap siswa.
-  const baris = await db.progressSiswa.findMany({
-    where: { kelas_id: kelasId },
-    select: {
-      nama_siswa: true,
-      skor: true,
-      waktu_submit: true,
-      bab: { select: { judul: true, mata_pelajaran: true } },
-    },
-    orderBy: { waktu_submit: "desc" },
-  });
-  const terbaru = new Map<string, (typeof baris)[number]>();
-  for (const b of baris) {
-    if (!terbaru.has(b.nama_siswa)) terbaru.set(b.nama_siswa, b);
-  }
-  return [...terbaru.values()].map((b) => ({
-    id: b.nama_siswa,
-    nama: b.nama_siswa,
-    bab_terakhir: `${b.bab.mata_pelajaran} · ${b.bab.judul}`,
-    nilai: b.skor,
-    status: "SUDAH_MENGERJAKAN" as const,
-    terakhir_aktif: b.waktu_submit.toLocaleString("id-ID", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      timeZone: "Asia/Jakarta",
+  const [babs, kelompok] = await Promise.all([
+    db.bab.findMany({ where: { kelas_id: kelasId }, select: { id: true, judul: true, mata_pelajaran: true, _count: { select: { soal: true } } } }),
+    db.progressSiswa.groupBy({
+      by: ["nama_siswa", "bab_id"],
+      where: { kelas_id: kelasId },
+      _count: { soal_id: true },
+      _max: { skor: true, waktu_submit: true },
     }),
-  }));
+  ]);
+  const infoBab = new Map(babs.map((b) => [b.id, b]));
+  const totalWajib = babs.filter((b) => b._count.soal > 0).length;
+
+  // Ringkas per siswa: aktivitas terbaru + jumlah bab yang benar-benar tuntas.
+  const perSiswa = new Map<string, { waktu: Date; babId: string; skor: number; selesai: number }>();
+  for (const g of kelompok) {
+    const bab = infoBab.get(g.bab_id);
+    if (!bab) continue;
+    const tuntas = bab._count.soal > 0 && g._count.soal_id >= bab._count.soal;
+    const waktu = g._max.waktu_submit ?? new Date(0);
+    const skor = g._max.skor ?? 0;
+    const cur = perSiswa.get(g.nama_siswa);
+    if (!cur) {
+      perSiswa.set(g.nama_siswa, { waktu, babId: g.bab_id, skor, selesai: tuntas ? 1 : 0 });
+    } else {
+      cur.selesai += tuntas ? 1 : 0;
+      if (waktu > cur.waktu) { cur.waktu = waktu; cur.babId = g.bab_id; cur.skor = skor; }
+    }
+  }
+
+  return [...perSiswa.entries()]
+    .sort(([, a], [, b]) => b.waktu.getTime() - a.waktu.getTime())
+    .map(([nama, s]) => {
+      const bab = infoBab.get(s.babId);
+      return {
+        id: nama,
+        nama,
+        bab_terakhir: bab ? `${bab.mata_pelajaran} · ${bab.judul}` : "—",
+        nilai: s.skor,
+        status: totalWajib > 0 && s.selesai >= totalWajib ? ("SUDAH_MENGERJAKAN" as const) : ("SEDANG_BERJALAN" as const),
+        terakhir_aktif: s.waktu.getTime() === 0 ? "—" : s.waktu.toLocaleString("id-ID", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", timeZone: "Asia/Jakarta" }),
+      };
+    });
 }
 
 export async function getRingkasanPelajaranDb(
@@ -171,8 +201,12 @@ export async function getMetrics(kelasId: string): Promise<MetricRingkasan[]> {
   const db = requireDb();
   const demo: MetricRingkasan[] = [{ label: "Siswa aktif", nilai: 24, delta: "3 sejak minggu lalu", naik: true }, { label: "Latihan terkumpul", nilai: 86, delta: "12 minggu ini", naik: true }, { label: "Rata-rata progres", nilai: 72, delta: "8% sejak bulan lalu", naik: true }];
   if (!db) return fallback(demo);
-  const [siswa, latihan] = await Promise.all([db.progressSiswa.groupBy({ by: ["nama_siswa"], where: { kelas_id: kelasId } }), db.progressSiswa.count({ where: { kelas_id: kelasId } })]);
-  return [{ label: "Siswa aktif", nilai: siswa.length, delta: "dari kelas ini", naik: true }, { label: "Latihan terkumpul", nilai: latihan, delta: "jawaban tersimpan", naik: true }, { label: "Rata-rata progres", nilai: 72, delta: "sementara", naik: true }];
+  const [siswa, latihan, rata] = await Promise.all([
+    db.progressSiswa.groupBy({ by: ["nama_siswa"], where: { kelas_id: kelasId } }),
+    db.progressSiswa.count({ where: { kelas_id: kelasId } }),
+    getProgressRataKelas(kelasId),
+  ]);
+  return [{ label: "Siswa aktif", nilai: siswa.length, delta: "dari kelas ini", naik: true }, { label: "Latihan terkumpul", nilai: latihan, delta: "jawaban tersimpan", naik: true }, { label: "Rata-rata progres", nilai: rata ?? 0, delta: rata === null ? "belum ada latihan" : "rata-rata nilai latihan", naik: true }];
 }
 
 export async function getProgressRataKelas(kelasId: string): Promise<number | null> {

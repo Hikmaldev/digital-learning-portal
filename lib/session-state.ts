@@ -14,7 +14,13 @@ export function useSessionState<T>(key: string, fallback: T) {
     if (typeof window === "undefined") return fallback;
     try {
       const tersimpan = window.sessionStorage.getItem(key);
-      return tersimpan === null ? fallback : (JSON.parse(tersimpan) as T);
+      if (tersimpan === null) return fallback;
+      try {
+        return JSON.parse(tersimpan) as T;
+      } catch {
+        // Nilai disimpan mentah (mis. oleh simpanSesiSiswa) — pakai apa adanya.
+        return tersimpan as unknown as T;
+      }
     } catch {
       return fallback;
     }

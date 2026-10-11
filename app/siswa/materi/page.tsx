@@ -13,7 +13,7 @@ export const metadata: Metadata = { title: "Materi Bab" };
 export const dynamic = "force-dynamic";
 
 interface Props {
-  searchParams: Promise<{ id?: string; kode?: string }>;
+  searchParams: Promise<{ id?: string; kode?: string; nama?: string }>;
 }
 
 const BAB_DEMO = "bab-bindo-3";
@@ -89,9 +89,11 @@ export default async function BabMateriPage({ searchParams }: Props) {
       : null;
   if (!kelas) return <BelumMasukKelas />;
   const kodeKelas = kelas.kode_akses;
+  const namaSiswa = params.nama?.trim() || undefined;
+  const namaParam = namaSiswa ? `&nama=${encodeURIComponent(namaSiswa)}` : "";
   const [infoBab, babList] = await Promise.all([
     getBabLatihan(kodeKelas),
-    getBabList(kelas.id),
+    getBabList(kelas.id, namaSiswa),
   ]);
   if (babList.length === 0) {
     return (
@@ -99,7 +101,7 @@ export default async function BabMateriPage({ searchParams }: Props) {
         <TopBar
           nav={[
             { href: "/siswa/kelas", label: "Kelas saya" },
-            { href: `/siswa/materi?kode=${kodeKelas}`, label: "Materi", aktif: true },
+            { href: `/siswa/materi?kode=${kodeKelas}${namaParam}`, label: "Materi", aktif: true },
             { href: `/siswa/latihan?kode=${kodeKelas}`, label: "Latihan" },
           ]}
           aksi={{ href: "/siswa/kelas", label: "Kembali ke kelas" }}
@@ -146,7 +148,7 @@ export default async function BabMateriPage({ searchParams }: Props) {
       <TopBar
         nav={[
           { href: "/siswa/kelas", label: "Kelas saya" },
-          { href: `/siswa/materi?kode=${kodeKelas}`, label: "Materi", aktif: true },
+          { href: `/siswa/materi?kode=${kodeKelas}${namaParam}`, label: "Materi", aktif: true },
           { href: `/siswa/latihan?kode=${kodeKelas}`, label: "Latihan" },
         ]}
         aksi={{ href: "/siswa/kelas", label: "Kembali ke kelas" }}
@@ -230,7 +232,7 @@ export default async function BabMateriPage({ searchParams }: Props) {
                 {babList.map((bab) => (
                   <Link
                     key={bab.id}
-                    href={`/siswa/materi?id=${bab.id}&kode=${kodeKelas}`}
+                    href={`/siswa/materi?id=${bab.id}&kode=${kodeKelas}${namaParam}`}
                     className={`flex items-start gap-2.5 border-t border-line py-3 text-[11px] ${
                       bab.id === target.id ? "font-bold text-coral" : "text-ink"
                     }`}
