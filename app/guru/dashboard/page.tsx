@@ -26,6 +26,9 @@ export default async function DashboardGuruPage() {
     demoMode ? getKelasAktifDb() : Promise.resolve(null),
   ]);
   const guruId = session?.user?.id;
+  // Sapaan memakai nama guru yang sedang masuk (kata pertama), bukan hardcoded.
+  const namaGuru =
+    session?.user?.name?.trim().split(/\s+/)[0] || (demoMode ? "Hikmal" : "Guru");
   // Hanya mode demo eksplisit yang boleh menggunakan data contoh.
   const daftarKelas = guruId ? await getKelasList(guruId) : demoMode ? kelassRingkasan : [];
   const progressKelas = await Promise.all(
@@ -42,11 +45,12 @@ export default async function DashboardGuruPage() {
   return (
     <>
       <TopBar
-        nav={[
-          { href: "/guru/dashboard", label: "Dashboard", aktif: true },
-          { href: "/guru/materi/baru", label: "Materi" },
-          { href: "/guru/soal/baru", label: "Latihan soal" },
-        ]}
+          nav={[
+            { href: "/guru/dashboard", label: "Dashboard", aktif: true },
+            { href: "/guru/materi/baru", label: "Materi" },
+            { href: "/guru/soal/baru", label: "Latihan soal" },
+            { href: "/guru/akun", label: "Akun" },
+          ]}
         aksi={{ href: "/", label: "Keluar" }}
       />
       <header className="border-b border-line bg-soft px-5 py-9 md:px-10">
@@ -55,7 +59,7 @@ export default async function DashboardGuruPage() {
             <p className="eyebrow eyebrow-muted mb-2.5">Ruang kerja guru</p>
             <h1 className="text-[38px] leading-none tracking-[-2px]">
               Selamat datang,{" "}
-              <em className="font-display text-coral">Hikmal.</em>
+              <em className="font-display text-coral">{namaGuru}.</em>
             </h1>
             <p className="mt-2.5 text-xs text-muted">
               Kelola kelas dan lihat perkembangan siswa dari satu tempat.
@@ -98,6 +102,12 @@ export default async function DashboardGuruPage() {
             className="pb-3 text-[11px] text-muted hover:text-ink"
           >
             Kelola materi
+          </Link>
+          <Link
+            href="/guru/feedback"
+            className="pb-3 text-[11px] text-muted hover:text-ink"
+          >
+            Masukan siswa
           </Link>
         </div>
 

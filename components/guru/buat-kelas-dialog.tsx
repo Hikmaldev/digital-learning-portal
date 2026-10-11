@@ -4,7 +4,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-const JENJANG = ["Paket A", "Paket B", "Paket C"] as const;
+const JENJANG = [
+  { nilai: "Paket A", label: "Paket A — setara SD" },
+  { nilai: "Paket B", label: "Paket B — setara SMP" },
+  { nilai: "Paket C", label: "Paket C — setara SMA" },
+  { nilai: "CAMPURAN", label: "CAMPURAN — siswa lintas jenjang" },
+] as const;
 
 interface KelasBaru {
   id: string;
@@ -181,8 +186,8 @@ export function BuatKelasDialog() {
                     onChange={(e) => setJenjang(e.target.value)}
                   >
                     {JENJANG.map((j) => (
-                      <option key={j} value={j}>
-                        {j}
+                      <option key={j.nilai} value={j.nilai}>
+                        {j.label}
                       </option>
                     ))}
                   </select>

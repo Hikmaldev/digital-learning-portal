@@ -40,10 +40,27 @@ export type SubmitLatihanInput = z.infer<typeof submitLatihanSchema>;
 
 export const buatKelasSchema = z.object({
   namaKelas: z.string().trim().min(3).max(80),
-  jenjang: z.enum(["Paket A", "Paket B", "Paket C"]),
+  jenjang: z.enum(["Paket A", "Paket B", "Paket C", "CAMPURAN"]),
 });
 
 export type BuatKelasInput = z.infer<typeof buatKelasSchema>;
+
+export const kirimFeedbackSchema = z.object({
+  kodeKelas: z
+    .string()
+    .trim()
+    .min(4)
+    .max(8)
+    .transform((v) => v.toUpperCase())
+    .optional()
+    .or(z.literal("").transform(() => undefined)),
+  namaSiswa: z.string().trim().max(60).optional(),
+  kategori: z.enum(["SARAN", "BUG", "PUJIAN", "LAINNYA"]).default("SARAN"),
+  pesan: z.string().trim().min(5, "Masukan minimal 5 karakter").max(1000, "Masukan maksimal 1000 karakter"),
+  kontak: z.string().trim().max(120).optional(),
+});
+
+export type KirimFeedbackInput = z.infer<typeof kirimFeedbackSchema>;
 
 export const simpanMateriSchema = z.object({
   kelasId: z.string().min(1),
@@ -76,6 +93,16 @@ export const simpanSoalSchema = z.object({
 });
 
 export type SimpanSoalInput = z.infer<typeof simpanSoalSchema>;
+
+export const gantiPasswordSchema = z.object({
+  passwordLama: z.string().min(6, "Password lama minimal 6 karakter").max(100),
+  passwordBaru: z
+    .string()
+    .min(8, "Password baru minimal 8 karakter")
+    .max(100, "Password baru maksimal 100 karakter"),
+});
+
+export type GantiPasswordInput = z.infer<typeof gantiPasswordSchema>;
 
 // --- Umum ---
 

@@ -1,5 +1,5 @@
 import { jsonError, jsonOk } from "../../lib/helpers";
-import { getRingkasanKelas, getMetrics } from "@/lib/queries";
+import { getRingkasanKelas, getMetrics, getAktivitasKelas } from "@/lib/queries";
 import { getGuruSession, guruMemilikiKelas } from "@/lib/authorization";
 import { prisma } from "@/lib/prisma";
 import { DatabaseUnavailableError } from "@/lib/runtime";
@@ -16,11 +16,12 @@ export async function GET(request: Request) {
   }
 
   try {
-    const [siswa, metrics] = await Promise.all([
+    const [siswa, metrics, aktivitas] = await Promise.all([
       getRingkasanKelas(kelasId),
       getMetrics(kelasId),
+      getAktivitasKelas(kelasId),
     ]);
-    return jsonOk({ siswa, metrics });
+    return jsonOk({ siswa, metrics, aktivitas });
   } catch (error) {
     if (error instanceof DatabaseUnavailableError) return jsonError(error.message, 503);
     return jsonError("Gagal mengambil progress kelas.", 500);

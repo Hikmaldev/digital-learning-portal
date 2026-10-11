@@ -1,7 +1,7 @@
 import { prisma } from "./prisma";
 import { babSiswa, daftarSiswa, kelasAktif, kelassRingkasan, ringkasanPelajaran, soalLatihan } from "./data";
 import { demoMode, DatabaseUnavailableError } from "./runtime";
-import type { Bab, Kelas, MetricRingkasan, RingkasanPelajaran, RingkasanSiswa } from "./types";
+import type { AktivitasLatihan, Bab, FeedbackSiswa, Kelas, MetricRingkasan, RingkasanPelajaran, RingkasanSiswa } from "./types";
 
 function requireDb() {
   if (!prisma) {
@@ -14,6 +14,18 @@ function requireDb() {
 function fallback<T>(value: T): T {
   if (demoMode) return value;
   throw new DatabaseUnavailableError();
+}
+
+/** Format waktu Indonesia (WIB) untuk tampilan; server Vercel berjalan UTC. */
+export function formatWaktuWIB(d: Date): string {
+  return d.toLocaleString("id-ID", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "Asia/Jakarta",
+  });
 }
 
 export async function getKelasAktifDb(): Promise<Kelas> {
@@ -127,7 +139,7 @@ export async function getRingkasanKelas(kelasId: string): Promise<RingkasanSiswa
         bab_terakhir: bab ? `${bab.mata_pelajaran} · ${bab.judul}` : "—",
         nilai: s.skor,
         status: totalWajib > 0 && s.selesai >= totalWajib ? ("SUDAH_MENGERJAKAN" as const) : ("SEDANG_BERJALAN" as const),
-        terakhir_aktif: s.waktu.getTime() === 0 ? "—" : s.waktu.toLocaleString("id-ID", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", timeZone: "Asia/Jakarta" }),
+        terakhir_aktif: s.waktu.getTime() === 0 ? "—" : formatWaktuWIB(s.waktu),
       };
     });
 }
@@ -189,6 +201,87 @@ export async function getRingkasanPelajaranDb(
     jumlah_siswa: v.jumlah_siswa,
     progres: v.bab_dihitung > 0 ? Math.round(v.total_progres / v.bab_dihitung) : 0,
   }));
+}
+
+/**
+ * Log aktivitas latihan kelas: satu baris per (siswa × bab) yang dikumpulkan,
+ * urut dari yang paling baru. Dipakai tabel "Aktivitas latihan terbaru".
+ */
+export async function getAktivitasKelas(kelasId: string): Promise<AktivitasLatihan[]> {
+  const db = requireDb();
+  if (!db) {
+    return fallback(
+      daftarSiswa.map((s) => ({
+        id: s.id,
+        nama_siswa: s.nama,
+        mata_pelajaran: "Bahasa Indonesia",
+        judul: s.bab_terakhir,
+        nilai: s.nilai ?? 0,
+        selesai: s.status === "SUDAH_MENGERJAKAN",
+        waktu: s.terakhir_aktif,
+      }))
+    );
+  }
+  const [babs, kelompok] = await Promise.all([
+    db.bab.findMany({ where: { kelas_id: kelasId }, select: { id: true, judul: true, mata_pelajaran: true, _count: { select: { soal: true } } } }),
+    db.progressSiswa.groupBy({
+      by: ["nama_siswa", "bab_id"],
+      where: { kelas_id: kelasId },
+      _count: { soal_id: true },
+      _max: { skor: true, waktu_submit: true },
+    }),
+  ]);
+  const infoBab = new Map(babs.map((b) => [b.id, b]));
+  return kelompok
+    .map((g) => {
+      const bab = infoBab.get(g.bab_id);
+      return {
+        id: `${g.nama_siswa}__${g.bab_id}`,
+        nama_siswa: g.nama_siswa,
+        mata_pelajaran: bab?.mata_pelajaran ?? "—",
+        judul: bab?.judul ?? "—",
+        nilai: g._max.skor ?? 0,
+        selesai: Boolean(bab && bab._count.soal > 0 && g._count.soal_id >= bab._count.soal),
+        waktu: g._max.waktu_submit ?? new Date(0),
+      };
+    })
+    .sort((a, b) => b.waktu.getTime() - a.waktu.getTime())
+    .slice(0, 100)
+    .map(({ waktu, ...a }) => ({ ...a, waktu: waktu.getTime() === 0 ? "—" : formatWaktuWIB(waktu) }));
+}
+
+/** Daftar masukan siswa untuk kelas-kelas milik guru (terbaru lebih dulu). */
+export async function getFeedbackList(guruId: string): Promise<FeedbackSiswa[]> {
+  const db = requireDb();
+  if (!db) return fallback([]);
+  const list = await db.feedback.findMany({
+    where: { kelas: { guru_id: guruId } },
+    include: { kelas: { select: { nama_kelas: true, kode_akses: true } } },
+    orderBy: { createdAt: "desc" },
+    take: 200,
+  });
+  return list.map((f) => ({
+    id: f.id,
+    nama_siswa: f.nama_siswa,
+    kategori: f.kategori,
+    pesan: f.pesan,
+    kontak: f.kontak,
+    dibaca: f.dibaca,
+    kelas_nama: f.kelas?.nama_kelas ?? null,
+    kelas_kode: f.kelas?.kode_akses ?? null,
+    waktu: formatWaktuWIB(f.createdAt),
+  }));
+}
+
+/** Tandai semua masukan siswa sebagai sudah dibaca. Mengembalikan jumlah baris. */
+export async function tandaiFeedbackDibaca(guruId: string): Promise<number> {
+  const db = requireDb();
+  if (!db) return fallback(0);
+  const hasil = await db.feedback.updateMany({
+    where: { dibaca: false, kelas: { guru_id: guruId } },
+    data: { dibaca: true },
+  });
+  return hasil.count;
 }
 
 function kunciMapel(nama: string): string { return ({ "Ilmu Pengetahuan Alam": "Ilmu Pengetahuan Alam", IPA: "Ilmu Pengetahuan Alam", "Ilmu Pengetahuan Sosial": "Ilmu Pengetahuan Sosial", IPS: "Ilmu Pengetahuan Sosial", "Bahasa Indonesia": "Bahasa Indonesia", Matematika: "Matematika" } as Record<string, string>)[nama] ?? nama; }

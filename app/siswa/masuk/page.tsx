@@ -36,8 +36,12 @@ export default async function SiswaMasukPage({ searchParams }: Props) {
             <StudentEntryForm kodeAwal={kodeAwal} />
           </div>
           <p className="mt-5 text-center text-[10px] text-muted">
-            Data siswa hanya digunakan untuk mencatat progres latihan di kelas
-            ini.
+            Baru pertama kali?{" "}
+            <a href="/panduan/siswa" className="font-bold text-coral hover:underline">
+              Baca panduan siswa
+            </a>{" "}
+            · Data siswa hanya digunakan untuk mencatat progres latihan di
+            kelas ini.
           </p>
         </div>
       </main>

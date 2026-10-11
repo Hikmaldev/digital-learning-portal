@@ -21,16 +21,17 @@ model User {
   updatedAt    DateTime @updatedAt
 }
 
-/// Kelas (Paket A/B/C) dengan kode akses untuk siswa
+/// Kelas (Paket A/B/C/CAMPURAN) dengan kode akses untuk siswa
 model Kelas {
   id        String  @id @default(cuid())
   nama_kelas String
-  jenjang   String // "Paket A" | "Paket B" | "Paket C"
+  jenjang   String // "Paket A" | "Paket B" | "Paket C" | "CAMPURAN"
   kode_akses String @unique
   guru_id   String
   guru      User    @relation("GuruKelas", fields: [guru_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
   bab       Bab[]
   progress  ProgressSiswa[]
+  feedback  Feedback[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -110,4 +111,20 @@ model ProgressSiswa {
 
   @@index([kelas_id, bab_id])
   @@index([nama_siswa])
+}
+
+/// Masukan/feedback siswa untuk pengembang (dibaca guru lewat /guru/feedback)
+model Feedback {
+  id         String   @id @default(cuid())
+  kelas_id   String?
+  kelas      Kelas?   @relation(fields: [kelas_id], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  nama_siswa String?
+  kategori   String   @default("SARAN") // SARAN | BUG | PUJIAN | LAINNYA
+  pesan      String
+  kontak     String?
+  dibaca     Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  @@index([kelas_id])
+  @@index([dibaca])
 }

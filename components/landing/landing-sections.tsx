@@ -14,6 +14,9 @@ export function LandingHeader() {
         <Link href="#fitur" className="hover:text-ink">
           Cara belajar
         </Link>
+        <Link href="/panduan" className="hover:text-ink">
+          Panduan
+        </Link>
         <Link href="/guru/masuk" className="hover:text-ink">
           Untuk guru
         </Link>
@@ -342,8 +345,14 @@ export function LandingFooter() {
       <p className="m-0 text-[11px] text-[#9faea5]">
         Belajar jadi lebih mungkin, satu bab setiap kali.
       </p>
-      <span className="text-[10px] text-[#9faea5]">
-        Portal Belajar Digital · 2026
+      <span className="flex items-center gap-4 text-[10px] text-[#9faea5]">
+        <Link href="/panduan/siswa" className="hover:text-paper">
+          Panduan siswa
+        </Link>
+        <Link href="/panduan/guru" className="hover:text-paper">
+          Panduan guru
+        </Link>
+        <span>Portal Belajar Digital · 2026</span>
       </span>
     </footer>
   );

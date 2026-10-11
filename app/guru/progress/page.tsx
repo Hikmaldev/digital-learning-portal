@@ -4,6 +4,7 @@ import { FooterSimple } from "@/components/footer-simple";
 import { TopBar } from "@/components/top-bar";
 import { StatusBadge } from "@/components/ui";
 import {
+  getAktivitasKelas,
   getKelasAktifDb,
   getKelasByKode,
   getKelasList,
@@ -46,6 +47,7 @@ export default async function DashboardProgressPage({ searchParams }: Props) {
     );
   }
   const daftarSiswa = await getRingkasanKelas(kelas.id);
+  const aktivitas = await getAktivitasKelas(kelas.id);
   const selesai = daftarSiswa.filter(
     (s) => s.status === "SUDAH_MENGERJAKAN"
   ).length;
@@ -65,6 +67,8 @@ export default async function DashboardProgressPage({ searchParams }: Props) {
             aktif: true,
           },
           { href: "/guru/materi/baru", label: "Kelola materi" },
+          { href: "/guru/feedback", label: "Masukan siswa" },
+          { href: "/guru/akun", label: "Akun" },
         ]}
         aksi={{ href: "/", label: "Keluar" }}
       />
@@ -106,49 +110,52 @@ export default async function DashboardProgressPage({ searchParams }: Props) {
         <div className="panel p-6">
           <div className="mb-4 flex items-start justify-between">
             <div>
-              <p className="eyebrow eyebrow-muted mb-2">Daftar siswa</p>
+              <p className="eyebrow eyebrow-muted mb-2">Daftar aktivitas</p>
               <h2 className="text-xl tracking-tight">
                 Aktivitas latihan terbaru.
               </h2>
             </div>
-            <select
-              className="select-field w-36 border border-[#bfc3b7] bg-paper px-3 py-2 text-[11px]"
-              defaultValue="Semua status"
-            >
-              <option>Semua status</option>
-              <option>Sudah selesai</option>
-              <option>Belum selesai</option>
-            </select>
+            <p className="mb-1 text-[11px] text-muted">
+              {aktivitas.length} aktivitas terbaru
+            </p>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full min-w-[620px] border-collapse text-left text-[11px]">
               <thead>
                 <tr className="text-[10px] text-muted">
                   <th className="px-4 py-3 font-medium">Nama siswa</th>
-                  <th className="px-4 py-3 font-medium">Bab terakhir</th>
+                  <th className="px-4 py-3 font-medium">Bab</th>
                   <th className="px-4 py-3 font-medium">Nilai</th>
                   <th className="px-4 py-3 font-medium">Status</th>
-                  <th className="px-4 py-3 font-medium">Terakhir aktif</th>
+                  <th className="px-4 py-3 font-medium">Waktu</th>
                 </tr>
               </thead>
               <tbody>
-                {daftarSiswa.map((siswa) => (
-                  <tr key={siswa.id} className="border-t border-line">
+                {aktivitas.map((a) => (
+                  <tr key={a.id} className="border-t border-line">
                     <td className="px-4 py-3.5">
-                      <strong className="text-xs">{siswa.nama}</strong>
-                    </td>
-                    <td className="px-4 py-3.5">{siswa.bab_terakhir}</td>
-                    <td className="px-4 py-3.5">
-                      {siswa.nilai === null ? "—" : siswa.nilai}
+                      <strong className="text-xs">{a.nama_siswa}</strong>
                     </td>
                     <td className="px-4 py-3.5">
-                      <StatusBadge status={siswa.status} />
+                      {a.mata_pelajaran} · {a.judul}
                     </td>
-                    <td className="px-4 py-3.5 text-muted">
-                      {siswa.terakhir_aktif}
+                    <td className="px-4 py-3.5">{a.nilai}</td>
+                    <td className="px-4 py-3.5">
+                      <StatusBadge
+                        status={a.selesai ? "SUDAH_MENGERJAKAN" : "SEDANG_BERJALAN"}
+                      />
                     </td>
+                    <td className="px-4 py-3.5 text-muted">{a.waktu}</td>
                   </tr>
                 ))}
+                {aktivitas.length === 0 && (
+                  <tr className="border-t border-line">
+                    <td colSpan={5} className="px-4 py-6 text-center text-muted">
+                      Belum ada aktivitas latihan. Aktivitas muncul setelah
+                      siswa mengirim jawaban latihan.
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

@@ -145,16 +145,11 @@ export function GuruLoginPage() {
               </button>
             </form>
 
-            <div className="mt-5 flex items-center justify-between text-[10px] text-muted">
-              <Link className="hover:underline" href="#">
-                Lupa password?
+            <div className="mt-5 flex items-center justify-between gap-3 text-[10px] text-muted">
+              <Link className="font-bold hover:underline" href="/panduan/guru">
+                Butuh panduan? Baca panduan guru →
               </Link>
-              <span>
-                Belum punya akun?{" "}
-                <Link href="#" className="font-bold text-coral">
-                  Daftar
-                </Link>
-              </span>
+              <span>Akun guru dibuat oleh pengelola</span>
             </div>
           </div>
         </div>

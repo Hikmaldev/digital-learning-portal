@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { FeedbackForm } from "./feedback-form";
 import { FooterSimple } from "../footer-simple";
 import { TopBar } from "../top-bar";
 import { StatusBadge } from "../ui";
@@ -184,6 +185,8 @@ export function SiswaKelasPage() {
             </Link>
           ))}
         </div>
+
+        <FeedbackForm />
       </main>
       <FooterSimple />
     </>

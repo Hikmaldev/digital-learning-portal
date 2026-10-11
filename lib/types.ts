@@ -10,7 +10,7 @@ export interface User {
   password_hash: string;
 }
 
-export type JenjangKelas = "Paket A" | "Paket B" | "Paket C";
+export type JenjangKelas = "Paket A" | "Paket B" | "Paket C" | "CAMPURAN";
 
 export interface Kelas {
   id: string;
@@ -84,6 +84,30 @@ export interface RingkasanSiswa {
   nilai: number | null;
   status: StatusLatihan;
   terakhir_aktif: string;
+}
+
+/** Satu baris log aktivitas: siswa mengerjakan satu bab. */
+export interface AktivitasLatihan {
+  id: string;
+  nama_siswa: string;
+  mata_pelajaran: string;
+  judul: string;
+  nilai: number;
+  selesai: boolean;
+  waktu: string;
+}
+
+/** Masukan/feedback siswa untuk pengembang. */
+export interface FeedbackSiswa {
+  id: string;
+  nama_siswa: string | null;
+  kategori: string;
+  pesan: string;
+  kontak: string | null;
+  dibaca: boolean;
+  kelas_nama: string | null;
+  kelas_kode: string | null;
+  waktu: string;
 }
 
 export interface RingkasanPelajaran {
