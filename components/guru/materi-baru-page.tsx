@@ -171,8 +171,8 @@ export function MateriBaruPage({
     ? `/guru/materi?kelasId=${encodeURIComponent(kelasId)}`
     : "/guru/materi";
   const hrefSoal = kelasId
-    ? `/guru/soal/baru?kelasId=${encodeURIComponent(kelasId)}`
-    : "/guru/soal/baru";
+    ? `/guru/soal?kelasId=${encodeURIComponent(kelasId)}`
+    : "/guru/soal";
 
   return (
     <>
@@ -394,10 +394,10 @@ export function MateriBaruPage({
                   <p className="eyebrow eyebrow-muted mb-3">Bab ini</p>
                   <div className="flex flex-col gap-2.5">
                     <Link
-                      href={`/guru/soal/baru?kelasId=${encodeURIComponent(kelasId)}&babId=${encodeURIComponent(materiAwal.id)}`}
+                      href={`/guru/soal?kelasId=${encodeURIComponent(kelasId)}&babId=${encodeURIComponent(materiAwal.id)}`}
                       className="btn btn-outline w-full"
                     >
-                      + Tambah soal bab ini
+                      Soal bab ini
                     </Link>
                     {kodeKelasTerpilih && (
                       <a

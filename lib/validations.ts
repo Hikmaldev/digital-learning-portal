@@ -106,6 +106,22 @@ export const simpanSoalSchema = z.object({
 
 export type SimpanSoalInput = z.infer<typeof simpanSoalSchema>;
 
+export const ubahSoalSchema = z.object({
+  pertanyaan: z.string().trim().min(5, "Pertanyaan minimal 5 karakter"),
+  opsi: z
+    .array(
+      z.object({
+        id: z.string().optional(),
+        teks: z.string().trim().min(1, "Teks opsi tidak boleh kosong"),
+      })
+    )
+    .min(2, "Minimal 2 opsi jawaban")
+    .max(6, "Maksimal 6 opsi jawaban"),
+  indexBenar: z.number().int().min(0),
+});
+
+export type UbahSoalInput = z.infer<typeof ubahSoalSchema>;
+
 export const gantiPasswordSchema = z.object({
   passwordLama: z.string().min(6, "Password lama minimal 6 karakter").max(100),
   passwordBaru: z

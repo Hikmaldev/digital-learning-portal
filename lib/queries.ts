@@ -83,6 +83,88 @@ export async function getSoalBab(babId: string): Promise<SoalDenganBenar[] | nul
   return soal.map((s) => ({ id: s.id, pertanyaan: s.pertanyaan, opsi: s.opsi.map((o) => ({ id: o.id, teks: o.teks, is_benar: o.is_benar })) }));
 }
 
+// --- Kelola soal (guru) ---
+
+export interface OpsiKelola {
+  id: string;
+  teks: string;
+  is_benar: boolean;
+}
+
+export interface SoalKelola {
+  id: string;
+  pertanyaan: string;
+  urutan: number;
+  opsi: OpsiKelola[];
+}
+
+export interface BabSoalKelola {
+  id: string;
+  judul: string;
+  mata_pelajaran: string;
+  urutan: number;
+  soal: SoalKelola[];
+}
+
+/** Semua bab + soalnya untuk halaman kelola latihan soal (opsional per bab). */
+export async function getSoalKelola(
+  kelasId: string,
+  babId?: string
+): Promise<BabSoalKelola[]> {
+  const db = requireDb();
+  if (!db) return [];
+  return db.bab.findMany({
+    where: { kelas_id: kelasId, ...(babId ? { id: babId } : {}) },
+    orderBy: [{ mata_pelajaran: "asc" }, { urutan: "asc" }],
+    select: {
+      id: true,
+      judul: true,
+      mata_pelajaran: true,
+      urutan: true,
+      soal: {
+        orderBy: { urutan: "asc" },
+        select: {
+          id: true,
+          pertanyaan: true,
+          urutan: true,
+          opsi: {
+            orderBy: { id: "asc" },
+            select: { id: true, teks: true, is_benar: true },
+          },
+        },
+      },
+    },
+  });
+}
+
+/** Satu soal + opsi + info bab untuk halaman ubah soal. */
+export async function getSoalUntukEdit(soalId: string) {
+  const db = requireDb();
+  if (!db) return null;
+  return db.soal.findUnique({
+    where: { id: soalId },
+    select: {
+      id: true,
+      pertanyaan: true,
+      urutan: true,
+      bab_id: true,
+      bab: {
+        select: {
+          judul: true,
+          mata_pelajaran: true,
+          urutan: true,
+          kelas_id: true,
+          kelas: { select: { kode_akses: true, nama_kelas: true } },
+        },
+      },
+      opsi: {
+        orderBy: { id: "asc" },
+        select: { id: true, teks: true, is_benar: true },
+      },
+    },
+  });
+}
+
 export interface InfoBabLatihan { babId: string; mataPelajaran: string; urutan: number; judul: string; }
 
 export async function getBabLatihan(kodeKelas?: string): Promise<InfoBabLatihan | null> {

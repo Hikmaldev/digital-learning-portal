@@ -76,7 +76,7 @@ export function AkunPage({ nama, email }: Props) {
         nav={[
           { href: "/guru/dashboard", label: "Dashboard" },
           { href: "/guru/materi", label: "Materi" },
-          { href: "/guru/soal/baru", label: "Latihan soal" },
+          { href: "/guru/soal", label: "Latihan soal" },
           { href: "/guru/akun", label: "Akun", aktif: true },
         ]}
         aksi={{ href: "/guru/dashboard", label: "Dashboard" }}

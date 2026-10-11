@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { FooterSimple } from "../footer-simple";
 import { TopBar } from "../top-bar";
 
@@ -35,6 +36,7 @@ export function SoalBaruPage({
   kelasIdAwal?: string;
   babIdAwal?: string;
 }) {
+  const router = useRouter();
   const [soal, setSoal] = useState<SoalDraft[]>([
     { id: 1, pertanyaan: "Apa yang dimaksud dengan gagasan utama?", benar: 0, o0: "Ide pokok atau inti pembahasan paragraf", o1: "Kalimat yang paling panjang", o2: "Contoh dalam bacaan", o3: "Kata-kata sulit" },
     { id: 2, pertanyaan: "", benar: 0, o0: "", o1: "", o2: "", o3: "" },
@@ -169,7 +171,10 @@ export function SoalBaruPage({
         error?: string;
       };
       if (res.ok && json.ok) {
-        setPesan({ jenis: "ok", teks: "✓ Latihan soal tersimpan & diterbitkan." });
+        // Kembali ke daftar soal bab ini agar hasilnya langsung terlihat.
+        router.push(
+          `/guru/soal?kelasId=${encodeURIComponent(kelasId)}&babId=${encodeURIComponent(babId)}`
+        );
         return;
       }
       if (res.status === 503) {
@@ -229,8 +234,8 @@ export function SoalBaruPage({
     ? `/guru/materi?kelasId=${encodeURIComponent(kelasId)}`
     : "/guru/materi";
   const hrefSoal = kelasId
-    ? `/guru/soal/baru?kelasId=${encodeURIComponent(kelasId)}`
-    : "/guru/soal/baru";
+    ? `/guru/soal?kelasId=${encodeURIComponent(kelasId)}`
+    : "/guru/soal";
 
   return (
     <>

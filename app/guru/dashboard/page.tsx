@@ -64,8 +64,8 @@ export default async function DashboardGuruPage({ searchParams }: Props) {
     ? `/guru/materi?kelasId=${encodeURIComponent(idAktif)}`
     : "/guru/materi";
   const hrefSoal = idAktif
-    ? `/guru/soal/baru?kelasId=${encodeURIComponent(idAktif)}`
-    : "/guru/soal/baru";
+    ? `/guru/soal?kelasId=${encodeURIComponent(idAktif)}`
+    : "/guru/soal";
   const [metrics, ringkasanMapel] = kelasUtama
     ? await Promise.all([
         getMetrics(kelasUtama.id),

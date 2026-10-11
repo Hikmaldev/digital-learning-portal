@@ -24,3 +24,12 @@ export async function guruMemilikiBab(babId: string, guruId: string) {
   });
   return Boolean(bab);
 }
+
+export async function guruMemilikiSoal(soalId: string, guruId: string) {
+  if (!prisma) return false;
+  const soal = await prisma.soal.findFirst({
+    where: { id: soalId, bab: { kelas: { guru_id: guruId } } },
+    select: { id: true },
+  });
+  return Boolean(soal);
+}

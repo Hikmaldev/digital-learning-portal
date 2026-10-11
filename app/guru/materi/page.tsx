@@ -35,8 +35,8 @@ export default async function KelolaMateriPage({ searchParams }: Props) {
     ? `/guru/materi/baru?kelasId=${encodeURIComponent(kelas.id)}`
     : "/guru/materi/baru";
   const hrefSoal = kelas
-    ? `/guru/soal/baru?kelasId=${encodeURIComponent(kelas.id)}`
-    : "/guru/soal/baru";
+    ? `/guru/soal?kelasId=${encodeURIComponent(kelas.id)}`
+    : "/guru/soal";
 
   return (
     <>
@@ -149,7 +149,7 @@ export default async function KelolaMateriPage({ searchParams }: Props) {
                     Ubah
                   </Link>
                   <Link
-                    href={`/guru/soal/baru?kelasId=${encodeURIComponent(kelas.id)}&babId=${encodeURIComponent(b.id)}`}
+                    href={`/guru/soal?kelasId=${encodeURIComponent(kelas.id)}&babId=${encodeURIComponent(b.id)}`}
                     className="btn btn-outline px-3 py-2 text-[11px]"
                   >
                     + Soal
