@@ -12,6 +12,7 @@ import {
 } from "@/lib/queries";
 import { demoMode } from "@/lib/runtime";
 import { getGuruSession } from "@/lib/authorization";
+import { PilihKelasProgress } from "@/components/guru/pilih-kelas";
 
 export const metadata: Metadata = { title: "Progress Siswa" };
 
@@ -24,14 +25,12 @@ interface Props {
 export default async function DashboardProgressPage({ searchParams }: Props) {
   const params = await searchParams;
   const guru = await getGuruSession();
+  const daftarKelas = guru ? await getKelasList(guru.guruId) : [];
   let kelas = params.kode
     ? await getKelasByKode(params.kode, guru?.guruId)
     : null;
-  if (!kelas && guru) {
-    const daftarKelas = await getKelasList(guru.guruId);
-    if (daftarKelas.length > 0) {
-      kelas = await getKelasByKode(daftarKelas[0].kode, guru.guruId);
-    }
+  if (!kelas && daftarKelas.length > 0) {
+    kelas = await getKelasByKode(daftarKelas[0].kode, guru?.guruId);
   }
   if (!kelas && demoMode) kelas = await getKelasAktifDb();
   if (!kelas) {
@@ -60,13 +59,19 @@ export default async function DashboardProgressPage({ searchParams }: Props) {
     <>
       <TopBar
         nav={[
-          { href: "/guru/dashboard", label: "Dashboard" },
           {
-            href: "/guru/progress",
+            href: `/guru/dashboard?kode=${encodeURIComponent(kelas.kode_akses)}`,
+            label: "Dashboard",
+          },
+          {
+            href: `/guru/progress?kode=${encodeURIComponent(kelas.kode_akses)}`,
             label: "Progress siswa",
             aktif: true,
           },
-          { href: "/guru/materi/baru", label: "Kelola materi" },
+          {
+            href: `/guru/materi/baru?kelasId=${encodeURIComponent(kelas.id)}`,
+            label: "Kelola materi",
+          },
           { href: "/guru/feedback", label: "Masukan siswa" },
           { href: "/guru/akun", label: "Akun" },
         ]}
@@ -86,9 +91,21 @@ export default async function DashboardProgressPage({ searchParams }: Props) {
               perlu diingatkan.
             </p>
           </div>
-          <button type="button" className="btn btn-outline self-start">
-            Unduh rekap ↓
-          </button>
+          <div className="flex w-full flex-col gap-2.5 self-start md:max-w-[300px]">
+            {daftarKelas.length > 1 && (
+              <PilihKelasProgress
+                daftar={daftarKelas.map((k) => ({
+                  kode: k.kode,
+                  nama: k.nama,
+                  jenjang: k.jenjang,
+                }))}
+                aktif={kelas.kode_akses}
+              />
+            )}
+            <button type="button" className="btn btn-outline">
+              Unduh rekap ↓
+            </button>
+          </div>
         </div>
 
         <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
@@ -161,7 +178,10 @@ export default async function DashboardProgressPage({ searchParams }: Props) {
           </div>
         </div>
 
-        <Link href="/guru/dashboard" className="mt-6 inline-block text-[11px] text-muted hover:underline">
+        <Link
+          href={`/guru/dashboard?kode=${encodeURIComponent(kelas.kode_akses)}`}
+          className="mt-6 inline-block text-[11px] text-muted hover:underline"
+        >
           ← Kembali ke dashboard
         </Link>
       </main>

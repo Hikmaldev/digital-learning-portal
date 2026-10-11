@@ -14,7 +14,7 @@ interface KelasRingkas {
   kode: string;
 }
 
-export function MateriBaruPage() {
+export function MateriBaruPage({ kelasIdAwal }: { kelasIdAwal?: string }) {
   const [terbit, setTerbit] = useState(true);
   const [babBerikutnya, setBabBerikutnya] = useState(true);
   const [tambahLatihan, setTambahLatihan] = useState(false);
@@ -28,14 +28,20 @@ export function MateriBaruPage() {
       .then((r) => (r.ok ? r.json() : null))
       .then((j) => {
         if (j?.ok && Array.isArray(j.data.kelas)) {
-          setKelasList(j.data.kelas);
-          setKelasId(String(j.data.kelas[0]?.id ?? ""));
+          const daftar = j.data.kelas as KelasRingkas[];
+          setKelasList(daftar);
+          // Pilih kelas dari ?kelasId= (bila valid milik guru), jika tidak kelas pertama.
+          const cocok =
+            kelasIdAwal && daftar.some((k) => k.id === kelasIdAwal)
+              ? kelasIdAwal
+              : daftar[0]?.id;
+          setKelasId(String(cocok ?? ""));
         }
       })
       .catch(() => {
         setPesan({ jenis: "eror", teks: "Daftar kelas tidak dapat dimuat dari database." });
       });
-  }, []);
+  }, [kelasIdAwal]);
 
   async function simpan(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -104,16 +110,28 @@ export function MateriBaruPage() {
           </option>,
         ];
 
+  // Tautan antar halaman membawa konteks kelas yang sedang dipilih.
+  const kodeAktif = pilihanKelas.find((k) => k.id === kelasId)?.kode;
+  const hrefDashboard = kodeAktif
+    ? `/guru/dashboard?kode=${encodeURIComponent(kodeAktif)}`
+    : "/guru/dashboard";
+  const hrefMateri = kelasId
+    ? `/guru/materi/baru?kelasId=${encodeURIComponent(kelasId)}`
+    : "/guru/materi/baru";
+  const hrefSoal = kelasId
+    ? `/guru/soal/baru?kelasId=${encodeURIComponent(kelasId)}`
+    : "/guru/soal/baru";
+
   return (
     <>
       <TopBar
         nav={[
-          { href: "/guru/dashboard", label: "Dashboard" },
-          { href: "/guru/materi/baru", label: "Materi", aktif: true },
-          { href: "/guru/soal/baru", label: "Latihan soal" },
+          { href: hrefDashboard, label: "Dashboard" },
+          { href: hrefMateri, label: "Materi", aktif: true },
+          { href: hrefSoal, label: "Latihan soal" },
           { href: "/guru/akun", label: "Akun" },
         ]}
-        aksi={{ href: "/guru/dashboard", label: "Dashboard" }}
+        aksi={{ href: hrefDashboard, label: "Dashboard" }}
       />
       <main className="mx-auto w-full max-w-[1180px] px-5 py-12 md:px-10">
         <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
@@ -335,7 +353,7 @@ export function MateriBaruPage() {
               )}
               {pesan?.jenis !== "ok" && (
                 <p className="text-[10px] leading-relaxed text-muted">
-                  <Link href="/guru/dashboard" className="font-bold text-coral">
+                  <Link href={hrefDashboard} className="font-bold text-coral">
                     Kembali ke dashboard →
                   </Link>
                 </p>

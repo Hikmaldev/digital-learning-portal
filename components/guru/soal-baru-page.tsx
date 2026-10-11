@@ -28,7 +28,7 @@ interface BabRingkas {
   urutan: number;
 }
 
-export function SoalBaruPage() {
+export function SoalBaruPage({ kelasIdAwal }: { kelasIdAwal?: string }) {
   const [soal, setSoal] = useState<SoalDraft[]>([
     { id: 1, pertanyaan: "Apa yang dimaksud dengan gagasan utama?", benar: 0, o0: "Ide pokok atau inti pembahasan paragraf", o1: "Kalimat yang paling panjang", o2: "Contoh dalam bacaan", o3: "Kata-kata sulit" },
     { id: 2, pertanyaan: "", benar: 0, o0: "", o1: "", o2: "", o3: "" },
@@ -52,14 +52,19 @@ export function SoalBaruPage() {
           : [];
         if (daftar.length > 0) {
           setKelasList(daftar);
-          setKelasId(daftar[0].id);
+          // Pilih kelas dari ?kelasId= (bila valid milik guru), jika tidak kelas pertama.
+          const cocok =
+            kelasIdAwal && daftar.some((k) => k.id === kelasIdAwal)
+              ? kelasIdAwal
+              : daftar[0].id;
+          setKelasId(cocok);
         }
       })
       .catch(() => undefined);
     return () => {
       aktif = false;
     };
-  }, []);
+  }, [kelasIdAwal]);
 
   // Bab untuk kelas terpilih.
   useEffect(() => {
@@ -203,16 +208,28 @@ export function SoalBaruPage() {
           </option>,
         ];
 
+  // Tautan antar halaman membawa konteks kelas yang sedang dipilih.
+  const kodeAktif = kelasList.find((k) => k.id === kelasId)?.kode;
+  const hrefDashboard = kodeAktif
+    ? `/guru/dashboard?kode=${encodeURIComponent(kodeAktif)}`
+    : "/guru/dashboard";
+  const hrefMateri = kelasId
+    ? `/guru/materi/baru?kelasId=${encodeURIComponent(kelasId)}`
+    : "/guru/materi/baru";
+  const hrefSoal = kelasId
+    ? `/guru/soal/baru?kelasId=${encodeURIComponent(kelasId)}`
+    : "/guru/soal/baru";
+
   return (
     <>
       <TopBar
         nav={[
-          { href: "/guru/dashboard", label: "Dashboard" },
-          { href: "/guru/materi/baru", label: "Materi" },
-          { href: "/guru/soal/baru", label: "Latihan soal", aktif: true },
+          { href: hrefDashboard, label: "Dashboard" },
+          { href: hrefMateri, label: "Materi" },
+          { href: hrefSoal, label: "Latihan soal", aktif: true },
           { href: "/guru/akun", label: "Akun" },
         ]}
-        aksi={{ href: "/guru/dashboard", label: "Dashboard" }}
+        aksi={{ href: hrefDashboard, label: "Dashboard" }}
       />
       <main className="mx-auto w-full max-w-[1280px] px-5 py-12 md:px-10">
         <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">

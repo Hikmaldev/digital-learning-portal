@@ -20,7 +20,12 @@ export const metadata: Metadata = { title: "Dashboard Guru" };
 
 export const dynamic = "force-dynamic";
 
-export default async function DashboardGuruPage() {
+interface Props {
+  searchParams: Promise<{ kode?: string }>;
+}
+
+export default async function DashboardGuruPage({ searchParams }: Props) {
+  const params = await searchParams;
   const [session, kelasDemo] = await Promise.all([
     auth(),
     demoMode ? getKelasAktifDb() : Promise.resolve(null),
@@ -34,8 +39,30 @@ export default async function DashboardGuruPage() {
   const progressKelas = await Promise.all(
     daftarKelas.map((k) => getProgressRataKelas(k.id))
   );
-  // Kelas utama untuk metrik: kelas guru pertama, atau kelas demo saat mode demo.
-  const kelasUtama = kelasDemo ?? daftarKelas[0] ?? null;
+  // Kelas yang dipilih lewat ?kode= (wajib milik guru), lalu demo, lalu kelas pertama.
+  const kodeParam = params.kode?.toUpperCase();
+  const dipilih = kodeParam
+    ? daftarKelas.find((k) => k.kode === kodeParam)
+    : undefined;
+  const kelasUtama = dipilih ?? kelasDemo ?? daftarKelas[0] ?? null;
+  const kodeAktif =
+    dipilih?.kode ?? kelasDemo?.kode_akses ?? daftarKelas[0]?.kode ?? null;
+  const idAktif = dipilih?.id ?? daftarKelas[0]?.id ?? kelasDemo?.id ?? null;
+  const namaKelasUtama =
+    dipilih?.nama ?? kelasDemo?.nama_kelas ?? daftarKelas[0]?.nama ?? null;
+  // Tautan antar halaman selalu membawa konteks kelas yang sedang dilihat.
+  const hrefDashboard = kodeAktif
+    ? `/guru/dashboard?kode=${encodeURIComponent(kodeAktif)}`
+    : "/guru/dashboard";
+  const hrefProgress = kodeAktif
+    ? `/guru/progress?kode=${encodeURIComponent(kodeAktif)}`
+    : "/guru/progress";
+  const hrefMateri = idAktif
+    ? `/guru/materi/baru?kelasId=${encodeURIComponent(idAktif)}`
+    : "/guru/materi/baru";
+  const hrefSoal = idAktif
+    ? `/guru/soal/baru?kelasId=${encodeURIComponent(idAktif)}`
+    : "/guru/soal/baru";
   const [metrics, ringkasanMapel] = kelasUtama
     ? await Promise.all([
         getMetrics(kelasUtama.id),
@@ -46,9 +73,9 @@ export default async function DashboardGuruPage() {
     <>
       <TopBar
           nav={[
-            { href: "/guru/dashboard", label: "Dashboard", aktif: true },
-            { href: "/guru/materi/baru", label: "Materi" },
-            { href: "/guru/soal/baru", label: "Latihan soal" },
+            { href: hrefDashboard, label: "Dashboard", aktif: true },
+            { href: hrefMateri, label: "Materi" },
+            { href: hrefSoal, label: "Latihan soal" },
             { href: "/guru/akun", label: "Akun" },
           ]}
         aksi={{ href: "/", label: "Keluar" }}
@@ -65,7 +92,7 @@ export default async function DashboardGuruPage() {
               Kelola kelas dan lihat perkembangan siswa dari satu tempat.
             </p>
           </div>
-          <Link href="/guru/materi/baru" className="btn btn-coral">
+          <Link href={hrefMateri} className="btn btn-coral">
             + Buat materi baru
           </Link>
         </div>
@@ -86,19 +113,19 @@ export default async function DashboardGuruPage() {
 
         <div className="mb-6 flex gap-6 border-b border-line">
           <Link
-            href="/guru/dashboard"
+            href={hrefDashboard}
             className="border-b-2 border-coral pb-3 text-[11px] font-bold"
           >
             Ringkasan kelas
           </Link>
           <Link
-            href="/guru/progress"
+            href={hrefProgress}
             className="pb-3 text-[11px] text-muted hover:text-ink"
           >
             Progress siswa
           </Link>
           <Link
-            href="/guru/materi/baru"
+            href={hrefMateri}
             className="pb-3 text-[11px] text-muted hover:text-ink"
           >
             Kelola materi
@@ -199,10 +226,13 @@ export default async function DashboardGuruPage() {
         <div className="panel mt-6 p-6">
           <div className="mb-4 flex items-start justify-between">
             <div>
-              <p className="eyebrow eyebrow-muted mb-2">Ringkasan aktivitas</p>
+              <p className="eyebrow eyebrow-muted mb-2">
+                Ringkasan aktivitas
+                {namaKelasUtama ? ` · ${namaKelasUtama}` : ""}
+              </p>
               <h2 className="text-xl tracking-tight">Progress kelas minggu ini.</h2>
             </div>
-            <Link href="/guru/progress" className="text-xs font-bold text-coral">
+            <Link href={hrefProgress} className="text-xs font-bold text-coral">
               Lihat detail <span className="pl-1 text-base">→</span>
             </Link>
           </div>
