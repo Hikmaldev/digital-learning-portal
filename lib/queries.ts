@@ -133,36 +133,33 @@ export async function getRingkasanKelas(kelasId: string): Promise<RingkasanSiswa
 }
 
 export async function getRingkasanPelajaranDb(
-  guruId?: string
+  kelasId: string
 ): Promise<RingkasanPelajaran[]> {
   const db = requireDb();
   if (!db) return fallback(ringkasanPelajaran);
 
   const bab = await db.bab.findMany({
-    where: guruId ? { kelas: { guru_id: guruId } } : undefined,
+    where: { kelas_id: kelasId },
     select: {
       id: true,
-      kelas_id: true,
       mata_pelajaran: true,
       _count: { select: { soal: true } },
     },
   });
   if (bab.length === 0) return [];
 
-  // Siswa unik yang sudah mengerjakan tiap bab dan yang aktif di tiap kelas.
+  // Siswa unik yang aktif di kelas dan yang sudah mengerjakan tiap bab.
   const progres = await db.progressSiswa.groupBy({
-    by: ["bab_id", "kelas_id", "nama_siswa"],
-    where: { bab_id: { in: bab.map((b) => b.id) } },
+    by: ["bab_id", "nama_siswa"],
+    where: { kelas_id: kelasId, bab_id: { in: bab.map((b) => b.id) } },
   });
+  const siswaKelas = new Set<string>();
   const siswaPerBab = new Map<string, Set<string>>();
-  const siswaPerKelas = new Map<string, Set<string>>();
   for (const p of progres) {
+    siswaKelas.add(p.nama_siswa);
     const babSet = siswaPerBab.get(p.bab_id) ?? new Set<string>();
     babSet.add(p.nama_siswa);
     siswaPerBab.set(p.bab_id, babSet);
-    const kelasSet = siswaPerKelas.get(p.kelas_id) ?? new Set<string>();
-    kelasSet.add(p.nama_siswa);
-    siswaPerKelas.set(p.kelas_id, kelasSet);
   }
 
   const perMapel = new Map<
@@ -176,12 +173,11 @@ export async function getRingkasanPelajaranDb(
       { jumlah_bab: 0, jumlah_latihan: 0, jumlah_siswa: 0, total_progres: 0, bab_dihitung: 0 };
     cur.jumlah_bab += 1;
     cur.jumlah_latihan += b._count.soal;
-    const murid = siswaPerKelas.get(b.kelas_id);
-    if (murid && murid.size > 0) {
+    if (siswaKelas.size > 0) {
       const sudah = siswaPerBab.get(b.id)?.size ?? 0;
-      cur.total_progres += Math.round((sudah / murid.size) * 100);
+      cur.total_progres += Math.round((sudah / siswaKelas.size) * 100);
       cur.bab_dihitung += 1;
-      cur.jumlah_siswa = Math.max(cur.jumlah_siswa, murid.size);
+      cur.jumlah_siswa = siswaKelas.size;
     }
     perMapel.set(kunci, cur);
   }

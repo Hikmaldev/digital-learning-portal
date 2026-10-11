@@ -36,7 +36,7 @@ export default async function DashboardGuruPage() {
   const [metrics, ringkasanMapel] = kelasUtama
     ? await Promise.all([
         getMetrics(kelasUtama.id),
-        getRingkasanPelajaranDb(guruId),
+        getRingkasanPelajaranDb(kelasUtama.id),
       ])
     : [[], []];
   return (
