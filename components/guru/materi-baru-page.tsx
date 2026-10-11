@@ -1,11 +1,22 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { FooterSimple } from "../footer-simple";
 import { TopBar } from "../top-bar";
 
 const DRAFT_KUNCI = "rb_draft_materi";
+
+const MAPEL_UMUM = [
+  "Bahasa Indonesia",
+  "Matematika",
+  "Ilmu Pengetahuan Alam",
+  "Ilmu Pengetahuan Sosial",
+  "Pendidikan Pancasila",
+  "Bahasa Inggris",
+  "Informatika",
+];
 
 interface KelasRingkas {
   id: string;
@@ -14,12 +25,36 @@ interface KelasRingkas {
   kode: string;
 }
 
-export function MateriBaruPage({ kelasIdAwal }: { kelasIdAwal?: string }) {
+export interface MateriAwal {
+  id: string;
+  kelas_id: string;
+  mata_pelajaran: string;
+  judul: string;
+  ringkasan: string | null;
+  konten_materi: string;
+  url_video: string | null;
+  link_sumber: string | null;
+  urutan: number;
+}
+
+/**
+ * Form materi — dipakai untuk menambah bab baru (mode "baru") dan
+ * mengubah bab yang sudah ada (mode "ubah", dikirim dari halaman edit).
+ */
+export function MateriBaruPage({
+  kelasIdAwal,
+  materiAwal,
+}: {
+  kelasIdAwal?: string;
+  materiAwal?: MateriAwal;
+}) {
+  const router = useRouter();
+  const modeUbah = Boolean(materiAwal);
   const [terbit, setTerbit] = useState(true);
   const [babBerikutnya, setBabBerikutnya] = useState(true);
   const [tambahLatihan, setTambahLatihan] = useState(false);
   const [kelasList, setKelasList] = useState<KelasRingkas[]>([]);
-  const [kelasId, setKelasId] = useState("");
+  const [kelasId, setKelasId] = useState(materiAwal?.kelas_id ?? "");
   const [memuat, setMemuat] = useState(false);
   const [pesan, setPesan] = useState<{ jenis: "ok" | "info" | "eror"; teks: string } | null>(null);
 
@@ -30,18 +65,22 @@ export function MateriBaruPage({ kelasIdAwal }: { kelasIdAwal?: string }) {
         if (j?.ok && Array.isArray(j.data.kelas)) {
           const daftar = j.data.kelas as KelasRingkas[];
           setKelasList(daftar);
-          // Pilih kelas dari ?kelasId= (bila valid milik guru), jika tidak kelas pertama.
-          const cocok =
-            kelasIdAwal && daftar.some((k) => k.id === kelasIdAwal)
-              ? kelasIdAwal
-              : daftar[0]?.id;
-          setKelasId(String(cocok ?? ""));
+          if (materiAwal) {
+            setKelasId(materiAwal.kelas_id);
+          } else {
+            // Pilih kelas dari ?kelasId= (bila valid milik guru), jika tidak kelas pertama.
+            const cocok =
+              kelasIdAwal && daftar.some((k) => k.id === kelasIdAwal)
+                ? kelasIdAwal
+                : daftar[0]?.id;
+            setKelasId(String(cocok ?? ""));
+          }
         }
       })
       .catch(() => {
         setPesan({ jenis: "eror", teks: "Daftar kelas tidak dapat dimuat dari database." });
       });
-  }, [kelasIdAwal]);
+  }, [kelasIdAwal, materiAwal]);
 
   async function simpan(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -62,17 +101,25 @@ export function MateriBaruPage({ kelasIdAwal }: { kelasIdAwal?: string }) {
     };
 
     try {
-      const res = await fetch("/api/guru/materi", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      const res =
+        modeUbah && materiAwal
+          ? await fetch(`/api/guru/materi/${encodeURIComponent(materiAwal.id)}`, {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload),
+            })
+          : await fetch("/api/guru/materi", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload),
+            });
       const json = (await res.json().catch(() => ({}))) as {
         ok?: boolean;
         error?: string;
       };
       if (res.ok && json.ok) {
-        setPesan({ jenis: "ok", teks: "✓ Materi tersimpan & diterbitkan ke siswa." });
+        // Kembali ke halaman kelola materi agar hasilnya langsung terlihat.
+        router.push(`/guru/materi?kelasId=${encodeURIComponent(payload.kelasId)}`);
         return;
       }
       if (res.status === 503) {
@@ -97,6 +144,12 @@ export function MateriBaruPage({ kelasIdAwal }: { kelasIdAwal?: string }) {
   }
 
   const pilihanKelas = kelasList;
+  const kodeKelasTerpilih = pilihanKelas.find((k) => k.id === kelasId)?.kode;
+  const namaKelasTerpilih = pilihanKelas.find((k) => k.id === kelasId)?.nama;
+  const daftarMapel =
+    materiAwal && !MAPEL_UMUM.includes(materiAwal.mata_pelajaran)
+      ? [materiAwal.mata_pelajaran, ...MAPEL_UMUM]
+      : MAPEL_UMUM;
   const selectKelas =
     pilihanKelas.length > 0
       ? pilihanKelas.map((k) => (
@@ -111,13 +164,12 @@ export function MateriBaruPage({ kelasIdAwal }: { kelasIdAwal?: string }) {
         ];
 
   // Tautan antar halaman membawa konteks kelas yang sedang dipilih.
-  const kodeAktif = pilihanKelas.find((k) => k.id === kelasId)?.kode;
-  const hrefDashboard = kodeAktif
-    ? `/guru/dashboard?kode=${encodeURIComponent(kodeAktif)}`
+  const hrefDashboard = kodeKelasTerpilih
+    ? `/guru/dashboard?kode=${encodeURIComponent(kodeKelasTerpilih)}`
     : "/guru/dashboard";
   const hrefMateri = kelasId
-    ? `/guru/materi/baru?kelasId=${encodeURIComponent(kelasId)}`
-    : "/guru/materi/baru";
+    ? `/guru/materi?kelasId=${encodeURIComponent(kelasId)}`
+    : "/guru/materi";
   const hrefSoal = kelasId
     ? `/guru/soal/baru?kelasId=${encodeURIComponent(kelasId)}`
     : "/guru/soal/baru";
@@ -138,19 +190,33 @@ export function MateriBaruPage({ kelasIdAwal }: { kelasIdAwal?: string }) {
           <div>
             <p className="eyebrow eyebrow-muted mb-2.5">
               Kelola materi ·{" "}
-              {pilihanKelas.find((k) => k.id === kelasId)?.nama ??
+              {namaKelasTerpilih ??
                 (pilihanKelas.length > 0 ? "Pilih kelas di bawah" : "Kelas pilihanmu")}
             </p>
             <h1 className="text-[38px] leading-none tracking-[-2px]">
-              Buat materi{" "}
-              <em className="font-display text-coral">baru.</em>
+              {modeUbah ? (
+                <>
+                  Ubah <em className="font-display text-coral">materi.</em>
+                </>
+              ) : (
+                <>
+                  Buat materi{" "}
+                  <em className="font-display text-coral">baru.</em>
+                </>
+              )}
             </h1>
             <p className="mt-2.5 text-[13px] text-muted">
-              Susun materi ringkas yang nyaman dibaca siswa lewat HP.
+              {modeUbah
+                ? "Perbarui isi bab, lalu simpan perubahan."
+                : "Susun materi ringkas yang nyaman dibaca siswa lewat HP."}
             </p>
           </div>
           <button type="submit" form="form-materi" className="btn btn-coral self-start" disabled={memuat}>
-            {memuat ? "Menyimpan..." : "Simpan & terbitkan "}
+            {memuat
+              ? "Menyimpan..."
+              : modeUbah
+                ? "Simpan perubahan "
+                : "Simpan & terbitkan "}
             {!memuat && <span className="pl-1 text-base">→</span>}
           </button>
         </div>
@@ -161,7 +227,13 @@ export function MateriBaruPage({ kelasIdAwal }: { kelasIdAwal?: string }) {
               <section className="panel p-6">
                 <div className="mb-4 flex items-center justify-between">
                   <h2 className="text-xl tracking-tight">Informasi bab</h2>
-                  <span className="badge-status badge-status-pending">Draft</span>
+                  <span
+                    className={
+                      modeUbah ? "badge-status" : "badge-status badge-status-pending"
+                    }
+                  >
+                    {modeUbah ? "Terbit" : "Draft"}
+                  </span>
                 </div>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <div className="flex flex-col gap-2">
@@ -171,31 +243,45 @@ export function MateriBaruPage({ kelasIdAwal }: { kelasIdAwal?: string }) {
                     <select
                       id="kelas"
                       name="kelas"
-                      className="field"
+                      className="field disabled:opacity-60"
                       value={kelasId}
                       onChange={(e) => setKelasId(e.target.value)}
+                      disabled={modeUbah}
                     >
                       {selectKelas}
                     </select>
+                    {modeUbah && (
+                      <small className="text-[10px] text-muted">
+                        Kelas tidak bisa dipindah setelah materi dibuat.
+                      </small>
+                    )}
                   </div>
                   <div className="flex flex-col gap-2">
                     <label htmlFor="mapel" className="text-[11px] font-bold">
                       Mata pelajaran
                     </label>
-                    <select id="mapel" name="mapel" className="field" defaultValue="Bahasa Indonesia">
-                      <option>Bahasa Indonesia</option>
-                      <option>Matematika</option>
-                      <option>Ilmu Pengetahuan Alam</option>
-                      <option>Ilmu Pengetahuan Sosial</option>
-                      <option>Pendidikan Pancasila</option>
-                      <option>Bahasa Inggris</option>
+                    <select
+                      id="mapel"
+                      name="mapel"
+                      className="field"
+                      defaultValue={materiAwal?.mata_pelajaran ?? "Bahasa Indonesia"}
+                    >
+                      {daftarMapel.map((m) => (
+                        <option key={m}>{m}</option>
+                      ))}
                     </select>
                   </div>
                   <div className="flex flex-col gap-2">
                     <label htmlFor="bab" className="text-[11px] font-bold">
                       Nomor bab
                     </label>
-                    <input id="bab" name="bab" className="field" defaultValue="04" inputMode="numeric" />
+                    <input
+                      id="bab"
+                      name="bab"
+                      className="field"
+                      defaultValue={materiAwal ? String(materiAwal.urutan) : "04"}
+                      inputMode="numeric"
+                    />
                   </div>
                 </div>
                 <div className="mt-4 flex flex-col gap-2">
@@ -207,6 +293,7 @@ export function MateriBaruPage({ kelasIdAwal }: { kelasIdAwal?: string }) {
                     name="judul"
                     className="field"
                     placeholder="Contoh: Menyimpulkan isi bacaan"
+                    defaultValue={materiAwal?.judul ?? ""}
                     required
                   />
                 </div>
@@ -219,6 +306,7 @@ export function MateriBaruPage({ kelasIdAwal }: { kelasIdAwal?: string }) {
                     name="ringkasan"
                     className="field"
                     placeholder="Satu kalimat yang menjelaskan isi bab"
+                    defaultValue={materiAwal?.ringkasan ?? ""}
                   />
                 </div>
               </section>
@@ -239,6 +327,7 @@ export function MateriBaruPage({ kelasIdAwal }: { kelasIdAwal?: string }) {
                     name="konten"
                     className="field min-h-[145px]"
                     placeholder="Tulis materi pelajaran di sini..."
+                    defaultValue={materiAwal?.konten_materi ?? ""}
                     required
                   />
                 </div>
@@ -274,6 +363,7 @@ export function MateriBaruPage({ kelasIdAwal }: { kelasIdAwal?: string }) {
                     type="url"
                     className="field"
                     placeholder="https://youtube.com/watch?v=..."
+                    defaultValue={materiAwal?.url_video ?? ""}
                   />
                   <small className="text-[10px] text-muted">
                     Video akan ditampilkan langsung di halaman materi.
@@ -289,6 +379,7 @@ export function MateriBaruPage({ kelasIdAwal }: { kelasIdAwal?: string }) {
                     type="url"
                     className="field"
                     placeholder="https://buku.kemendikdasmen.go.id/..."
+                    defaultValue={materiAwal?.link_sumber ?? ""}
                   />
                   <small className="text-[10px] text-muted">
                     Gunakan link ke sumber asli, bukan upload file.
@@ -298,38 +389,62 @@ export function MateriBaruPage({ kelasIdAwal }: { kelasIdAwal?: string }) {
             </div>
 
             <aside className="flex flex-col gap-4">
-              <div className="panel p-5">
-                <p className="eyebrow eyebrow-muted mb-4">Pengaturan terbit</p>
-                <div className="flex flex-col gap-3.5">
-                  <label className="flex items-start gap-2.5 text-[11px] text-muted">
-                    <input
-                      type="checkbox"
-                      checked={terbit}
-                      onChange={(e) => setTerbit(e.target.checked)}
-                      className="mt-1 accent-coral"
-                    />
-                    Terbitkan ke siswa setelah disimpan
-                  </label>
-                  <label className="flex items-start gap-2.5 text-[11px] text-muted">
-                    <input
-                      type="checkbox"
-                      checked={babBerikutnya}
-                      onChange={(e) => setBabBerikutnya(e.target.checked)}
-                      className="mt-1 accent-coral"
-                    />
-                    Tampilkan sebagai bab berikutnya
-                  </label>
-                  <label className="flex items-start gap-2.5 text-[11px] text-muted">
-                    <input
-                      type="checkbox"
-                      checked={tambahLatihan}
-                      onChange={(e) => setTambahLatihan(e.target.checked)}
-                      className="mt-1 accent-coral"
-                    />
-                    Tambahkan latihan setelah materi
-                  </label>
+              {modeUbah && materiAwal ? (
+                <div className="panel p-5">
+                  <p className="eyebrow eyebrow-muted mb-3">Bab ini</p>
+                  <div className="flex flex-col gap-2.5">
+                    <Link
+                      href={`/guru/soal/baru?kelasId=${encodeURIComponent(kelasId)}&babId=${encodeURIComponent(materiAwal.id)}`}
+                      className="btn btn-outline w-full"
+                    >
+                      + Tambah soal bab ini
+                    </Link>
+                    {kodeKelasTerpilih && (
+                      <a
+                        href={`/siswa/materi?id=${encodeURIComponent(materiAwal.id)}&kode=${encodeURIComponent(kodeKelasTerpilih)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn btn-outline w-full"
+                      >
+                        Lihat sebagai siswa ↗
+                      </a>
+                    )}
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="panel p-5">
+                  <p className="eyebrow eyebrow-muted mb-4">Pengaturan terbit</p>
+                  <div className="flex flex-col gap-3.5">
+                    <label className="flex items-start gap-2.5 text-[11px] text-muted">
+                      <input
+                        type="checkbox"
+                        checked={terbit}
+                        onChange={(e) => setTerbit(e.target.checked)}
+                        className="mt-1 accent-coral"
+                      />
+                      Terbitkan ke siswa setelah disimpan
+                    </label>
+                    <label className="flex items-start gap-2.5 text-[11px] text-muted">
+                      <input
+                        type="checkbox"
+                        checked={babBerikutnya}
+                        onChange={(e) => setBabBerikutnya(e.target.checked)}
+                        className="mt-1 accent-coral"
+                      />
+                      Tampilkan sebagai bab berikutnya
+                    </label>
+                    <label className="flex items-start gap-2.5 text-[11px] text-muted">
+                      <input
+                        type="checkbox"
+                        checked={tambahLatihan}
+                        onChange={(e) => setTambahLatihan(e.target.checked)}
+                        className="mt-1 accent-coral"
+                      />
+                      Tambahkan latihan setelah materi
+                    </label>
+                  </div>
+                </div>
+              )}
               <div className="panel p-5">
                 <p className="eyebrow eyebrow-muted mb-3">Tips materi ringan</p>
                 <p className="text-[11px] leading-relaxed text-muted">
@@ -351,13 +466,11 @@ export function MateriBaruPage({ kelasIdAwal }: { kelasIdAwal?: string }) {
                   {pesan.teks}
                 </p>
               )}
-              {pesan?.jenis !== "ok" && (
-                <p className="text-[10px] leading-relaxed text-muted">
-                  <Link href={hrefDashboard} className="font-bold text-coral">
-                    Kembali ke dashboard →
-                  </Link>
-                </p>
-              )}
+              <p className="text-[10px] leading-relaxed text-muted">
+                <Link href={hrefMateri} className="font-bold text-coral">
+                  ← Kembali ke daftar materi
+                </Link>
+              </p>
             </aside>
           </div>
         </form>

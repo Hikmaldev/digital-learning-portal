@@ -75,7 +75,7 @@ export function AkunPage({ nama, email }: Props) {
       <TopBar
         nav={[
           { href: "/guru/dashboard", label: "Dashboard" },
-          { href: "/guru/materi/baru", label: "Materi" },
+          { href: "/guru/materi", label: "Materi" },
           { href: "/guru/soal/baru", label: "Latihan soal" },
           { href: "/guru/akun", label: "Akun", aktif: true },
         ]}

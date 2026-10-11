@@ -57,9 +57,12 @@ export default async function DashboardGuruPage({ searchParams }: Props) {
   const hrefProgress = kodeAktif
     ? `/guru/progress?kode=${encodeURIComponent(kodeAktif)}`
     : "/guru/progress";
-  const hrefMateri = idAktif
+  const hrefMateriBaru = idAktif
     ? `/guru/materi/baru?kelasId=${encodeURIComponent(idAktif)}`
     : "/guru/materi/baru";
+  const hrefKelolaMateri = idAktif
+    ? `/guru/materi?kelasId=${encodeURIComponent(idAktif)}`
+    : "/guru/materi";
   const hrefSoal = idAktif
     ? `/guru/soal/baru?kelasId=${encodeURIComponent(idAktif)}`
     : "/guru/soal/baru";
@@ -74,7 +77,7 @@ export default async function DashboardGuruPage({ searchParams }: Props) {
       <TopBar
           nav={[
             { href: hrefDashboard, label: "Dashboard", aktif: true },
-            { href: hrefMateri, label: "Materi" },
+            { href: hrefKelolaMateri, label: "Materi" },
             { href: hrefSoal, label: "Latihan soal" },
             { href: "/guru/akun", label: "Akun" },
           ]}
@@ -92,7 +95,7 @@ export default async function DashboardGuruPage({ searchParams }: Props) {
               Kelola kelas dan lihat perkembangan siswa dari satu tempat.
             </p>
           </div>
-          <Link href={hrefMateri} className="btn btn-coral">
+          <Link href={hrefMateriBaru} className="btn btn-coral">
             + Buat materi baru
           </Link>
         </div>
@@ -125,7 +128,7 @@ export default async function DashboardGuruPage({ searchParams }: Props) {
             Progress siswa
           </Link>
           <Link
-            href={hrefMateri}
+            href={hrefKelolaMateri}
             className="pb-3 text-[11px] text-muted hover:text-ink"
           >
             Kelola materi

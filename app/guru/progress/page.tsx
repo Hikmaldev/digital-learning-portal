@@ -12,7 +12,7 @@ import {
 } from "@/lib/queries";
 import { demoMode } from "@/lib/runtime";
 import { getGuruSession } from "@/lib/authorization";
-import { PilihKelasProgress } from "@/components/guru/pilih-kelas";
+import { PilihKelas } from "@/components/guru/pilih-kelas";
 
 export const metadata: Metadata = { title: "Progress Siswa" };
 
@@ -69,7 +69,7 @@ export default async function DashboardProgressPage({ searchParams }: Props) {
             aktif: true,
           },
           {
-            href: `/guru/materi/baru?kelasId=${encodeURIComponent(kelas.id)}`,
+            href: `/guru/materi?kelasId=${encodeURIComponent(kelas.id)}`,
             label: "Kelola materi",
           },
           { href: "/guru/feedback", label: "Masukan siswa" },
@@ -93,18 +93,25 @@ export default async function DashboardProgressPage({ searchParams }: Props) {
           </div>
           <div className="flex w-full flex-col gap-2.5 self-start md:max-w-[300px]">
             {daftarKelas.length > 1 && (
-              <PilihKelasProgress
+              <PilihKelas
                 daftar={daftarKelas.map((k) => ({
+                  id: k.id,
                   kode: k.kode,
                   nama: k.nama,
                   jenjang: k.jenjang,
                 }))}
                 aktif={kelas.kode_akses}
+                basis="/guru/progress"
+                param="kode"
               />
             )}
-            <button type="button" className="btn btn-outline">
+            <a
+              href={`/api/guru/rekap?kelasId=${encodeURIComponent(kelas.id)}`}
+              className="btn btn-outline"
+              download
+            >
               Unduh rekap ↓
-            </button>
+            </a>
           </div>
         </div>
 

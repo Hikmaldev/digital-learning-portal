@@ -250,6 +250,64 @@ export async function getAktivitasKelas(kelasId: string): Promise<AktivitasLatih
     .map(({ waktu, ...a }) => ({ ...a, waktu: waktu.getTime() === 0 ? "—" : formatWaktuWIB(waktu) }));
 }
 
+export interface BarisRekap {
+  nama_siswa: string;
+  mata_pelajaran: string;
+  judul: string;
+  dijawab: number;
+  total_soal: number;
+  skor: number;
+  selesai: boolean;
+  waktu: string;
+}
+
+/** Rekap lengkap progress satu kelas (semua siswa × bab, tanpa batas 100). */
+export async function getRekapKelas(kelasId: string): Promise<BarisRekap[]> {
+  const db = requireDb();
+  if (!db) return [];
+  const [babs, kelompok] = await Promise.all([
+    db.bab.findMany({
+      where: { kelas_id: kelasId },
+      select: {
+        id: true,
+        judul: true,
+        mata_pelajaran: true,
+        urutan: true,
+        _count: { select: { soal: true } },
+      },
+    }),
+    db.progressSiswa.groupBy({
+      by: ["nama_siswa", "bab_id"],
+      where: { kelas_id: kelasId },
+      _count: { soal_id: true },
+      _max: { skor: true, waktu_submit: true },
+    }),
+  ]);
+  const infoBab = new Map(babs.map((b) => [b.id, b]));
+  return kelompok
+    .map((g) => {
+      const bab = infoBab.get(g.bab_id);
+      const total = bab?._count.soal ?? 0;
+      return {
+        nama_siswa: g.nama_siswa,
+        mata_pelajaran: bab?.mata_pelajaran ?? "—",
+        judul: bab?.judul ?? "—",
+        urutan: bab?.urutan ?? 0,
+        dijawab: g._count.soal_id,
+        total_soal: total,
+        skor: g._max.skor ?? 0,
+        selesai: total > 0 && g._count.soal_id >= total,
+        waktu: g._max.waktu_submit ? formatWaktuWIB(g._max.waktu_submit) : "—",
+      };
+    })
+    .sort(
+      (a, b) =>
+        a.nama_siswa.localeCompare(b.nama_siswa, "id") ||
+        a.mata_pelajaran.localeCompare(b.mata_pelajaran, "id") ||
+        a.urutan - b.urutan
+    );
+}
+
 /** Daftar masukan siswa untuk kelas-kelas milik guru (terbaru lebih dulu). */
 export async function getFeedbackList(guruId: string): Promise<FeedbackSiswa[]> {
   const db = requireDb();

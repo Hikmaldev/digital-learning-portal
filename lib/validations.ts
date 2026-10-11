@@ -76,6 +76,18 @@ export const simpanMateriSchema = z.object({
 
 export type SimpanMateriInput = z.infer<typeof simpanMateriSchema>;
 
+export const ubahMateriSchema = z.object({
+  mataPelajaran: z.string().trim().min(2),
+  judul: z.string().trim().min(3).max(120),
+  ringkasan: z.string().max(200).optional(),
+  kontenMateri: z.string().min(1),
+  urutan: z.number().int().min(1).default(1),
+  urlVideo: z.string().url().optional().or(z.literal("")),
+  linkSumber: z.string().url().optional().or(z.literal("")),
+});
+
+export type UbahMateriInput = z.infer<typeof ubahMateriSchema>;
+
 export const simpanSoalSchema = z.object({
   babId: z.string().min(1),
   soal: z

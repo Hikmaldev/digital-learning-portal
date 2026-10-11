@@ -28,7 +28,13 @@ interface BabRingkas {
   urutan: number;
 }
 
-export function SoalBaruPage({ kelasIdAwal }: { kelasIdAwal?: string }) {
+export function SoalBaruPage({
+  kelasIdAwal,
+  babIdAwal,
+}: {
+  kelasIdAwal?: string;
+  babIdAwal?: string;
+}) {
   const [soal, setSoal] = useState<SoalDraft[]>([
     { id: 1, pertanyaan: "Apa yang dimaksud dengan gagasan utama?", benar: 0, o0: "Ide pokok atau inti pembahasan paragraf", o1: "Kalimat yang paling panjang", o2: "Contoh dalam bacaan", o3: "Kata-kata sulit" },
     { id: 2, pertanyaan: "", benar: 0, o0: "", o1: "", o2: "", o3: "" },
@@ -75,8 +81,14 @@ export function SoalBaruPage({ kelasIdAwal }: { kelasIdAwal?: string }) {
       .then((jb) => {
         if (!aktif) return;
         if (jb?.ok && Array.isArray(jb.data?.bab) && jb.data.bab.length > 0) {
-          setBabList(jb.data.bab as BabRingkas[]);
-          setBabId(String(jb.data.bab[0].id));
+          const daftarBab = jb.data.bab as BabRingkas[];
+          setBabList(daftarBab);
+          // Bab dari ?babId= (bila valid di kelas ini), jika tidak bab pertama.
+          const cocok =
+            babIdAwal && daftarBab.some((b) => b.id === babIdAwal)
+              ? babIdAwal
+              : daftarBab[0].id;
+          setBabId(String(cocok));
           setPesan(null);
         } else {
           setBabList([]);
@@ -94,7 +106,7 @@ export function SoalBaruPage({ kelasIdAwal }: { kelasIdAwal?: string }) {
     return () => {
       aktif = false;
     };
-  }, [kelasId]);
+  }, [kelasId, babIdAwal]);
 
   function ubah(id: number, field: string, nilai: string) {
     setSoal((prev) =>
@@ -214,8 +226,8 @@ export function SoalBaruPage({ kelasIdAwal }: { kelasIdAwal?: string }) {
     ? `/guru/dashboard?kode=${encodeURIComponent(kodeAktif)}`
     : "/guru/dashboard";
   const hrefMateri = kelasId
-    ? `/guru/materi/baru?kelasId=${encodeURIComponent(kelasId)}`
-    : "/guru/materi/baru";
+    ? `/guru/materi?kelasId=${encodeURIComponent(kelasId)}`
+    : "/guru/materi";
   const hrefSoal = kelasId
     ? `/guru/soal/baru?kelasId=${encodeURIComponent(kelasId)}`
     : "/guru/soal/baru";

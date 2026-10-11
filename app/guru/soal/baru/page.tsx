@@ -6,10 +6,10 @@ export const metadata: Metadata = { title: "Buat Latihan Soal" };
 export const dynamic = "force-dynamic";
 
 interface Props {
-  searchParams: Promise<{ kelasId?: string }>;
+  searchParams: Promise<{ kelasId?: string; babId?: string }>;
 }
 
 export default async function SoalBaruRoute({ searchParams }: Props) {
-  const { kelasId } = await searchParams;
-  return <SoalBaruPage kelasIdAwal={kelasId} />;
+  const { kelasId, babId } = await searchParams;
+  return <SoalBaruPage kelasIdAwal={kelasId} babIdAwal={babId} />;
 }

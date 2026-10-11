@@ -226,7 +226,8 @@ npm run guru:add -- --nama "Budi Santoso" --email budi@email.com --dry-run
 What the teacher can do after logging in at `/guru/masuk`:
 
 - Manage their **own** classes only (create class, materials, quizzes, share class codes).
-- See progress and student feedback for their **own** classes only.
+- **Kelola materi** (`/guru/materi`) — list every chapter of a class, then edit, delete, preview as a student, or add quiz questions for that chapter. The **+ Tambah materi** button opens the chapter form (`/guru/materi/baru`).
+- See progress and student feedback for their **own** classes only, and download a CSV recap from the progress page (**Unduh rekap**).
 - Change their own password at `/guru/akun` (menu **Akun** in the teacher panel).
 
 > ⚠️ Change the seeded demo password (`demo1234`) before going live with real teachers.
@@ -244,8 +245,10 @@ What the teacher can do after logging in at `/guru/masuk`:
 | `GET/POST` | `/api/guru/kelas` | List classes / create a new class |
 | `GET` | `/api/guru/bab?kelasId=` | Chapters per class (quiz builder) |
 | `POST` | `/api/guru/materi` | Save a lesson chapter (text, video, book source) |
+| `PATCH/DELETE` | `/api/guru/materi/:babId` | Edit or delete an existing chapter (owner only) |
 | `POST` | `/api/guru/soal` | Save multiple-choice quiz questions |
 | `GET` | `/api/guru/progress?kelasId=` | Per-student progress summary + metrics |
+| `GET` | `/api/guru/rekap?kelasId=` | Download class progress recap (CSV) |
 | `POST` | `/api/guru/password` | Change the logged-in teacher's password |
 | `GET` | `/api/guru/status` | Infrastructure status (`dbAktif` / uptime) |
 | `GET/POST` | `/api/auth/*` | Auth.js — teacher login |
