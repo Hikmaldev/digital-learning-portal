@@ -111,6 +111,7 @@ export function MateriBaruPage() {
           { href: "/guru/dashboard", label: "Dashboard" },
           { href: "/guru/materi/baru", label: "Materi", aktif: true },
           { href: "/guru/soal/baru", label: "Latihan soal" },
+          { href: "/guru/akun", label: "Akun" },
         ]}
         aksi={{ href: "/guru/dashboard", label: "Dashboard" }}
       />

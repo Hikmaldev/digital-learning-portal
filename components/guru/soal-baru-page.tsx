@@ -210,6 +210,7 @@ export function SoalBaruPage() {
           { href: "/guru/dashboard", label: "Dashboard" },
           { href: "/guru/materi/baru", label: "Materi" },
           { href: "/guru/soal/baru", label: "Latihan soal", aktif: true },
+          { href: "/guru/akun", label: "Akun" },
         ]}
         aksi={{ href: "/guru/dashboard", label: "Dashboard" }}
       />

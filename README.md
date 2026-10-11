@@ -23,13 +23,20 @@
 - Chapter lists + bite-sized lesson materials per subject, with embedded videos & book sources
 - **Multiple-choice quizzes with auto-grading** — score and answer breakdown appear instantly
 - **Auto-saved drafts** — answers stay in `sessionStorage`, surviving page reloads
+- **Overall & per-chapter progress** — a completed quiz chapter shows 100% "Selesai" on the class page
+- **Student feedback form** — suggestions, bug reports, or praise straight from the class page
 
 ### 🧑‍🏫 Teacher Panel (Auth.js login)
 - **Dashboard** — at-a-glance metrics: active students, collected quizzes, average progress
-- **Create a new class** — next-semester classes with an auto-generated 6-character access code, ready to share with students
-- **Per-student progress** — done / in progress / not started statuses
+- **Create a new class** — auto-generated 6-character access code, ready to share. Levels: `Paket A`, `Paket B`, `Paket C`, or `CAMPURAN` (mixed classes)
+- **Per-student progress** — summaries plus a newest-first activity log (student × chapter, score, status, WIB time)
 - **Lesson editor** — add chapters with summary, content, video & book sources
 - **Quiz builder** — compose multiple-choice questions and mark the correct answer
+- **Feedback inbox** — read and mark student feedback as read
+
+### 📖 User Guide
+- **/panduan** — step-by-step guides with screenshots for students and teachers
+  ([`/panduan/siswa`](app/panduan/siswa/page.tsx), [`/panduan/guru`](app/panduan/guru/page.tsx))
 
 ### 🛡️ Integrity & Resilience
 - **Answer keys never reach the browser** — grading happens entirely on the server (`lib/grading.ts`)
@@ -197,6 +204,35 @@ Demo class code for students:
 
 ---
 
+## 👥 Adding Teacher Accounts (Multi-Teacher)
+
+The portal supports multiple teachers. Each class belongs to exactly one teacher,
+so materials, quizzes, student progress, and feedback never mix between teachers —
+even when the same subject (e.g. Mathematics) is taught in different classes.
+
+Create a new teacher account from the CLI:
+
+```bash
+# Random password is generated and printed (share it via WhatsApp)
+npm run guru:add -- --nama "Budi Santoso" --email budi@email.com
+
+# Or set the initial password yourself
+npm run guru:add -- --nama "Budi Santoso" --email budi@email.com --password "rahasia123"
+
+# Validate without saving
+npm run guru:add -- --nama "Budi Santoso" --email budi@email.com --dry-run
+```
+
+What the teacher can do after logging in at `/guru/masuk`:
+
+- Manage their **own** classes only (create class, materials, quizzes, share class codes).
+- See progress and student feedback for their **own** classes only.
+- Change their own password at `/guru/akun` (menu **Akun** in the teacher panel).
+
+> ⚠️ Change the seeded demo password (`demo1234`) before going live with real teachers.
+
+---
+
 ## 📡 API Endpoints
 
 | Method | Endpoint | Description |
@@ -210,6 +246,7 @@ Demo class code for students:
 | `POST` | `/api/guru/materi` | Save a lesson chapter (text, video, book source) |
 | `POST` | `/api/guru/soal` | Save multiple-choice quiz questions |
 | `GET` | `/api/guru/progress?kelasId=` | Per-student progress summary + metrics |
+| `POST` | `/api/guru/password` | Change the logged-in teacher's password |
 | `GET` | `/api/guru/status` | Infrastructure status (`dbAktif` / uptime) |
 | `GET/POST` | `/api/auth/*` | Auth.js — teacher login |
 

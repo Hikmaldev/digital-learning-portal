@@ -12,6 +12,7 @@
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
     "db:seed": "prisma db seed",
+    "guru:add": "tsx scripts/tambah-guru.ts",
     "db:konten": "node --env-file-if-exists=.env --import tsx prisma/seed-paket-abc.ts"
   },
   "dependencies": {
