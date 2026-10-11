@@ -70,8 +70,36 @@ export async function getBabLatihan(kodeKelas?: string): Promise<InfoBabLatihan 
 export async function getRingkasanKelas(kelasId: string): Promise<RingkasanSiswa[]> {
   const db = requireDb();
   if (!db) return fallback(daftarSiswa);
-  const siswa = await db.progressSiswa.groupBy({ by: ["nama_siswa"], where: { kelas_id: kelasId }, _count: true, _max: { waktu_submit: true } });
-  return siswa.map((s) => ({ id: s.nama_siswa, nama: s.nama_siswa, bab_terakhir: "—", nilai: null, status: "SUDAH_MENGERJAKAN" as const, terakhir_aktif: s._max.waktu_submit?.toLocaleString("id-ID") ?? "—" }));
+  // Satu siswa punya banyak baris progress (per soal). Ambil aktivitas terbaru tiap siswa.
+  const baris = await db.progressSiswa.findMany({
+    where: { kelas_id: kelasId },
+    select: {
+      nama_siswa: true,
+      skor: true,
+      waktu_submit: true,
+      bab: { select: { judul: true, mata_pelajaran: true } },
+    },
+    orderBy: { waktu_submit: "desc" },
+  });
+  const terbaru = new Map<string, (typeof baris)[number]>();
+  for (const b of baris) {
+    if (!terbaru.has(b.nama_siswa)) terbaru.set(b.nama_siswa, b);
+  }
+  return [...terbaru.values()].map((b) => ({
+    id: b.nama_siswa,
+    nama: b.nama_siswa,
+    bab_terakhir: `${b.bab.mata_pelajaran} · ${b.bab.judul}`,
+    nilai: b.skor,
+    status: "SUDAH_MENGERJAKAN" as const,
+    terakhir_aktif: b.waktu_submit.toLocaleString("id-ID", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      timeZone: "Asia/Jakarta",
+    }),
+  }));
 }
 
 export async function getRingkasanPelajaranDb(
