@@ -187,6 +187,13 @@ Demo class code for students:
 | Class Code | Class Name | Level |
 |---|---|---|
 | `HB2026` | Kelas Kesetaraan Harapan Bersama | Paket B |
+| `PAKETA` | Kelas A (Paket A — Setara SD) | Bahasa Indonesia, Matematika |
+| `PAKETB` | Kelas B (Paket B — Setara SMP) | Bahasa Indonesia, Matematika, Bahasa Inggris |
+| `PAKETC` | Kelas C (Paket C — Setara SMA) | Matematika, Bahasa Indonesia, Bahasa Inggris, Informatika |
+
+> `PAKETA`/`PAKETB`/`PAKETC` come from `npm run db:konten`. Every chapter ships with
+> materials and at least 5 auto-graded multiple-choice questions, sourced from
+> official Kemendikdasmen textbooks (SIBI).
 
 ---
 
