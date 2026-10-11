@@ -3,7 +3,7 @@ import Link from "next/link";
 import { FooterSimple } from "@/components/footer-simple";
 import { TopBar } from "@/components/top-bar";
 import { StatusBadge } from "@/components/ui";
-import { peringatanKunci } from "@/lib/data";
+import { peringatanBahasaUmum, peringatanKunci } from "@/lib/data";
 import { getBabLatihan, getBabList, getKelasAktifDb, getKelasByKode } from "@/lib/queries";
 import type { Bab } from "@/lib/types";
 import { demoMode } from "@/lib/runtime";
@@ -135,6 +135,10 @@ export default async function BabMateriPage({ searchParams }: Props) {
   const showCallout =
     target.id === BAB_DEMO ||
     target.mata_pelajaran?.toUpperCase().includes("BAHASA INDONESIA");
+  const peringatanMateri =
+    target.id === BAB_DEMO || /gagasan/i.test(target.judul)
+      ? peringatanKunci
+      : peringatanBahasaUmum;
   const labelBab = `Bab ${String(target.urutan ?? 0).padStart(2, "0")}`;
 
   return (
@@ -197,7 +201,7 @@ export default async function BabMateriPage({ searchParams }: Props) {
               {showCallout && (
                 <div className="my-6 ml-0 border-l-4 border-leafgreen bg-[#e3ead8] px-5 py-4">
                   <strong className="block text-xs">Ingat baik-baik</strong>
-                  <p className="m-0 text-xs text-[#58695a]">{peringatanKunci}</p>
+                  <p className="m-0 text-xs text-[#58695a]">{peringatanMateri}</p>
                 </div>
               )}
             </div>

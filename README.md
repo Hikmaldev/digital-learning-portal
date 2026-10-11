@@ -122,9 +122,12 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 npm run db:generate   # generate the Prisma client
 npm run db:migrate    # prisma migrate dev — create & apply migrations
 npm run db:seed       # fill demo data (teacher, HB2026 class, chapters, quizzes, progress)
+npm run db:konten     # add Paket A/B/C classes (PAKETA/PAKETB/PAKETC) with materials & quizzes
 ```
 
 > Run `npm run db:seed` **only once** — chapter/quiz data uses `create` (not `upsert`).
+> `npm run db:konten` is safe to run repeatedly: it upserts classes and chapters, and only
+> creates quizzes for chapters that don't have any yet.
 
 ### 4. Run the Dev Server
 

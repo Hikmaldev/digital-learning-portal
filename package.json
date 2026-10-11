@@ -11,7 +11,8 @@
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
-    "db:seed": "prisma db seed"
+    "db:seed": "prisma db seed",
+    "db:konten": "node --env-file-if-exists=.env --import tsx prisma/seed-paket-abc.ts"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.1.1",

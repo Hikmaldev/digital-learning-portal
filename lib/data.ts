@@ -210,6 +210,9 @@ export interface HasilLatihan {
 export const peringatanKunci =
   "Gagasan utama biasanya dapat ditemukan di awal atau akhir paragraf. Kalimat yang menjelaskan gagasan utama disebut kalimat penjelas.";
 
+export const peringatanBahasaUmum =
+  "Setelah membaca, coba ceritakan kembali isi bacaan dengan bahasamu sendiri. Cara ini membantumu memahami dan mengingat materi lebih lama.";
+
 export const ringkasanPelajaran: RingkasanPelajaran[] = [
   { mata_pelajaran: "Matematika", jumlah_bab: 4, jumlah_latihan: 18, jumlah_siswa: 24, progres: 86 },
   { mata_pelajaran: "Bahasa Indonesia", jumlah_bab: 3, jumlah_latihan: 12, jumlah_siswa: 24, progres: 68 },

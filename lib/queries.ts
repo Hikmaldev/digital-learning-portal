@@ -35,7 +35,7 @@ export async function getKelasByKode(kode: string, guruId?: string): Promise<Kel
 export async function getBabList(kelasId: string): Promise<Bab[]> {
   const db = requireDb();
   if (!db) return fallback(babSiswa);
-  const bab = await db.bab.findMany({ where: { kelas_id: kelasId }, include: { _count: { select: { soal: true } } }, orderBy: { urutan: "asc" } });
+  const bab = await db.bab.findMany({ where: { kelas_id: kelasId }, include: { _count: { select: { soal: true } } }, orderBy: [{ mata_pelajaran: "asc" }, { urutan: "asc" }] });
   return bab.map((b) => ({ id: b.id, kelas_id: b.kelas_id, mata_pelajaran: b.mata_pelajaran, judul: b.judul, ringkasan: b.ringkasan ?? `${b._count.soal} latihan tersedia`, konten_materi: b.konten_materi, url_video: b.url_video ?? undefined, link_sumber: b.link_sumber ?? undefined, urutan: b.urutan, jumlah_latihan: b._count.soal, progres: 0, status: "BELUM_MULAI" }));
 }
 
