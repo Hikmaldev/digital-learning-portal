@@ -2,10 +2,9 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FooterSimple } from "@/components/footer-simple";
 import { TopBar } from "@/components/top-bar";
-import { useSessionState } from "@/lib/session-state";
 import { kelasAktif, namaSiswaDemo } from "@/lib/data";
 import type { HasilLatihan } from "@/lib/data";
 
@@ -25,10 +24,32 @@ interface Props {
   labelBab: string;
   kelasNama: string;
   kodeKelas: string;
+  namaSiswa?: string;
 }
 
-const KUNCI_DRAFT = "rb_draft_latihan";
+/** Kunci draft versi lama (global) — dibersihkan agar tidak mengacaukan hitungan. */
+const KUNCI_DRAFT_LAMA = "rb_draft_latihan";
 const KUNCI_HASIL = "rb_hasil_latihan";
+/** Batas waktu kirim — koneksi lambat tidak boleh membuat tombol macet. */
+const TIMEOUT_KIRIM_MS = 15000;
+
+/** Baca draft bab ini dari perangkat; hanya jawaban yang soalnya masih ada. */
+function bacaDraft(kunci: string, soal: QuizSoal[]): Record<string, string> {
+  if (typeof window === "undefined") return {};
+  try {
+    window.sessionStorage.removeItem(KUNCI_DRAFT_LAMA);
+    const mentah = window.sessionStorage.getItem(kunci);
+    if (!mentah) return {};
+    const isi = JSON.parse(mentah) as Record<string, string>;
+    const bersih: Record<string, string> = {};
+    for (const s of soal) {
+      if (isi[s.id]) bersih[s.id] = isi[s.id];
+    }
+    return bersih;
+  } catch {
+    return {};
+  }
+}
 
 export function QuizPage({
   soal,
@@ -38,15 +59,30 @@ export function QuizPage({
   labelBab,
   kelasNama,
   kodeKelas,
+  namaSiswa: namaSiswaProp,
 }: Props) {
   const router = useRouter();
-  const [jawaban, setJawaban] = useSessionState<Record<string, string>>(
-    KUNCI_DRAFT,
-    {}
+
+  // Draft dipisah per kelas + bab, jadi jawaban bab lain tidak pernah tercampur.
+  const kunciDraft = `rb_draft_latihan:${kodeKelas}:${babId}`;
+
+  // Inisialisasi lazy: draft perangkat dibaca sekali saat mount (setelah
+  // hidrasi) sehingga tidak memicu setState di dalam effect.
+  const [jawaban, setJawaban] = useState<Record<string, string>>(() =>
+    bacaDraft(kunciDraft, soal)
   );
   const [tersimpan, setTersimpan] = useState(false);
   const [mengirim, setMengirim] = useState(false);
   const [gagal, setGagal] = useState("");
+
+  // AUTO-SAVE: setiap perubahan jawaban langsung ditulis ke perangkat siswa.
+  useEffect(() => {
+    try {
+      window.sessionStorage.setItem(kunciDraft, JSON.stringify(jawaban));
+    } catch {
+      /* penyimpanan tidak tersedia */
+    }
+  }, [jawaban, kunciDraft]);
 
   useEffect(() => {
     if (!tersimpan) return;
@@ -54,7 +90,13 @@ export function QuizPage({
     return () => window.clearTimeout(timer);
   }, [tersimpan]);
 
-  const terjawab = Object.keys(jawaban).length;
+  // Hitung hanya jawaban untuk soal bab ini.
+  const terjawab = useMemo(
+    () => soal.filter((s) => jawaban[s.id]).length,
+    [soal, jawaban]
+  );
+  const sisa = soal.length - terjawab;
+  const lengkap = soal.length > 0 && sisa === 0;
 
   function pilih(soalId: string, opsiId: string) {
     setJawaban((prev) => ({ ...prev, [soalId]: opsiId }));
@@ -62,8 +104,23 @@ export function QuizPage({
     setGagal("");
   }
 
+  function ulangi() {
+    if (!window.confirm("Hapus semua jawaban di bab ini dan mulai dari awal?")) {
+      return;
+    }
+    setJawaban({});
+    setTersimpan(false);
+    setGagal("");
+    try {
+      window.sessionStorage.removeItem(kunciDraft);
+    } catch {
+      /* penyimpanan tidak tersedia */
+    }
+  }
+
   function kumpulkan(e: React.FormEvent) {
     e.preventDefault();
+    if (!lengkap || mengirim) return;
     void kirimJawaban();
   }
 
@@ -71,33 +128,46 @@ export function QuizPage({
   async function kirimJawaban() {
     setMengirim(true);
     setGagal("");
-    const namaSiswa = sessionStorage.getItem("rb_nama_siswa") ?? namaSiswaDemo;
+    const namaSiswa =
+      namaSiswaProp ?? sessionStorage.getItem("rb_nama_siswa") ?? namaSiswaDemo;
     // Kode dari URL halaman adalah konteks kelas yang benar; sessionStorage
     // hanya dipakai bila prop tidak tersedia.
     const kodeKirim =
       kodeKelas || sessionStorage.getItem("rb_kode_kelas") || kelasAktif.kode_akses;
+    // Kirim hanya jawaban soal bab ini (kunci sisa bab lain tidak ikut).
+    const jawabanKirim = Object.fromEntries(
+      soal.filter((s) => jawaban[s.id]).map((s) => [s.id, jawaban[s.id]])
+    );
 
     let hasil: HasilLatihan;
     try {
-      const res = await fetch("/api/siswa/latihan/submit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          kodeKelas: kodeKirim,
-          namaSiswa,
-          babId,
-          jawaban,
-        }),
-      });
+      const kontrol = new AbortController();
+      const timer = window.setTimeout(() => kontrol.abort(), TIMEOUT_KIRIM_MS);
+      let res: Response;
+      try {
+        res = await fetch("/api/siswa/latihan/submit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            kodeKelas: kodeKirim,
+            namaSiswa,
+            babId,
+            jawaban: jawabanKirim,
+          }),
+          signal: kontrol.signal,
+        });
+      } finally {
+        window.clearTimeout(timer);
+      }
       const json = (await res.json()) as { ok: boolean; data?: HasilLatihan };
       if (!res.ok || !json.ok || !json.data) throw new Error("Gagal mengirim");
       hasil = json.data;
     } catch {
-      // Server tidak terjangkau. Hitung lokal hanya bila kunci tersedia
-      // (mode data contoh); jika tidak, beri tahu siswa dan simpan draft.
+      // Server tidak terjangkau / terlalu lama. Hitung lokal hanya bila kunci
+      // tersedia (mode data contoh); jika tidak, simpan draft & beri tahu siswa.
       if (!kunciLokal) {
         setGagal(
-          "Tidak dapat terhubung ke server. Jawabanmu tetap tersimpan — coba kirim lagi."
+          "Koneksi ke server terputus atau terlalu lama. Jawabanmu tetap tersimpan otomatis di perangkat ini — tekan “Kirim jawaban” lagi."
         );
         setMengirim(false);
         return;
@@ -121,13 +191,15 @@ export function QuizPage({
       };
     }
     sessionStorage.setItem(KUNCI_HASIL, JSON.stringify(hasil));
-    sessionStorage.removeItem(KUNCI_DRAFT);
+    sessionStorage.removeItem(kunciDraft);
+    sessionStorage.removeItem(KUNCI_DRAFT_LAMA);
     setMengirim(false);
     router.push("/siswa/latihan/hasil");
   }
 
-  const urlMateri = `/siswa/materi?id=${encodeURIComponent(babId)}&kode=${encodeURIComponent(kodeKelas)}`;
-  const urlLatihan = `/siswa/latihan?kode=${encodeURIComponent(kodeKelas)}`;
+  const namaParam = namaSiswaProp ? `&nama=${encodeURIComponent(namaSiswaProp)}` : "";
+  const urlMateri = `/siswa/materi?id=${encodeURIComponent(babId)}&kode=${encodeURIComponent(kodeKelas)}${namaParam}`;
+  const urlLatihan = `/siswa/latihan?kode=${encodeURIComponent(kodeKelas)}${namaParam}`;
 
   return (
     <>
@@ -148,10 +220,7 @@ export function QuizPage({
             {kelasNama}
           </Link>
           <span className="text-[#a3aaa1]">/</span>
-          <Link
-            className="hover:underline"
-            href={urlMateri}
-          >
+          <Link className="hover:underline" href={urlMateri}>
             {mapel} · {labelBab}
           </Link>
           <span className="text-[#a3aaa1]">/</span>
@@ -200,19 +269,34 @@ export function QuizPage({
               </fieldset>
             ))}
 
-            <div className="mt-6 flex items-center justify-between border-t border-line pt-5">
-              <span className="text-[10px] text-muted">
-                {tersimpan
-                  ? "✓ Draft tersimpan di perangkatmu."
-                  : "Jawaban tersimpan sementara di perangkatmu."}
-              </span>
+            <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-5">
+              <div className="flex flex-col gap-1.5">
+                <span className="text-[10px] text-muted">
+                  {tersimpan
+                    ? "✓ Jawaban tersimpan otomatis di perangkatmu."
+                    : "Jawaban tersimpan otomatis di perangkatmu."}
+                </span>
+                {terjawab > 0 && !mengirim && (
+                  <button
+                    type="button"
+                    onClick={ulangi}
+                    className="self-start text-[10px] font-bold text-muted underline hover:text-coral"
+                  >
+                    Ulangi dari awal
+                  </button>
+                )}
+              </div>
               <button
                 type="submit"
-                disabled={terjawab < soal.length || mengirim}
+                disabled={!lengkap || mengirim}
                 className="btn btn-coral disabled:cursor-not-allowed disabled:opacity-40"
               >
-                {mengirim ? "Mengirim..." : "Kirim jawaban"}{" "}
-                {!mengirim && <span className="pl-1 text-base">→</span>}
+                {mengirim
+                  ? "Mengirim..."
+                  : lengkap
+                    ? "Kirim jawaban"
+                    : `Jawab ${sisa} soal lagi`}{" "}
+                {!mengirim && lengkap && <span className="pl-1 text-base">→</span>}
               </button>
             </div>
             {gagal && (
@@ -228,7 +312,7 @@ export function QuizPage({
           <aside className="flex flex-col gap-4">
             <div className="panel self-start p-5">
               <p className="eyebrow eyebrow-muted mb-3">Progres latihan</p>
-              <h3 className="mb-4 text-base tracking-tight">Gagasan utama</h3>
+              <h3 className="mb-4 text-base tracking-tight">{mapel}</h3>
               <div className="grid grid-cols-5 gap-1.5">
                 {soal.map((soalItem, i) => (
                   <span
@@ -245,6 +329,7 @@ export function QuizPage({
               </div>
               <p className="mt-4 text-[11px] leading-relaxed text-muted">
                 Pilih satu jawaban yang paling tepat untuk setiap soal.
+                Jawabanmu tersimpan otomatis — aman walau halaman ditutup.
               </p>
             </div>
             <div className="panel p-5">

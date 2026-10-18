@@ -122,11 +122,15 @@ export default function PanduanSiswaPage() {
         >
           <p>
             Pilih <b>satu jawaban</b> untuk setiap soal. Tombol{" "}
-            <b>Kirim jawaban</b> aktif setelah semua soal dijawab.
+            <b>Kirim jawaban</b> aktif setelah semua soal dijawab — selama
+            belum lengkap, tombolnya menunjukkan berapa soal lagi yang perlu
+            dijawab.
           </p>
           <p>
-            Jawabanmu tersimpan otomatis di HP — kalau halaman ter-refresh,
-            pilihanmu tidak hilang.
+            Jawabanmu <b>tersimpan otomatis di HP untuk setiap bab</b> — kalau
+            halaman ter-refresh, HP terkunci, atau kamu membuka materi dulu,
+            pilihanmu tidak hilang. Ada juga tombol <b>Ulangi dari awal</b>
+            bila ingin mengosongkan dan mengerjakan ulang.
           </p>
         </Langkah>
 

@@ -22,7 +22,7 @@
 - **Join with just a class code** (e.g. `HB2026`) — no registration required
 - Chapter lists + bite-sized lesson materials per subject, with embedded videos & book sources
 - **Multiple-choice quizzes with auto-grading** — score and answer breakdown appear instantly
-- **Auto-saved drafts** — answers stay in `sessionStorage`, surviving page reloads
+- **Auto-saved drafts, per chapter** — every answer is saved to `sessionStorage` under a per-class+chapter key, so reloads, locked phones, or visiting the lesson never lose progress; the submit button clearly says how many questions are left and unlocks the moment all of them are answered (submit has a 15s timeout so a slow connection can never leave it stuck)
 - **Overall & per-chapter progress** — a completed quiz chapter shows 100% "Selesai" on the class page
 - **Student feedback form** — suggestions, bug reports, or praise straight from the class page
 

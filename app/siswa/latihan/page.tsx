@@ -265,6 +265,7 @@ export default async function LatihanSoalPage({ searchParams }: Props) {
       labelBab={`Bab ${String(babDipilih.urutan ?? 0).padStart(2, "0")}`}
       kelasNama={kelasSiswa.nama_kelas}
       kodeKelas={kelasSiswa.kode_akses}
+      namaSiswa={namaSiswa}
     />
   );
 }
