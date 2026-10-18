@@ -136,7 +136,21 @@ export default async function BabMateriPage({ searchParams }: Props) {
     target.id === BAB_DEMO || /gagasan/i.test(target.judul)
       ? peringatanKunci
       : peringatanBahasaUmum;
-  const labelBab = `Bab ${String(target.urutan ?? 0).padStart(2, "0")}`;
+  // Nomor bab dihitung di dalam mapelnya (bukan nomor global kelas).
+  const kelompokMapel: Array<{ mapel: string; daftar: Array<{ bab: Bab; no: number }> }> = [];
+  for (const bab of babList) {
+    const terakhir = kelompokMapel[kelompokMapel.length - 1];
+    if (terakhir?.mapel === bab.mata_pelajaran) {
+      terakhir.daftar.push({ bab, no: terakhir.daftar.length + 1 });
+    } else {
+      kelompokMapel.push({ mapel: bab.mata_pelajaran, daftar: [{ bab, no: 1 }] });
+    }
+  }
+  const noTarget =
+    kelompokMapel
+      .find((k) => k.mapel === target.mata_pelajaran)
+      ?.daftar.find((x) => x.bab.id === target.id)?.no ?? target.urutan ?? 0;
+  const labelBab = `Bab ${String(noTarget).padStart(2, "0")}`;
 
   return (
     <>
@@ -221,22 +235,29 @@ export default async function BabMateriPage({ searchParams }: Props) {
           <aside className="flex flex-col gap-4">
             <div className="panel p-5">
               <h3 className="mb-4 text-base tracking-tight">
-                Bab di kelas ini
+                Materi per mapel
               </h3>
               <nav>
-                {babList.map((bab) => (
-                  <Link
-                    key={bab.id}
-                    href={`/siswa/materi?id=${bab.id}&kode=${kodeKelas}${namaParam}`}
-                    className={`flex items-start gap-2.5 border-t border-line py-3 text-[11px] ${
-                      bab.id === target.id ? "font-bold text-coral" : "text-ink"
-                    }`}
-                  >
-                    <span className="font-normal text-muted">
-                      {String(bab.urutan ?? 0).padStart(2, "0")}
-                    </span>
-                    {bab.judul}
-                  </Link>
+                {kelompokMapel.map((kel) => (
+                  <div key={kel.mapel} className="mt-5 first:mt-0">
+                    <p className="mb-0.5 text-[10px] font-bold uppercase tracking-[0.13em] text-muted">
+                      {kel.mapel}
+                    </p>
+                    {kel.daftar.map(({ bab, no }) => (
+                      <Link
+                        key={bab.id}
+                        href={`/siswa/materi?id=${bab.id}&kode=${kodeKelas}${namaParam}`}
+                        className={`flex items-start gap-2.5 border-t border-line py-3 text-[11px] ${
+                          bab.id === target.id ? "font-bold text-coral" : "text-ink"
+                        }`}
+                      >
+                        <span className="font-normal text-muted">
+                          {String(no).padStart(2, "0")}
+                        </span>
+                        {bab.judul}
+                      </Link>
+                    ))}
+                  </div>
                 ))}
               </nav>
             </div>

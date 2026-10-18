@@ -74,6 +74,18 @@ export function SiswaKelasPage() {
   const total = bab.length;
   const prosentase = total === 0 ? 0 : Math.round((selesai / total) * 100);
 
+  // Kelompokkan bab per mata pelajaran (API mengirim urutan mapel → bab).
+  // Nomor bab dihitung ulang di dalam mapelnya masing-masing.
+  const kelompokMapel: Array<{ mapel: string; daftar: Array<Bab & { no: number }> }> = [];
+  for (const item of bab) {
+    const terakhir = kelompokMapel[kelompokMapel.length - 1];
+    if (terakhir?.mapel === item.mata_pelajaran) {
+      terakhir.daftar.push({ ...item, no: terakhir.daftar.length + 1 });
+    } else {
+      kelompokMapel.push({ mapel: item.mata_pelajaran, daftar: [{ ...item, no: 1 }] });
+    }
+  }
+
   const kodeParam = `?kode=${encodeURIComponent(kelas.kode_akses)}`;
   const namaParam = nama ? `&nama=${encodeURIComponent(nama)}` : "";
   const [kataDepan, kataAkhir] = (() => {
@@ -148,43 +160,51 @@ export function SiswaKelasPage() {
           <div>
             <p className="eyebrow eyebrow-muted mb-2">Semua pelajaran</p>
             <h2 className="text-2xl tracking-tight">
-              Pilih bab yang ingin dipelajari.
+              Pilih mata pelajaran, lalu babnya.
             </h2>
           </div>
           <p className="mb-1 hidden text-[11px] text-muted md:block">
-            {total} bab
+            {total} bab · {kelompokMapel.length} mapel
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {bab.map((item: Bab) => (
-            <Link
-              key={item.id}
-              href={`/siswa/materi?id=${item.id}&kode=${encodeURIComponent(kelas.kode_akses)}${namaParam}`}
-              className="group flex min-h-[206px] flex-col border border-line bg-paper p-6 hover:border-coral"
-            >
-              <span className="text-[10px] font-bold tracking-[1px] text-coral">
-                {item.mata_pelajaran}
-              </span>
-              <h3 className="mt-5 mb-2.5 text-lg leading-tight tracking-tight">
-                {item.judul}
-              </h3>
-              <p className="min-h-9 text-[11px] text-muted">{item.ringkasan}</p>
-              <div className="mt-auto flex items-center justify-between pt-4">
-                <StatusBadge status={item.status} />
-                <b className="text-[10px]">{item.progres}%</b>
-              </div>
-              {item.progres > 0 && (
-                <div className="mt-2 h-1 w-full bg-[#deded4]">
-                  <div
-                    className="h-full bg-ink"
-                    style={{ width: `${item.progres}%` }}
-                  />
-                </div>
-              )}
-            </Link>
-          ))}
-        </div>
+        {kelompokMapel.map((kel) => (
+          <section key={kel.mapel} className="mb-9 last:mb-0">
+            <div className="mb-4 flex items-end justify-between border-b border-line pb-2.5">
+              <h3 className="text-sm font-bold tracking-tight">{kel.mapel}</h3>
+              <p className="text-[10px] text-muted">{kel.daftar.length} bab</p>
+            </div>
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+              {kel.daftar.map((item) => (
+                <Link
+                  key={item.id}
+                  href={`/siswa/materi?id=${item.id}&kode=${encodeURIComponent(kelas.kode_akses)}${namaParam}`}
+                  className="group flex min-h-[206px] flex-col border border-line bg-paper p-6 hover:border-coral"
+                >
+                  <span className="text-[10px] font-bold tracking-[1px] text-coral">
+                    Bab {item.no}
+                  </span>
+                  <h4 className="mt-5 mb-2.5 text-lg leading-tight tracking-tight">
+                    {item.judul}
+                  </h4>
+                  <p className="min-h-9 text-[11px] text-muted">{item.ringkasan}</p>
+                  <div className="mt-auto flex items-center justify-between pt-4">
+                    <StatusBadge status={item.status} />
+                    <b className="text-[10px]">{item.progres}%</b>
+                  </div>
+                  {item.progres > 0 && (
+                    <div className="mt-2 h-1 w-full bg-[#deded4]">
+                      <div
+                        className="h-full bg-ink"
+                        style={{ width: `${item.progres}%` }}
+                      />
+                    </div>
+                  )}
+                </Link>
+              ))}
+            </div>
+          </section>
+        ))}
 
         <FeedbackForm />
       </main>
