@@ -40,7 +40,7 @@ export default async function FeedbackGuruPage() {
           { href: "/guru/progress", label: "Progress siswa" },
           { href: "/guru/feedback", label: "Masukan siswa", aktif: true },
         ]}
-        aksi={{ href: "/", label: "Keluar" }}
+        aksi={{ href: "/", label: "Keluar", keluar: true }}
       />
       <main className="mx-auto max-w-[900px] px-5 py-12 md:px-10">
         <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-start md:justify-between">

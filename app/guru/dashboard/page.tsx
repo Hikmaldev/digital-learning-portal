@@ -82,7 +82,7 @@ export default async function DashboardGuruPage({ searchParams }: Props) {
             { href: hrefSoal, label: "Latihan soal" },
             { href: "/guru/akun", label: "Akun" },
           ]}
-        aksi={{ href: "/", label: "Keluar" }}
+        aksi={{ href: "/", label: "Keluar", keluar: true }}
       />
       <header className="border-b border-line bg-soft px-5 py-9 md:px-10">
         <div className="mx-auto flex max-w-[1104px] flex-col gap-5 md:flex-row md:items-end md:justify-between">

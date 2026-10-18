@@ -75,7 +75,7 @@ export default async function DashboardProgressPage({ searchParams }: Props) {
           { href: "/guru/feedback", label: "Masukan siswa" },
           { href: "/guru/akun", label: "Akun" },
         ]}
-        aksi={{ href: "/", label: "Keluar" }}
+        aksi={{ href: "/", label: "Keluar", keluar: true }}
       />
       <main className="mx-auto max-w-[1180px] px-5 py-12 md:px-10">
         <div className="mb-8 flex flex-col gap-3 md:flex-row md:items-start md:justify-between">

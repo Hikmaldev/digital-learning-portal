@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Brand } from "./brand";
+import { TombolKeluar } from "./tombol-keluar";
 
 export interface NavItem {
   href: string;
@@ -9,7 +10,7 @@ export interface NavItem {
 
 interface TopBarProps {
   nav: NavItem[];
-  aksi?: { href: string; label: string };
+  aksi?: { href: string; label: string; keluar?: boolean };
 }
 
 /** Bar navigasi atas untuk area siswa & guru. */
@@ -29,11 +30,12 @@ export function TopBar({ nav, aksi }: TopBarProps) {
             </Link>
           ))}
         </nav>
-        {aksi && (
+        {aksi && !aksi.keluar && (
           <Link href={aksi.href} className="text-xs font-bold hover:text-coral">
             {aksi.label} <span className="text-coral">↗</span>
           </Link>
         )}
+        {aksi?.keluar && <TombolKeluar label={aksi.label} />}
       </div>
       {/* Nav mobile: baris kedua, scroll horizontal, selalu terlihat di HP */}
       {nav.length > 0 && (
