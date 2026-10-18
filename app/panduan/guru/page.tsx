@@ -168,10 +168,12 @@ export default function PanduanGuruPage() {
             dan kapan.
           </p>
           <p>
-            Butuh arsip untuk laporan? Klik <b>Unduh rekap (CSV)</b> — file
-            berisi info kelas, ringkasan tiap siswa (bab selesai, rata-rata
-            nilai), dan rincian semua bab termasuk yang belum dikerjakan. Bisa
-            langsung dibuka di Excel atau Google Sheets.
+            Butuh arsip untuk laporan? Klik <b>Unduh rekap (Excel)</b> — file
+            <b>.xlsx</b> berisi dua sheet ringkas: <b>Ringkasan</b> (info kelas
+            + ringkasan tiap siswa: bab selesai, persentase, rata-rata, nilai
+            terbaik) dan <b>Rincian per Bab</b> (semua bab tiap siswa, termasuk
+            yang belum dikerjakan). Lebar kolom dan tinggi baris sudah
+            dirapikan, siap dibuka di Excel atau Google Sheets.
           </p>
         </Langkah>
 

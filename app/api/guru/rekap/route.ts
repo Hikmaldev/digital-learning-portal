@@ -3,18 +3,16 @@ import { jsonError } from "../../lib/helpers";
 import { prisma } from "@/lib/prisma";
 import { getGuruSession, guruMemilikiKelas } from "@/lib/authorization";
 import { getRekapLengkap } from "@/lib/queries";
-import { bangunCsvRekap, namaFileRekap } from "@/lib/rekap-csv";
+import { bangunXlsxRekap, namaFileRekap } from "@/lib/rekap-xlsx";
 import { DatabaseUnavailableError } from "@/lib/runtime";
 
 /**
- * GET /api/guru/rekap?kelasId= — unduh rekap progress kelas sebagai CSV.
+ * GET /api/guru/rekap?kelasId= — unduh rekap progress kelas sebagai Excel (.xlsx).
  *
- * Isi file (tiga bagian, lihat lib/rekap-csv.ts):
- *  1. Info kelas + waktu unduh.
- *  2. Ringkasan per siswa (bab selesai, persentase, rata-rata & nilai terbaik).
- *  3. Rincian semua bab untuk setiap siswa (termasuk yang belum dikerjakan).
- *
- * Dipisah dengan ";" + BOM supaya rapi dibuka di Excel Indonesia.
+ * Isi file (lihat lib/rekap-xlsx.ts):
+ *  - Sheet "Ringkasan": info kelas + ringkasan per siswa.
+ *  - Sheet "Rincian per Bab": semua siswa × semua bab (termasuk yang belum).
+ * Lebar kolom & tinggi baris sudah diatur agar ringkas namun terbaca.
  */
 export async function GET(request: NextRequest) {
   const kelasId = request.nextUrl.searchParams.get("kelasId");
@@ -30,9 +28,11 @@ export async function GET(request: NextRequest) {
     const rekap = await getRekapLengkap(kelasId);
     if (!rekap) return jsonError("Kelas tidak ditemukan.", 404);
 
-    return new Response("\uFEFF" + bangunCsvRekap(rekap), {
+    const file = await bangunXlsxRekap(rekap);
+    return new Response(new Uint8Array(file), {
       headers: {
-        "Content-Type": "text/csv; charset=utf-8",
+        "Content-Type":
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         "Content-Disposition": `attachment; filename="${namaFileRekap(rekap.info.kode_akses)}"`,
         "Cache-Control": "no-store",
       },

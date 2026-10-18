@@ -228,7 +228,7 @@ What the teacher can do after logging in at `/guru/masuk`:
 - Manage their **own** classes only (create class, materials, quizzes, share class codes).
 - **Kelola materi** (`/guru/materi`) — list every chapter of a class, then edit, delete, preview as a student, or manage its questions. The **+ Tambah materi** button opens the chapter form (`/guru/materi/baru`).
 - **Kelola latihan soal** (`/guru/soal`) — list every chapter's questions, then edit (Ubah) or delete a question, or add new ones (**+ Tambah soal** opens `/guru/soal/baru`, pre-selected to the chapter).
-- See progress and student feedback for their **own** classes only, and download a **CSV recap** from the progress page (**Unduh rekap**): class info + download time, a per-student summary (chapters completed, percentage, average & best score, last active), and a full chapter-by-chapter breakdown for every student — including chapters not yet done.
+- See progress and student feedback for their **own** classes only, and download an **Excel (.xlsx) recap** from the progress page (**Unduh rekap**): two compact sheets — class info + per-student summary (chapters completed, percentage, average & best score, last active), and a full chapter-by-chapter breakdown for every student (including chapters not yet done). Column widths and row heights are pre-tuned.
 - Change their own password at `/guru/akun` (menu **Akun** in the teacher panel).
 
 > ⚠️ Change the seeded demo password (`demo1234`) before going live with real teachers.
@@ -250,7 +250,7 @@ What the teacher can do after logging in at `/guru/masuk`:
 | `POST` | `/api/guru/soal` | Save multiple-choice quiz questions |
 | `PATCH/DELETE` | `/api/guru/soal/:soalId` | Edit or delete a quiz question (owner only) |
 | `GET` | `/api/guru/progress?kelasId=` | Per-student progress summary + metrics |
-| `GET` | `/api/guru/rekap?kelasId=` | Download class progress recap (CSV: info, per-student summary, per-chapter detail) |
+| `GET` | `/api/guru/rekap?kelasId=` | Download class progress recap as Excel `.xlsx` (summary sheet + per-chapter sheet) |
 | `POST` | `/api/guru/password` | Change the logged-in teacher's password |
 | `GET` | `/api/guru/status` | Infrastructure status (`dbAktif` / uptime) |
 | `GET/POST` | `/api/auth/*` | Auth.js — teacher login |
