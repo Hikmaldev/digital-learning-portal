@@ -9,8 +9,14 @@ interface KelasBagikan {
 }
 
 /** Banner kode kelas: pilih kelas yang kodenya ingin dibagikan, salin sekali klik. */
-export function BagikanKode({ kelas }: { kelas: KelasBagikan[] }) {
-  const [terpilih, setTerpilih] = useState(kelas[0]?.kode ?? "");
+export function BagikanKode({
+  kelas,
+  defaultKode,
+}: {
+  kelas: KelasBagikan[];
+  defaultKode?: string;
+}) {
+  const [terpilih, setTerpilih] = useState(defaultKode ?? kelas[0]?.kode ?? "");
   const aktif = kelas.find((k) => k.kode === terpilih) ?? kelas[0];
 
   return (

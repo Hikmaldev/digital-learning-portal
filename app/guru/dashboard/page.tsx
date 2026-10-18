@@ -5,6 +5,7 @@ import { TopBar } from "@/components/top-bar";
 import { ProgressBar } from "@/components/ui";
 import { BuatKelasDialog } from "@/components/guru/buat-kelas-dialog";
 import { BagikanKode } from "@/components/guru/bagikan-kode";
+import { PilihKelas } from "@/components/guru/pilih-kelas";
 import { kelassRingkasan } from "@/lib/data";
 import { demoMode } from "@/lib/runtime";
 import { auth } from "@/auth";
@@ -95,9 +96,26 @@ export default async function DashboardGuruPage({ searchParams }: Props) {
               Kelola kelas dan lihat perkembangan siswa dari satu tempat.
             </p>
           </div>
-          <Link href={hrefMateriBaru} className="btn btn-coral">
-            + Buat materi baru
-          </Link>
+          <div className="flex flex-col items-start gap-3 md:items-end">
+            {daftarKelas.length > 1 && (
+              <div className="w-full md:w-[300px]">
+                <PilihKelas
+                  daftar={daftarKelas.map((k) => ({
+                    id: k.id,
+                    kode: k.kode,
+                    nama: k.nama,
+                    jenjang: k.jenjang,
+                  }))}
+                  aktif={kodeAktif ?? ""}
+                  basis="/guru/dashboard"
+                  param="kode"
+                />
+              </div>
+            )}
+            <Link href={hrefMateriBaru} className="btn btn-coral">
+              + Buat materi baru
+            </Link>
+          </div>
         </div>
       </header>
 
@@ -148,7 +166,7 @@ export default async function DashboardGuruPage({ searchParams }: Props) {
               Pilih kelas, lalu beri tahu kode ini ke siswanya.
             </p>
           </div>
-          <BagikanKode kelas={daftarKelas} />
+          <BagikanKode kelas={daftarKelas} defaultKode={kodeAktif ?? undefined} />
           <span className="block text-[11px] md:hidden">Bagikan ↗</span>
         </div>
 
@@ -184,7 +202,12 @@ export default async function DashboardGuruPage({ searchParams }: Props) {
                   {daftarKelas.map((k, i) => (
                     <tr key={k.id} className="border-t border-line">
                       <td className="px-4 py-3.5">
-                        <strong className="block text-xs">{k.nama}</strong>
+                        <Link
+                          href={`/guru/dashboard?kode=${k.kode}`}
+                          className="block text-xs hover:text-coral"
+                        >
+                          {k.nama}
+                        </Link>
                         <small className="text-[10px] text-muted">
                           {k.jenjang} · kode {k.kode}
                         </small>
