@@ -343,22 +343,59 @@ export async function getAktivitasKelas(kelasId: string): Promise<AktivitasLatih
     .map(({ waktu, ...a }) => ({ ...a, waktu: waktu.getTime() === 0 ? "—" : formatWaktuWIB(waktu) }));
 }
 
-export interface BarisRekap {
-  nama_siswa: string;
+export interface RekapBab {
+  id: string;
   mata_pelajaran: string;
   judul: string;
+  urutan: number;
+  total_soal: number;
+}
+
+export interface RekapRingkasanSiswa {
+  nama_siswa: string;
+  bab_selesai: number;
+  bab_dikerjakan: number;
+  total_bab: number;
+  persen: number;
+  rata_nilai: number;
+  nilai_terbaik: number;
+  terakhir_aktif: Date | null;
+}
+
+export interface RekapDetailBab {
+  nama_siswa: string;
+  bab_id: string;
   dijawab: number;
   total_soal: number;
   skor: number;
   selesai: boolean;
-  waktu: string;
+  waktu: Date | null;
 }
 
-/** Rekap lengkap progress satu kelas (semua siswa × bab, tanpa batas 100). */
-export async function getRekapKelas(kelasId: string): Promise<BarisRekap[]> {
+export interface RekapLengkap {
+  info: { nama_kelas: string; kode_akses: string; jenjang: string; guru_nama: string };
+  bab: RekapBab[];
+  ringkasan: RekapRingkasanSiswa[];
+  detail: RekapDetailBab[];
+}
+
+/**
+ * Data rekap lengkap satu kelas untuk unduhan CSV:
+ * info kelas, ringkasan per siswa, dan detail pengerjaan per bab.
+ */
+export async function getRekapLengkap(kelasId: string): Promise<RekapLengkap | null> {
   const db = requireDb();
-  if (!db) return [];
-  const [babs, kelompok] = await Promise.all([
+  if (!db) return null;
+  const [kelas, babs, kelompok] = await Promise.all([
+    db.kelas.findUnique({
+      where: { id: kelasId },
+      select: {
+        nama_kelas: true,
+        kode_akses: true,
+        jenjang: true,
+        guru: { select: { nama: true } },
+      },
+    }),
     db.bab.findMany({
       where: { kelas_id: kelasId },
       select: {
@@ -368,6 +405,7 @@ export async function getRekapKelas(kelasId: string): Promise<BarisRekap[]> {
         urutan: true,
         _count: { select: { soal: true } },
       },
+      orderBy: [{ mata_pelajaran: "asc" }, { urutan: "asc" }],
     }),
     db.progressSiswa.groupBy({
       by: ["nama_siswa", "bab_id"],
@@ -376,29 +414,69 @@ export async function getRekapKelas(kelasId: string): Promise<BarisRekap[]> {
       _max: { skor: true, waktu_submit: true },
     }),
   ]);
+  if (!kelas) return null;
+
   const infoBab = new Map(babs.map((b) => [b.id, b]));
-  return kelompok
+  const detail: RekapDetailBab[] = kelompok
+    .filter((g) => infoBab.has(g.bab_id))
     .map((g) => {
-      const bab = infoBab.get(g.bab_id);
-      const total = bab?._count.soal ?? 0;
+      const bab = infoBab.get(g.bab_id)!;
       return {
         nama_siswa: g.nama_siswa,
-        mata_pelajaran: bab?.mata_pelajaran ?? "—",
-        judul: bab?.judul ?? "—",
-        urutan: bab?.urutan ?? 0,
+        bab_id: g.bab_id,
         dijawab: g._count.soal_id,
-        total_soal: total,
+        total_soal: bab._count.soal,
         skor: g._max.skor ?? 0,
-        selesai: total > 0 && g._count.soal_id >= total,
-        waktu: g._max.waktu_submit ? formatWaktuWIB(g._max.waktu_submit) : "—",
+        selesai: bab._count.soal > 0 && g._count.soal_id >= bab._count.soal,
+        waktu: g._max.waktu_submit ?? null,
+      };
+    });
+
+  const perSiswa = new Map<string, RekapDetailBab[]>();
+  for (const d of detail) {
+    const list = perSiswa.get(d.nama_siswa) ?? [];
+    list.push(d);
+    perSiswa.set(d.nama_siswa, list);
+  }
+
+  const ringkasan: RekapRingkasanSiswa[] = [...perSiswa.entries()]
+    .map(([nama, baris]) => {
+      const jumlahSelesai = baris.filter((r) => r.selesai).length;
+      const skor = baris.map((r) => r.skor);
+      const terakhir = baris.reduce<Date | null>(
+        (acc, r) => (!r.waktu ? acc : !acc || r.waktu > acc ? r.waktu : acc),
+        null
+      );
+      return {
+        nama_siswa: nama,
+        bab_selesai: jumlahSelesai,
+        bab_dikerjakan: baris.length,
+        total_bab: babs.length,
+        persen: babs.length > 0 ? Math.round((jumlahSelesai / babs.length) * 100) : 0,
+        rata_nilai: skor.length > 0 ? Math.round(skor.reduce((a, b) => a + b, 0) / skor.length) : 0,
+        nilai_terbaik: skor.length > 0 ? Math.max(...skor) : 0,
+        terakhir_aktif: terakhir,
       };
     })
-    .sort(
-      (a, b) =>
-        a.nama_siswa.localeCompare(b.nama_siswa, "id") ||
-        a.mata_pelajaran.localeCompare(b.mata_pelajaran, "id") ||
-        a.urutan - b.urutan
-    );
+    .sort((a, b) => a.nama_siswa.localeCompare(b.nama_siswa, "id"));
+
+  return {
+    info: {
+      nama_kelas: kelas.nama_kelas,
+      kode_akses: kelas.kode_akses,
+      jenjang: kelas.jenjang,
+      guru_nama: kelas.guru.nama,
+    },
+    bab: babs.map((b) => ({
+      id: b.id,
+      mata_pelajaran: b.mata_pelajaran,
+      judul: b.judul,
+      urutan: b.urutan,
+      total_soal: b._count.soal,
+    })),
+    ringkasan,
+    detail,
+  };
 }
 
 /** Daftar masukan siswa untuk kelas-kelas milik guru (terbaru lebih dulu). */

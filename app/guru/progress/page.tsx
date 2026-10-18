@@ -110,8 +110,12 @@ export default async function DashboardProgressPage({ searchParams }: Props) {
               className="btn btn-outline"
               download
             >
-              Unduh rekap ↓
+              Unduh rekap (CSV) ↓
             </a>
+            <p className="m-0 text-[10px] leading-relaxed text-muted">
+              Berisi info kelas, ringkasan tiap siswa (bab selesai, rata-rata
+              nilai), dan rincian semua bab — termasuk yang belum dikerjakan.
+            </p>
           </div>
         </div>
 

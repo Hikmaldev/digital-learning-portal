@@ -167,6 +167,12 @@ export default function PanduanGuruPage() {
             status, dan waktunya (WIB) — jadi kamu tahu siapa mengerjakan apa
             dan kapan.
           </p>
+          <p>
+            Butuh arsip untuk laporan? Klik <b>Unduh rekap (CSV)</b> — file
+            berisi info kelas, ringkasan tiap siswa (bab selesai, rata-rata
+            nilai), dan rincian semua bab termasuk yang belum dikerjakan. Bisa
+            langsung dibuka di Excel atau Google Sheets.
+          </p>
         </Langkah>
 
         <Langkah
