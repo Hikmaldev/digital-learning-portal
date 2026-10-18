@@ -5,6 +5,7 @@ import {
   type MateriAwal,
 } from "@/components/guru/materi-baru-page";
 import { getGuruSession, guruMemilikiBab } from "@/lib/authorization";
+import { getGambarBab } from "@/lib/queries";
 import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = { title: "Ubah Materi" };
@@ -40,10 +41,13 @@ export default async function UbahMateriRoute({ params }: Props) {
   });
   if (!bab) notFound();
 
+  const gambar = await getGambarBab(babId);
+
   return (
     <MateriBaruPage
       materiAwal={bab as MateriAwal}
       kelasIdAwal={bab.kelas_id}
+      gambarAwal={gambar}
     />
   );
 }

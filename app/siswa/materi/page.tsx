@@ -4,7 +4,7 @@ import { FooterSimple } from "@/components/footer-simple";
 import { TopBar } from "@/components/top-bar";
 import { StatusBadge } from "@/components/ui";
 import { peringatanBahasaUmum, peringatanKunci } from "@/lib/data";
-import { getBabList, getKelasAktifDb, getKelasByKode } from "@/lib/queries";
+import { getBabList, getGambarBab, getKelasAktifDb, getKelasByKode } from "@/lib/queries";
 import type { Bab } from "@/lib/types";
 import { demoMode } from "@/lib/runtime";
 
@@ -124,6 +124,7 @@ export default async function BabMateriPage({ searchParams }: Props) {
 
   // Tanpa ?id= tampilkan bab pertama (sesuai urutan daftar di sidebar).
   const target: Bab = babList.find((b) => b.id === params.id) ?? babList[0];
+  const gambarBab = await getGambarBab(target.id);
 
   const paragraf = target.konten_materi
     .split(/\n+/)
@@ -229,6 +230,22 @@ export default async function BabMateriPage({ searchParams }: Props) {
                 <span>Bacaan tambahan dari buku resmi</span>
                 <span className="text-base text-coral">↗</span>
               </a>
+            )}
+
+            {gambarBab.length > 0 && (
+              <section className="mt-7 flex flex-col gap-5">
+                {gambarBab.map((g) => (
+                  <figure key={g.id} className="border border-line">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={g.url}
+                      alt="Gambar materi pembelajaran"
+                      className="w-full"
+                      loading="lazy"
+                    />
+                  </figure>
+                ))}
+              </section>
             )}
           </article>
 

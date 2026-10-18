@@ -83,6 +83,17 @@ export async function getSoalBab(babId: string): Promise<SoalDenganBenar[] | nul
   return soal.map((s) => ({ id: s.id, pertanyaan: s.pertanyaan, opsi: s.opsi.map((o) => ({ id: o.id, teks: o.teks, is_benar: o.is_benar })) }));
 }
 
+/** Daftar gambar materi per bab (URL tersimpan di Vercel Blob). */
+export async function getGambarBab(babId: string): Promise<Array<{ id: string; url: string }>> {
+  const db = requireDb();
+  if (!db) return [];
+  return db.gambar.findMany({
+    where: { bab_id: babId },
+    orderBy: { createdAt: "asc" },
+    select: { id: true, url: true },
+  });
+}
+
 // --- Kelola soal (guru) ---
 
 export interface OpsiKelola {

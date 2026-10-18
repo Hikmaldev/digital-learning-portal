@@ -5,6 +5,10 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { FooterSimple } from "../footer-simple";
 import { TopBar } from "../top-bar";
+import {
+  PanelGambarMateri,
+  type GambarItem,
+} from "./panel-gambar-materi";
 
 const DRAFT_KUNCI = "rb_draft_materi";
 
@@ -44,9 +48,11 @@ export interface MateriAwal {
 export function MateriBaruPage({
   kelasIdAwal,
   materiAwal,
+  gambarAwal,
 }: {
   kelasIdAwal?: string;
   materiAwal?: MateriAwal;
+  gambarAwal?: GambarItem[];
 }) {
   const router = useRouter();
   const modeUbah = Boolean(materiAwal);
@@ -331,24 +337,13 @@ export function MateriBaruPage({
                     required
                   />
                 </div>
-                <div className="mt-4 grid min-h-[130px] place-items-center border border-dashed border-[#aeb4a8] bg-[#f9f8f1] p-4 text-center">
-                  <div>
-                    <strong className="block text-xs">
-                      Tambahkan gambar pendukung
-                    </strong>
-                    <span className="text-[11px] text-muted">
-                      PNG atau JPG · maksimal 2 MB · terhubung dengan Vercel
-                      Blob (Fase 2)
-                    </span>
-                    <br />
-                    <button type="button" className="btn btn-outline mt-3">
-                      Pilih gambar
-                    </button>
-                  </div>
-                </div>
-              </section>
+            </section>
 
-              <section className="panel p-6">
+            {modeUbah && materiAwal && (
+              <PanelGambarMateri babId={materiAwal.id} awal={gambarAwal ?? []} />
+            )}
+
+            <section className="panel p-6">
                 <div className="mb-4 flex items-center justify-between">
                   <h2 className="text-xl tracking-tight">Referensi tambahan</h2>
                   <span className="text-[10px] text-muted">Opsional</span>
