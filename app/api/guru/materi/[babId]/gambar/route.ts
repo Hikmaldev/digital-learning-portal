@@ -38,9 +38,10 @@ export async function POST(request: NextRequest, { params }: Params) {
         { access: "public", addRandomSuffix: true },
       );
       url = blob.url;
-    } catch {
+    } catch (salah) {
+      const detail = salah instanceof Error ? salah.message : "";
       return jsonError(
-        "Penyimpanan gambar belum aktif (BLOB_READ_WRITE_TOKEN belum diset di project).",
+        `Penyimpanan gambar belum aktif. Detail: ${detail || "kredensial Blob tidak tersedia."}`,
         503,
       );
     }
