@@ -146,7 +146,10 @@ export function MateriBaruPage({
                   `/api/guru/materi/${encodeURIComponent(babId)}/gambar`,
                   { method: "POST", body: formGambar },
                 );
-                if (!unggah.ok) gagal++;
+                const hasil = (await unggah.json().catch(() => null)) as {
+                  ok?: boolean;
+                } | null;
+                if (!unggah.ok || !hasil?.ok) gagal++;
               } catch {
                 gagal++;
               }
