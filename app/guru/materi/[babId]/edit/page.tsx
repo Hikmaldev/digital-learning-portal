@@ -14,10 +14,11 @@ export const dynamic = "force-dynamic";
 
 interface Props {
   params: Promise<{ babId: string }>;
+  searchParams: Promise<{ gambarGagal?: string }>;
 }
 
-export default async function UbahMateriRoute({ params }: Props) {
-  const { babId } = await params;
+export default async function UbahMateriRoute({ params, searchParams }: Props) {
+  const [{ babId }, { gambarGagal }] = await Promise.all([params, searchParams]);
   const guru = await getGuruSession();
   if (!guru) redirect("/guru/masuk");
   if (!prisma) redirect("/guru/materi");
@@ -42,12 +43,18 @@ export default async function UbahMateriRoute({ params }: Props) {
   if (!bab) notFound();
 
   const gambar = await getGambarBab(babId);
+  const jumlahGagal = Number.parseInt(gambarGagal ?? "", 10);
 
   return (
     <MateriBaruPage
       materiAwal={bab as MateriAwal}
       kelasIdAwal={bab.kelas_id}
       gambarAwal={gambar}
+      pesanAwal={
+        jumlahGagal > 0
+          ? `${jumlahGagal} gambar gagal diunggah saat menyimpan materi. Coba unggah ulang lewat panel gambar di bawah.`
+          : undefined
+      }
     />
   );
 }

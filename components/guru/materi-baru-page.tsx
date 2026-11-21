@@ -9,6 +9,7 @@ import {
   PanelGambarMateri,
   type GambarItem,
 } from "./panel-gambar-materi";
+import { PanelGambarBaru } from "./panel-gambar-baru";
 
 const DRAFT_KUNCI = "rb_draft_materi";
 
@@ -49,10 +50,12 @@ export function MateriBaruPage({
   kelasIdAwal,
   materiAwal,
   gambarAwal,
+  pesanAwal,
 }: {
   kelasIdAwal?: string;
   materiAwal?: MateriAwal;
   gambarAwal?: GambarItem[];
+  pesanAwal?: string;
 }) {
   const router = useRouter();
   const modeUbah = Boolean(materiAwal);
@@ -62,7 +65,11 @@ export function MateriBaruPage({
   const [kelasList, setKelasList] = useState<KelasRingkas[]>([]);
   const [kelasId, setKelasId] = useState(materiAwal?.kelas_id ?? "");
   const [memuat, setMemuat] = useState(false);
-  const [pesan, setPesan] = useState<{ jenis: "ok" | "info" | "eror"; teks: string } | null>(null);
+  const [tahap, setTahap] = useState<string | null>(null);
+  const [gambarBaru, setGambarBaru] = useState<File[]>([]);
+  const [pesan, setPesan] = useState<{ jenis: "ok" | "info" | "eror"; teks: string } | null>(
+    pesanAwal ? { jenis: "eror", teks: pesanAwal } : null,
+  );
 
   useEffect(() => {
     fetch("/api/guru/kelas")
@@ -122,8 +129,37 @@ export function MateriBaruPage({
       const json = (await res.json().catch(() => ({}))) as {
         ok?: boolean;
         error?: string;
+        data?: { bab?: { id?: string } };
       };
       if (res.ok && json.ok) {
+        // Materi baru: unggah gambar yang tadi ditahan di form.
+        if (!modeUbah) {
+          const babId = json.data?.bab?.id;
+          if (babId && gambarBaru.length > 0) {
+            let gagal = 0;
+            for (let i = 0; i < gambarBaru.length; i++) {
+              setTahap(`Mengunggah gambar ${i + 1}/${gambarBaru.length}...`);
+              const formGambar = new FormData();
+              formGambar.append("file", gambarBaru[i]);
+              try {
+                const unggah = await fetch(
+                  `/api/guru/materi/${encodeURIComponent(babId)}/gambar`,
+                  { method: "POST", body: formGambar },
+                );
+                if (!unggah.ok) gagal++;
+              } catch {
+                gagal++;
+              }
+            }
+            if (gagal > 0) {
+              // Materi sudah tersimpan; buka halaman ubah agar gambar bisa dicoba lagi.
+              router.push(
+                `/guru/materi/${encodeURIComponent(babId)}/edit?gambarGagal=${gagal}`,
+              );
+              return;
+            }
+          }
+        }
         // Kembali ke halaman kelola materi agar hasilnya langsung terlihat.
         router.push(`/guru/materi?kelasId=${encodeURIComponent(payload.kelasId)}`);
         return;
@@ -133,7 +169,10 @@ export function MateriBaruPage({
         sessionStorage.setItem(DRAFT_KUNCI, JSON.stringify(payload));
         setPesan({
           jenis: "info",
-          teks: "Database belum aktif — materi disimpan sebagai draft lokal di perangkat ini.",
+          teks:
+            gambarBaru.length > 0
+              ? "Database belum aktif — teks materi disimpan sebagai draft lokal. Gambar belum tersimpan; pilih ulang setelah database aktif."
+              : "Database belum aktif — materi disimpan sebagai draft lokal di perangkat ini.",
         });
         return;
       }
@@ -142,10 +181,14 @@ export function MateriBaruPage({
       sessionStorage.setItem(DRAFT_KUNCI, JSON.stringify(payload));
       setPesan({
         jenis: "info",
-        teks: "Tidak dapat terhubung — materi disimpan sebagai draft lokal di perangkat ini.",
+        teks:
+          gambarBaru.length > 0
+            ? "Tidak dapat terhubung — teks materi disimpan sebagai draft lokal. Gambar belum tersimpan; pilih ulang setelah koneksi pulih."
+            : "Tidak dapat terhubung — materi disimpan sebagai draft lokal di perangkat ini.",
       });
     } finally {
       setMemuat(false);
+      setTahap(null);
     }
   }
 
@@ -219,7 +262,7 @@ export function MateriBaruPage({
           </div>
           <button type="submit" form="form-materi" className="btn btn-coral self-start" disabled={memuat}>
             {memuat
-              ? "Menyimpan..."
+              ? (tahap ?? "Menyimpan...")
               : modeUbah
                 ? "Simpan perubahan "
                 : "Simpan & terbitkan "}
@@ -339,8 +382,10 @@ export function MateriBaruPage({
                 </div>
             </section>
 
-            {modeUbah && materiAwal && (
+            {modeUbah && materiAwal ? (
               <PanelGambarMateri babId={materiAwal.id} awal={gambarAwal ?? []} />
+            ) : (
+              <PanelGambarBaru onChange={setGambarBaru} />
             )}
 
             <section className="panel p-6">
