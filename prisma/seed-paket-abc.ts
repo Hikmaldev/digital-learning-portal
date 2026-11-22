@@ -88,10 +88,16 @@ async function seedPaket(paket: PaketKonten, guruId: string) {
     }
 
     if (item.gambar?.length) {
-      // Hapus aset ilustrasi lama yang dulu disimpan dari folder public.
+      // Hapus ilustrasi bawaan seed yang sudah tidak dipakai lagi.
       // Gambar unggahan guru memakai URL Vercel Blob sehingga tidak ikut terhapus.
       await prisma.gambar.deleteMany({
-        where: { bab_id: bab.id, url: { startsWith: "/materi/" } },
+        where: {
+          bab_id: bab.id,
+          OR: [
+            { url: { startsWith: "/materi/" } },
+            { url: { startsWith: "https://upload.wikimedia.org/" } },
+          ],
+        },
       });
 
       for (const gambar of item.gambar) {

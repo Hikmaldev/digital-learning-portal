@@ -5,10 +5,12 @@ const SUMBER_BI =
 const SUMBER_MTK =
   "https://buku.kemendikdasmen.go.id/katalog/Matematika-untuk-SDMI-Kelas-IV";
 // Ilustrasi dari Wikimedia Commons (bukan aset buatan sendiri).
-// Plotmountain.jpg — public domain, Kaede4.
-const GAMBAR_NARASI = "https://upload.wikimedia.org/wikipedia/commons/2/24/Plotmountain.jpg";
-// Wash your hands.svg — CC BY-SA 3.0, Thibault fr.
-const GAMBAR_PETUNJUK = "https://upload.wikimedia.org/wikipedia/commons/c/c9/Wash_your_hands.svg";
+// Miki Sakurai telling story for children.jpg — CC0, Miki Sakurai.
+// Dipilih karena tidak memiliki label berbahasa Inggris dan sesuai dengan narasi.
+const GAMBAR_NARASI = "https://upload.wikimedia.org/wikipedia/commons/e/eb/Miki_Sakurai_telling_story_for_children.jpg";
+// Hand washing with soap.jpg — CC BY-SA 4.0, Justmee3001.
+// Foto tanpa teks sehingga dapat dipahami siswa Indonesia.
+const GAMBAR_PETUNJUK = "https://upload.wikimedia.org/wikipedia/commons/9/97/Hand_washing_with_soap.jpg";
 // Geometry Shapes and Solids.svg — CC0, C b grenouille.
 const GAMBAR_BANGUN_DATAR = "https://upload.wikimedia.org/wikipedia/commons/c/c1/Geometry_Shapes_and_Solids.svg";
 // Metric clock.JPG — CC0, Jpeterson101.

@@ -28,8 +28,8 @@ function idVideo(url: string): string | null {
 }
 
 function labelGambar(url: string): string {
-  if (url.includes("Plotmountain")) return "Diagram struktur alur teks narasi";
-  if (url.includes("Wash_your_hands")) return "Ilustrasi langkah mencuci tangan";
+  if (url.includes("Miki_Sakurai")) return "Ilustrasi kegiatan bercerita kepada anak-anak";
+  if (url.includes("Hand_washing_with_soap")) return "Foto langkah mencuci tangan dengan sabun";
   if (url.includes("Geometry_Shapes")) return "Ilustrasi berbagai bangun datar dan bangun ruang";
   if (url.includes("Metric_clock")) return "Contoh jam untuk mempelajari satuan waktu";
   if (url.includes("Ruler_and_coin")) return "Contoh alat ukur panjang dan uang";
@@ -38,18 +38,18 @@ function labelGambar(url: string): string {
 }
 
 function kreditGambar(url: string): { nama: string; lisensi: string; href: string } | null {
-  if (url.includes("Plotmountain")) {
+  if (url.includes("Miki_Sakurai")) {
     return {
-      nama: "Kaede4",
-      lisensi: "domain publik",
-      href: "https://commons.wikimedia.org/wiki/File:Plotmountain.jpg",
+      nama: "Miki Sakurai",
+      lisensi: "CC0",
+      href: "https://commons.wikimedia.org/wiki/File:Miki_Sakurai_telling_story_for_children.jpg",
     };
   }
-  if (url.includes("Wash_your_hands")) {
+  if (url.includes("Hand_washing_with_soap")) {
     return {
-      nama: "Thibault fr",
-      lisensi: "CC BY-SA 3.0",
-      href: "https://commons.wikimedia.org/wiki/File:Wash_your_hands.svg",
+      nama: "Justmee3001",
+      lisensi: "CC BY-SA 4.0",
+      href: "https://commons.wikimedia.org/wiki/File:Hand_washing_with_soap.jpg",
     };
   }
   if (url.includes("Geometry_Shapes")) {
