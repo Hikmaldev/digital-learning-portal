@@ -8,6 +8,13 @@ export interface SoalKonten {
   benar: 0 | 1 | 2 | 3;
 }
 
+export interface GambarKonten {
+  /** URL gambar relatif dari folder public atau URL publik. */
+  url: string;
+  /** Perkiraan ukuran file dalam byte untuk metadata database. */
+  ukuranFile: number;
+}
+
 export interface BabKonten {
   mapel: string;
   judul: string;
@@ -16,6 +23,10 @@ export interface BabKonten {
   konten: string;
   /** Link buku resmi (SIBI/Kemendikdasmen) sebagai bacaan tambahan. */
   sumber: string;
+  /** Link video YouTube pembelajaran, opsional. */
+  urlVideo?: string;
+  /** Gambar pendukung yang ditambahkan saat seed. */
+  gambar?: GambarKonten[];
   soal: SoalKonten[];
 }
 

@@ -62,6 +62,7 @@ async function seedPaket(paket: PaketKonten, guruId: string) {
       judul: item.judul,
       ringkasan: item.ringkasan,
       konten_materi: item.konten,
+      ...(item.urlVideo ? { url_video: item.urlVideo } : {}),
       link_sumber: item.sumber,
       urutan,
     };
@@ -84,6 +85,24 @@ async function seedPaket(paket: PaketKonten, guruId: string) {
         select: { id: true },
       });
       babBaru++;
+    }
+
+    if (item.gambar?.length) {
+      for (const gambar of item.gambar) {
+        const sudahAda = await prisma.gambar.findFirst({
+          where: { bab_id: bab.id, url: gambar.url },
+          select: { id: true },
+        });
+        if (!sudahAda) {
+          await prisma.gambar.create({
+            data: {
+              bab_id: bab.id,
+              url: gambar.url,
+              ukuran_file: gambar.ukuranFile,
+            },
+          });
+        }
+      }
     }
 
     const [jumlahSoal, jumlahProgress] = await Promise.all([

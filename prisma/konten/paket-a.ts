@@ -4,6 +4,14 @@ const SUMBER_BI =
   "https://buku.kemendikdasmen.go.id/katalog/bahasa-indonesia-lihat-sekitar-untuk-sdmi-kelas-iv-edisi-revisi";
 const SUMBER_MTK =
   "https://buku.kemendikdasmen.go.id/katalog/Matematika-untuk-SDMI-Kelas-IV";
+const GAMBAR_NARASI = "/materi/paket-a/narasi.svg";
+const GAMBAR_PETUNJUK = "/materi/paket-a/petunjuk.svg";
+const GAMBAR_BANGUN_DATAR = "/materi/paket-a/bangun-datar.svg";
+const GAMBAR_PENGUKURAN = "/materi/paket-a/pengukuran.svg";
+const VIDEO_NARASI = "https://www.youtube.com/watch?v=CfhmEyvUKTo";
+const VIDEO_PETUNJUK = "https://www.youtube.com/watch?v=mQ9jLcKFpgc";
+const VIDEO_BANGUN_DATAR = "https://www.youtube.com/watch?v=1ENevf_mFRs";
+const VIDEO_PENGUKURAN = "https://www.youtube.com/watch?v=pB-iNV45ypI";
 
 /**
  * Paket A — setara SD/MI (Fase A–C Kurikulum Merdeka).
@@ -325,6 +333,279 @@ export const paketA: PaketKonten = {
         {
           pertanyaan: "Pecahan 3/4 dibaca...",
           opsi: ["tiga per empat", "empat per tiga", "tiga empat", "tiga kali empat"],
+          benar: 0,
+        },
+      ],
+    },
+
+    // ── Materi tambahan sesi 1 ────────────────────────────────────────────
+    {
+      mapel: "Bahasa Indonesia",
+      judul: "Teks narasi: menceritakan pengalaman dan imajinasi",
+      ringkasan: "Mengenali tujuan, unsur, urutan peristiwa, dan cara menulis teks narasi berdasarkan pengalaman atau imajinasi.",
+      urlVideo: VIDEO_NARASI,
+      sumber: SUMBER_BI,
+      gambar: [{ url: GAMBAR_NARASI, ukuranFile: 68000 }],
+      konten: [
+        "Teks narasi adalah teks yang menceritakan rangkaian peristiwa secara berurutan. Peristiwanya dapat berupa pengalaman nyata, seperti membantu orang tua, atau cerita imajinasi, seperti kisah hewan yang dapat berbicara. Tujuan narasi adalah membuat pembaca memahami apa yang terjadi, siapa yang terlibat, kapan dan di mana kejadian berlangsung, serta bagaimana ceritanya berakhir.",
+        "Unsur penting dalam narasi adalah tokoh, latar, alur, masalah, dan penyelesaian. Tokoh merupakan pelaku cerita, sedangkan latar adalah keterangan tempat dan waktu. Alur menunjukkan urutan kejadian. Masalah adalah kesulitan yang dihadapi tokoh, sementara penyelesaian menjelaskan cara masalah tersebut berakhir. Narasi sederhana biasanya dimulai dengan pengenalan tokoh dan latar, dilanjutkan masalah atau kejadian penting, lalu diakhiri penyelesaian dan pesan cerita.",
+        "Agar urutan cerita mudah diikuti, gunakan kata penghubung waktu, seperti mula-mula, kemudian, setelah itu, sementara itu, akhirnya, dan keesokan harinya. Gunakan pula kata kerja tindakan, misalnya berjalan, menemukan, membawa, menolong, dan menanam. Kata sifat seperti ramah, lelah, gelap, atau ramai dapat membantu menggambarkan tokoh dan suasana.",
+        "Saat menulis pengalaman nyata, ceritakan kejadian sesuai urutan sebenarnya dan gunakan kata ganti aku atau saya secara konsisten. Contohnya: ‘Pada Minggu pagi, Lala dan ayahnya membersihkan selokan di depan rumah. Setelah hujan deras, banyak daun menyumbat aliran air. Mereka mengangkat daun dan memasukkannya ke tempat sampah. Akhirnya, air kembali mengalir.’ Tokoh cerita adalah Lala dan ayahnya, latarnya Minggu pagi di depan rumah, masalahnya daun menyumbat selokan, dan penyelesaiannya adalah membersihkan daun. Cerita itu juga menyampaikan pesan bahwa menjaga kebersihan merupakan tanggung jawab bersama.",
+        "Sebelum tulisan dikumpulkan, periksa apakah judulnya sesuai dengan isi, tokoh dan latarnya jelas, peristiwa tersusun runtut, serta setiap kalimat menggunakan huruf kapital dan tanda baca yang tepat. Pastikan pula bagian akhir benar-benar menjawab masalah yang muncul dalam cerita.",
+      ].join("\n\n"),
+      soal: [
+        {
+          pertanyaan: "Tujuan utama teks narasi adalah...",
+          opsi: ["menceritakan rangkaian peristiwa secara berurutan", "menjelaskan cara menggunakan alat", "mengelompokkan benda berdasarkan warna", "menyampaikan daftar harga"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Dalam cerita tentang Raka yang tersesat di pasar, keterangan pasar termasuk unsur...",
+          opsi: ["latar tempat", "tokoh", "masalah", "penyelesaian"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Bagian cerita yang memperkenalkan tokoh dan tempat disebut bagian...",
+          opsi: ["awal", "tengah", "akhir", "judul"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Kata penghubung yang paling tepat untuk melanjutkan urutan setelah ‘mula-mula’ adalah...",
+          opsi: ["kemudian", "tetapi", "karena", "walaupun"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Bacalah: ‘Nina lupa membawa payung. Hujan turun ketika ia pulang.’ Masalah dalam cerita tersebut adalah...",
+          opsi: ["Nina tidak membawa payung saat hujan", "Nina membeli payung baru", "Nina bermain di halaman", "hujan berhenti sebelum Nina pulang"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Urutan yang paling logis untuk cerita memasak mi adalah...",
+          opsi: ["merebus air – memasukkan mi – menambahkan bumbu", "menambahkan bumbu – memakan mi – merebus air", "memakan mi – merebus air – membeli mi", "menutup panci – membeli mi – memasukkan mi"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Kalimat yang paling tepat untuk menunjukkan penyelesaian masalah adalah...",
+          opsi: ["Akhirnya, Sari menemukan jalan pulang dengan mengikuti petunjuk warga.", "Sari berjalan tanpa tahu arah.", "Sari melihat jalan yang ramai.", "Sari merasa bingung sejak pagi."],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Jika narasi menceritakan kejadian nyata yang dialami penulis, kata ganti yang paling konsisten digunakan adalah...",
+          opsi: ["aku atau saya", "dia dan mereka bergantian tanpa alasan", "kita meskipun sendirian", "kamu untuk semua tokoh"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Perhatikan peristiwa: (1) Beni menanam bibit. (2) Beni menyiram tanah. (3) Beni membuat lubang. Urutan yang paling tepat adalah...",
+          opsi: ["3–1–2", "1–2–3", "2–3–1", "3–2–1"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Mengapa cerita tentang membersihkan selokan dapat memiliki pesan ‘menjaga kebersihan adalah tanggung jawab bersama’?",
+          opsi: ["Karena tindakan tokoh menyelesaikan masalah lingkungan melalui kerja sama.", "Karena tokoh hanya menonton hujan.", "Karena selokan merupakan tempat bermain.", "Karena cerita tidak memiliki masalah."],
+          benar: 0,
+        },
+      ],
+    },
+    {
+      mapel: "Bahasa Indonesia",
+      judul: "Teks petunjuk: memahami instruksi dalam kehidupan sehari-hari",
+      ringkasan: "Memahami tujuan, urutan langkah, kata perintah, dan cara menulis petunjuk yang aman serta mudah diikuti.",
+      urlVideo: VIDEO_PETUNJUK,
+      sumber: SUMBER_BI,
+      gambar: [{ url: GAMBAR_PETUNJUK, ukuranFile: 64000 }],
+      konten: [
+        "Teks petunjuk adalah teks yang menjelaskan cara melakukan sesuatu, menggunakan alat, atau mencapai tujuan tertentu. Contohnya petunjuk mencuci tangan, membuat minuman, menyalakan komputer, meminjam buku, dan menuju suatu tempat. Petunjuk yang baik memiliki tujuan jelas serta langkah yang lengkap, berurutan, dan mudah dilakukan.",
+        "Kata yang sering digunakan dalam petunjuk antara lain siapkan, buka, masukkan, tekan, campurkan, tunggu, jangan, dan pastikan. Kata-kata tersebut merupakan kata kerja perintah karena meminta pembaca melakukan tindakan. Kata pertama, kedua, selanjutnya, setelah itu, lalu, dan terakhir membantu menunjukkan urutan langkah.",
+        "Jika kegiatan membutuhkan benda, petunjuk dapat mencantumkan alat dan bahan. Alat membantu pekerjaan, misalnya gunting atau penggaris. Bahan digunakan atau diolah, misalnya kertas, lem, dan air. Penyebutan alat dan bahan membuat pembaca dapat mempersiapkan kebutuhan sebelum mulai bekerja.",
+        "Contoh petunjuk mencuci tangan adalah sebagai berikut: basahi tangan dengan air mengalir, gunakan sabun, gosok telapak tangan, punggung tangan, sela-sela jari, dan kuku, lalu bilas hingga bersih. Setelah itu, keringkan tangan. Urutan tersebut perlu diikuti agar tangan benar-benar bersih.",
+        "Petunjuk keselamatan harus diperhatikan, terutama jika kegiatan menggunakan listrik, api, atau benda tajam. Kata jangan dan dilarang biasanya menandai larangan. Contohnya, jangan menyentuh kabel dengan tangan basah dan jangan memasukkan benda ke dalam stopkontak. Petunjuk arah juga harus menggunakan penanda yang jelas, seperti lurus, belok kiri, di sebelah kanan, di depan, dan berseberangan.",
+        "Sebelum menggunakan sebuah petunjuk, periksa apakah tujuannya jelas, alat dan bahan sudah disebutkan bila diperlukan, semua langkah tersusun runtut, dan aturan keselamatannya tersedia. Petunjuk sebaiknya singkat, tetapi tidak boleh menghilangkan informasi penting atau menggabungkan tindakan yang dapat membingungkan pembaca.",
+      ].join("\n\n"),
+      soal: [
+        {
+          pertanyaan: "Teks petunjuk dibuat untuk...",
+          opsi: ["menjelaskan cara melakukan atau menggunakan sesuatu", "menceritakan tokoh dalam dongeng", "menggambarkan suasana tempat", "menyebutkan nama-nama benda"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Kata ‘tekan’ dan ‘masukkan’ dalam petunjuk termasuk...",
+          opsi: ["kata kerja perintah", "kata sifat", "kata tanya", "kata bilangan"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Dalam petunjuk membuat teh, langkah yang sebaiknya dilakukan pertama adalah...",
+          opsi: ["menyiapkan gelas, teh, gula, dan air panas", "meminum teh", "mencuci gelas setelah selesai", "membuang teh ke tempat sampah"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Mengapa langkah dalam teks petunjuk harus berurutan?",
+          opsi: ["Agar pembaca dapat melakukan pekerjaan dengan benar dan aman.", "Agar teks menjadi lebih panjang.", "Agar semua kalimat memiliki jumlah kata sama.", "Agar pembaca tidak mengetahui tujuannya."],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Kalimat yang merupakan petunjuk keselamatan adalah...",
+          opsi: ["Jangan menyentuh kabel dengan tangan basah.", "Kabel itu panjang dan hitam.", "Saya melihat kabel di lantai.", "Kabel digunakan setiap hari."],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Jika petunjuk berbunyi ‘Terakhir, keringkan tangan’, tindakan itu dilakukan...",
+          opsi: ["setelah tangan dibilas", "sebelum tangan dibasahi", "sebelum menggunakan sabun", "sebelum menggosok sela jari"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Dalam petunjuk membuat kolase, kertas dan lem disebut bahan, sedangkan gunting disebut...",
+          opsi: ["alat", "tujuan", "langkah", "arah"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Petunjuk dari rumah ke perpustakaan yang paling jelas adalah...",
+          opsi: ["Berjalan lurus sampai pertigaan, belok kiri, lalu perpustakaan ada di sebelah kanan.", "Perpustakaan itu bagus dan ramai.", "Rumah saya dekat dengan sesuatu.", "Pergilah ke tempat yang kamu suka."],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Urutan yang tepat untuk mengirim surat adalah: (1) memasukkan surat ke amplop, (2) menulis alamat, (3) menutup amplop. Urutan yang benar adalah...",
+          opsi: ["2–1–3", "1–3–2", "3–2–1", "2–3–1"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Sebuah petunjuk langsung menyuruh anak menyalakan alat tanpa menyebutkan bahaya kabel basah. Perbaikan terbaik adalah...",
+          opsi: ["menambahkan peringatan agar tidak menyentuh kabel dengan tangan basah", "menghapus tujuan petunjuk", "menukar semua langkah secara acak", "menambahkan cerita yang tidak berhubungan"],
+          benar: 0,
+        },
+      ],
+    },
+    {
+      mapel: "Matematika",
+      judul: "Bangun datar dan sifat-sifatnya",
+      ringkasan: "Mengenal segi banyak, ciri persegi, persegi panjang, segitiga, dan hubungan keliling dengan ukuran sisi.",
+      urlVideo: VIDEO_BANGUN_DATAR,
+      sumber: SUMBER_MTK,
+      gambar: [{ url: GAMBAR_BANGUN_DATAR, ukuranFile: 64000 }],
+      konten: [
+        "Bangun datar adalah bentuk yang memiliki panjang dan lebar, tetapi tidak memiliki tinggi atau ketebalan. Contohnya persegi, persegi panjang, segitiga, lingkaran, jajar genjang, dan trapesium. Sisi merupakan garis pembatas bangun, sedangkan titik sudut adalah pertemuan dua sisi.",
+        "Persegi memiliki empat sisi sama panjang dan empat sudut siku-siku. Persegi panjang memiliki dua pasang sisi berhadapan yang sama panjang dan empat sudut siku-siku. Segitiga memiliki tiga sisi dan tiga titik sudut. Segitiga sama sisi memiliki tiga sisi sama panjang, sedangkan segitiga sama kaki memiliki dua sisi sama panjang.",
+        "Keliling adalah panjang seluruh sisi yang mengelilingi bangun. Rumus keliling persegi adalah 4 × sisi, keliling persegi panjang adalah 2 × (panjang + lebar), dan keliling segitiga adalah jumlah ketiga sisinya. Misalnya, persegi dengan sisi 6 cm memiliki keliling 4 × 6 = 24 cm. Persegi panjang berukuran 8 cm × 3 cm memiliki keliling 2 × (8 + 3) = 22 cm.",
+        "Luas adalah banyaknya satuan persegi yang menutupi bagian dalam bangun. Rumus luas persegi adalah sisi × sisi, sedangkan luas persegi panjang adalah panjang × lebar. Persegi panjang berukuran 8 cm × 3 cm memiliki luas 8 × 3 = 24 cm².",
+        "Satuan keliling menggunakan satuan panjang, seperti cm atau m. Satuan luas menggunakan satuan persegi, seperti cm² atau m². Saat menyelesaikan soal, tuliskan informasi yang diketahui, pilih rumus yang sesuai, pastikan satuannya sama, lalu periksa kembali satuan jawaban.",
+        "Bangun gabungan dapat dipecah menjadi beberapa bangun yang lebih sederhana. Jika bagian-bagiannya tidak saling tumpang tindih, luas seluruh bangun diperoleh dengan menjumlahkan luas setiap bagian. Cara ini membantu menghitung bentuk seperti huruf L atau bentuk lain yang tidak sederhana.",
+      ].join("\n\n"),
+      soal: [
+        {
+          pertanyaan: "Bangun datar yang memiliki empat sisi sama panjang dan empat sudut siku-siku adalah...",
+          opsi: ["persegi", "segitiga", "lingkaran", "trapesium"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Persegi panjang dengan panjang 9 cm dan lebar 4 cm memiliki keliling...",
+          opsi: ["26 cm", "36 cm", "13 cm", "18 cm"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Luas persegi dengan sisi 7 cm adalah...",
+          opsi: ["49 cm²", "28 cm²", "14 cm²", "49 cm"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Sebuah segitiga memiliki sisi 5 cm, 6 cm, dan 7 cm. Kelilingnya adalah...",
+          opsi: ["18 cm", "17 cm", "30 cm", "18 cm²"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Ciri yang pasti dimiliki persegi panjang adalah...",
+          opsi: ["sisi yang berhadapan sama panjang", "semua sisinya selalu sama panjang", "memiliki tiga titik sudut", "tidak memiliki sudut siku-siku"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Taman berbentuk persegi panjang berukuran 12 m × 5 m. Panjang pagar yang diperlukan untuk mengelilinginya adalah...",
+          opsi: ["34 m", "60 m", "17 m", "34 m²"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Sebuah persegi memiliki keliling 32 cm. Panjang setiap sisinya adalah...",
+          opsi: ["8 cm", "16 cm", "28 cm", "128 cm"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Satuan yang tepat untuk menyatakan luas lantai kelas adalah...",
+          opsi: ["m²", "m", "cm", "liter"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Dua persegi panjang masing-masing memiliki luas 12 cm² dan 15 cm². Jika digabung tanpa tumpang tindih, luas seluruhnya adalah...",
+          opsi: ["27 cm²", "27 cm", "180 cm²", "3 cm²"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Rina menghitung luas persegi panjang 10 cm × 4 cm dengan rumus 2 × (10 + 4). Kesalahan Rina adalah...",
+          opsi: ["rumus itu untuk keliling, sedangkan luas harus dihitung dengan panjang × lebar", "angka 10 harus diganti 2", "lebar tidak boleh digunakan", "luas harus memakai satuan cm saja"],
+          benar: 0,
+        },
+      ],
+    },
+    {
+      mapel: "Matematika",
+      judul: "Pengukuran panjang, berat, waktu, dan uang",
+      ringkasan: "Memilih satuan yang tepat, mengonversi pengukuran, serta menyelesaikan masalah sehari-hari tentang panjang, berat, waktu, dan uang.",
+      urlVideo: VIDEO_PENGUKURAN,
+      sumber: SUMBER_MTK,
+      gambar: [{ url: GAMBAR_PENGUKURAN, ukuranFile: 70000 }],
+      konten: [
+        "Pengukuran digunakan untuk mengetahui ukuran suatu benda atau lama suatu kegiatan dengan satuan yang disepakati. Panjang dapat diukur dengan milimeter, sentimeter, meter, atau kilometer. Gunakan milimeter atau sentimeter untuk benda kecil, meter untuk panjang ruangan atau halaman, dan kilometer untuk jarak antarkota.",
+        "Hubungan satuan panjang yang penting adalah 1 cm = 10 mm, 1 m = 100 cm, dan 1 km = 1.000 m. Saat mengubah satuan besar ke satuan kecil, kalikan. Saat mengubah satuan kecil ke satuan besar, bagi. Contohnya 3 m = 300 cm dan 450 cm = 4,5 m. Sebelum menjumlahkan atau mengurangkan panjang, samakan satuannya terlebih dahulu.",
+        "Berat atau massa benda dapat diukur dengan gram dan kilogram. Hubungannya adalah 1 kg = 1.000 g. Jadi, 2 kg 300 g sama dengan 2.300 g, sedangkan 3.500 g sama dengan 3 kg 500 g. Gram cocok untuk benda yang ringan, sedangkan kilogram digunakan untuk benda yang lebih berat.",
+        "Waktu dapat dinyatakan dalam detik, menit, jam, hari, dan minggu. Satu menit sama dengan 60 detik, satu jam sama dengan 60 menit, satu hari sama dengan 24 jam, dan satu minggu sama dengan 7 hari. Untuk mencari lama kegiatan, tentukan waktu mulai dan waktu selesai. Kegiatan dari pukul 07.30 sampai 09.00 berlangsung 1 jam 30 menit.",
+        "Harga barang ditulis menggunakan rupiah (Rp). Total belanja diperoleh dengan menjumlahkan semua harga barang. Kembalian dihitung dengan rumus uang yang dibayarkan dikurangi total harga. Misalnya, buku seharga Rp12.000 dan pensil seharga Rp3.500 memiliki total Rp15.500. Jika dibayar dengan Rp20.000, kembaliannya Rp4.500.",
+        "Saat mengerjakan soal cerita, perhatikan angka dan satuannya, tentukan besaran yang dicari, lalu pilih operasi yang sesuai. Perkirakan jawaban sebelum menghitung agar hasil yang terlalu besar atau terlalu kecil dapat diketahui. Setelah itu, tuliskan hasil dengan satuan yang tepat.",
+      ].join("\n\n"),
+      soal: [
+        {
+          pertanyaan: "Satuan yang tepat untuk mengukur jarak antarkota adalah...",
+          opsi: ["kilometer", "sentimeter", "milimeter", "gram"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "4 m sama dengan...",
+          opsi: ["400 cm", "40 cm", "4.000 cm", "0,4 cm"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "2 kg 250 g sama dengan...",
+          opsi: ["2.250 g", "225 g", "2.025 g", "22.500 g"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "90 menit sama dengan...",
+          opsi: ["1 jam 30 menit", "1 jam 20 menit", "2 jam 30 menit", "90 jam"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Sebuah film dimulai pukul 13.15 dan selesai pukul 15.00. Lama film adalah...",
+          opsi: ["1 jam 45 menit", "1 jam 15 menit", "2 jam 15 menit", "45 menit"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Ibu membeli beras Rp28.000 dan minyak Rp17.500. Total belanja Ibu adalah...",
+          opsi: ["Rp45.500", "Rp44.500", "Rp46.500", "Rp45.000"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Doni membayar belanja Rp32.000 dengan uang Rp50.000. Kembaliannya adalah...",
+          opsi: ["Rp18.000", "Rp22.000", "Rp82.000", "Rp12.000"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Pita sepanjang 3 m dipotong 75 cm. Sisa pita adalah...",
+          opsi: ["225 cm", "275 cm", "375 cm", "2.925 cm"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Untuk menjumlahkan 2 m dan 35 cm, langkah pertama yang paling tepat adalah...",
+          opsi: ["mengubah keduanya ke satuan yang sama", "langsung menulis 2 + 35 = 37 m", "mengubah meter menjadi kilogram", "menghapus satuannya"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Sebuah perjalanan dimulai pukul 08.40 dan berlangsung 2 jam 35 menit. Perjalanan selesai pukul...",
+          opsi: ["11.15", "10.75", "11.05", "10.15"],
           benar: 0,
         },
       ],
