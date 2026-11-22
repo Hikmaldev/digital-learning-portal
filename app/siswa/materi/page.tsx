@@ -36,6 +36,14 @@ function labelGambar(url: string): string {
   if (url.includes("Basic_triangle")) return "Ilustrasi segitiga dasar";
   if (url.includes("Boy_playing_with_ball")) return "Foto anak bermain bola sebagai contoh kegiatan waktu luang";
   if (url.includes("Two_directions_sign")) return "Foto papan petunjuk arah";
+  if (url.includes("Matrix_%28maths%29")) return "Contoh susunan matriks dalam matematika";
+  if (url.includes("Two_red_dice")) return "Ilustrasi dua dadu untuk mempelajari peluang";
+  if (url.includes("Sri_Harjanto_Sahid")) return "Foto pembacaan puisi oleh penyair Indonesia";
+  if (url.includes("Man_writing_on_paper")) return "Foto kegiatan menulis untuk karya ilmiah";
+  if (url.includes("Cooking_Delicious_Food")) return "Foto kegiatan memasak sebagai konteks procedure text";
+  if (url.includes("Dylan_Marron")) return "Foto seseorang sedang menyampaikan presentasi";
+  if (url.includes("Cybersecurity")) return "Ilustrasi gembok dan keamanan digital";
+  if (url.includes("Analytics_2016")) return "Foto layar laptop dengan visualisasi data";
   if (url.includes("Geometry_Shapes")) return "Ilustrasi berbagai bangun datar dan bangun ruang";
   if (url.includes("Metric_clock")) return "Contoh jam untuk mempelajari satuan waktu";
   if (url.includes("Ruler_and_coin")) return "Contoh alat ukur panjang dan uang";
@@ -100,6 +108,62 @@ function kreditGambar(url: string): { nama: string; lisensi: string; href: strin
       href: "https://commons.wikimedia.org/wiki/File:Two_directions_sign_(Unsplash).jpg",
     };
   }
+  if (url.includes("Matrix_%28maths%29")) {
+    return {
+      nama: "User:Genesis",
+      lisensi: "CC BY-SA 3.0",
+      href: "https://commons.wikimedia.org/wiki/File:Matrix_(maths),_revised.png",
+    };
+  }
+  if (url.includes("Two_red_dice")) {
+    return {
+      nama: "Stephen Silver",
+      lisensi: "CC0",
+      href: "https://commons.wikimedia.org/wiki/File:Two_red_dice_01.svg",
+    };
+  }
+  if (url.includes("Sri_Harjanto_Sahid")) {
+    return {
+      nama: "Crisco 1492",
+      lisensi: "CC BY-SA 4.0",
+      href: "https://commons.wikimedia.org/wiki/File:Sri_Harjanto_Sahid_reading_a_poem,_2015-08-22_02.jpg",
+    };
+  }
+  if (url.includes("Man_writing_on_paper")) {
+    return {
+      nama: "Olu Eletu",
+      lisensi: "CC0",
+      href: "https://commons.wikimedia.org/wiki/File:Man_writing_on_paper_(Unsplash).jpg",
+    };
+  }
+  if (url.includes("Cooking_Delicious_Food")) {
+    return {
+      nama: "Mona Hassan Abo-Abda",
+      lisensi: "CC BY-SA 4.0",
+      href: "https://commons.wikimedia.org/wiki/File:Cooking_Delicious_Food.jpg",
+    };
+  }
+  if (url.includes("Dylan_Marron")) {
+    return {
+      nama: "Indy beetle",
+      lisensi: "CC0",
+      href: "https://commons.wikimedia.org/wiki/File:Dylan_Marron_delivering_presentation_at_NC_State_University.jpg",
+    };
+  }
+  if (url.includes("Cybersecurity")) {
+    return {
+      nama: "jaydeep_",
+      lisensi: "CC0",
+      href: "https://commons.wikimedia.org/wiki/File:Cybersecurity.png",
+    };
+  }
+  if (url.includes("Analytics_2016")) {
+    return {
+      nama: "Lalmch dari Pixabay",
+      lisensi: "CC0",
+      href: "https://commons.wikimedia.org/wiki/File:Analytics_2016-02-26_at_10.19.24_AM.jpg",
+    };
+  }
   if (url.includes("Geometry_Shapes")) {
     return {
       nama: "C b grenouille",
@@ -152,9 +216,20 @@ function VideoMateri({ url }: { url?: string }) {
         <div className="mx-auto mb-2.5 grid size-12 place-items-center rounded-full bg-coral text-lg">
           ▶
         </div>
-        <small className="block text-[10px] text-[#ced9d1]">
-          Video pembelajaran · Disarankan ditonton saat di kelas
-        </small>
+        {url ? (
+          <a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block text-[11px] underline hover:text-coral"
+          >
+            Buka pilihan video pembelajaran di YouTube ↗
+          </a>
+        ) : (
+          <small className="block text-[10px] text-[#ced9d1]">
+            Video pembelajaran · Disarankan ditonton saat di kelas
+          </small>
+        )}
       </div>
     </div>
   );

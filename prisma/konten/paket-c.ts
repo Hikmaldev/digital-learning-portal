@@ -9,6 +9,43 @@ const SUMBER_ENG =
 const SUMBER_INFO =
   "https://guru.kemdikbud.go.id/kurikulum/referensi-penerapan/capaian-pembelajaran/sd-sma/informatika/fase-e/";
 
+// Materi tambahan Sesi 3 menggunakan ilustrasi Wikimedia Commons berlisensi terbuka.
+// Matrix (maths), revised.png — CC BY-SA 3.0, User:Genesis.
+const GAMBAR_MATRIKS =
+  "https://upload.wikimedia.org/wikipedia/commons/b/b9/Matrix_%28maths%29%2C_revised.png";
+// Two red dice 01.svg — CC0, Stephen Silver/Open Clip Art Library.
+const GAMBAR_PELUANG =
+  "https://upload.wikimedia.org/wikipedia/commons/3/36/Two_red_dice_01.svg";
+// Sri Harjanto Sahid reading a poem — CC BY-SA 4.0, Crisco 1492.
+const GAMBAR_PUISI =
+  "https://upload.wikimedia.org/wikipedia/commons/0/0d/Sri_Harjanto_Sahid_reading_a_poem%2C_2015-08-22_02.jpg";
+// Man writing on paper (Unsplash) — CC0, Olu Eletu.
+const GAMBAR_KARYA_ILMIAH =
+  "https://upload.wikimedia.org/wikipedia/commons/3/35/Man_writing_on_paper_%28Unsplash%29.jpg";
+// Cooking Delicious Food — CC BY-SA 4.0, Mona Hassan Abo-Abda.
+const GAMBAR_PROCEDURE =
+  "https://upload.wikimedia.org/wikipedia/commons/0/06/Cooking_Delicious_Food.jpg";
+// Dylan Marron delivering presentation — CC0, Indy beetle.
+const GAMBAR_PRESENTASI =
+  "https://upload.wikimedia.org/wikipedia/commons/f/fc/Dylan_Marron_delivering_presentation_at_NC_State_University.jpg";
+// Cybersecurity.png — CC0, Pixabay/jaydeep_.
+const GAMBAR_KEAMANAN =
+  "https://upload.wikimedia.org/wikipedia/commons/4/46/Cybersecurity.png";
+// Analytics 2016-02-26 at 10.19.24 AM.jpg — CC0, Lalmch from Pixabay.
+const GAMBAR_DATA =
+  "https://upload.wikimedia.org/wikipedia/commons/0/0f/Analytics_2016-02-26_at_10.19.24_AM.jpg";
+
+// Tautan pencarian YouTube dipakai agar siswa dapat memilih penjelasan terbaru
+// yang sesuai. Komponen materi menampilkannya sebagai tautan bila bukan URL embed.
+const VIDEO_MATRIKS = "https://www.youtube.com/results?search_query=matriks+matematika+kelas+11";
+const VIDEO_PELUANG = "https://www.youtube.com/results?search_query=peluang+matematika+kelas+12";
+const VIDEO_PUISI = "https://www.youtube.com/results?search_query=puisi+kelas+10+bahasa+indonesia";
+const VIDEO_KARYA_ILMIAH = "https://www.youtube.com/results?search_query=karya+ilmiah+kelas+11+bahasa+indonesia";
+const VIDEO_PROCEDURE = "https://www.youtube.com/results?search_query=procedure+text+kelas+10";
+const VIDEO_PRESENTASI = "https://www.youtube.com/results?search_query=asking+for+and+giving+opinion+kelas+10";
+const VIDEO_KEAMANAN = "https://www.youtube.com/results?search_query=keamanan+digital+informatika+kelas+10";
+const VIDEO_DATA = "https://www.youtube.com/results?search_query=analisis+data+informatika+kelas+10";
+
 /**
  * Paket C — setara SMA/MA (Fase E–F Kurikulum Merdeka).
  * Topik mengikuti buku teks resmi Kemendikdasmen kelas X dan CP Informatika Fase E.
@@ -175,6 +212,139 @@ export const paketC: PaketKonten = {
         },
       ],
     },
+    // ── Materi tambahan Sesi 3: Matematika ───────────────────────────────
+    {
+      mapel: "Matematika",
+      judul: "Matriks dan operasinya",
+      ringkasan: "Pengertian matriks, ordo, elemen, serta penjumlahan dan perkalian matriks sederhana.",
+      konten: [
+        "Matriks adalah susunan bilangan yang ditulis dalam baris dan kolom. Matriks biasanya diberi nama dengan huruf kapital, sedangkan setiap bilangan di dalamnya disebut elemen atau entri.",
+        "Ordo matriks menyatakan banyak baris × banyak kolom. Matriks dengan 2 baris dan 3 kolom memiliki ordo 2 × 3. Elemen aᵢⱼ berada pada baris ke-i dan kolom ke-j.",
+        "Dua matriks dapat dijumlahkan atau dikurangkan jika ordonya sama. Operasinya dilakukan dengan menjumlahkan atau mengurangkan elemen-elemen yang menempati posisi sama.",
+        "Perkalian matriks memiliki aturan khusus: banyak kolom matriks pertama harus sama dengan banyak baris matriks kedua. Elemen hasil diperoleh dari jumlah perkalian setiap elemen baris dengan elemen kolom yang bersesuaian.",
+      ].join("\n\n"),
+      sumber: SUMBER_MTK,
+      urlVideo: VIDEO_MATRIKS,
+      gambar: [{ url: GAMBAR_MATRIKS, ukuranFile: 26000 }],
+      soal: [
+        {
+          pertanyaan: "Matriks adalah susunan bilangan dalam...",
+          opsi: ["baris dan kolom", "satu garis saja", "lingkaran dan busur", "diagram tanpa angka"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Matriks dengan 3 baris dan 2 kolom memiliki ordo...",
+          opsi: ["3 × 2", "2 × 3", "3 + 2", "6 × 1"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Bilangan yang terdapat di dalam matriks disebut...",
+          opsi: ["elemen atau entri", "determinan saja", "ordo", "vektor"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Matriks A dan B dapat dijumlahkan jika...",
+          opsi: ["ordonya sama", "semua elemennya nol", "A selalu persegi", "B hanya memiliki satu baris"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Jika A = [[1, 2], [3, 4]] dan B = [[5, 6], [7, 8]], elemen baris pertama kolom pertama dari A + B adalah...",
+          opsi: ["6", "5", "1", "2"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Pada matriks, a₂₃ menunjukkan elemen pada...",
+          opsi: ["baris kedua kolom ketiga", "baris ketiga kolom kedua", "baris kedua dan ketiga saja", "kolom kedua baris pertama"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Syarat perkalian matriks A × B dapat dilakukan adalah...",
+          opsi: ["banyak kolom A sama dengan banyak baris B", "ordo A dan B harus selalu sama", "semua elemen A dan B sama", "A dan B harus memiliki satu kolom"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Jika A berordo 2 × 3 dan B berordo 3 × 4, maka A × B berordo...",
+          opsi: ["2 × 4", "3 × 3", "4 × 2", "2 × 3"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Seorang siswa menjumlahkan matriks berordo 2 × 3 dengan matriks berordo 3 × 2. Kesalahannya adalah...",
+          opsi: ["menjumlahkan matriks yang ordonya berbeda", "menjumlahkan elemen pada posisi sama", "menulis matriks dalam baris", "memeriksa jumlah kolom"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Dalam penjumlahan matriks, elemen yang dijumlahkan adalah elemen yang...",
+          opsi: ["posisinya sama", "nilainya paling besar", "berada di diagonal saja", "berada pada baris berbeda"],
+          benar: 0,
+        },
+      ],
+    },
+    {
+      mapel: "Matematika",
+      judul: "Peluang kejadian",
+      ringkasan: "Ruang sampel, titik sampel, peluang teoretis, dan peluang kejadian sederhana.",
+      konten: [
+        "Peluang menyatakan kemungkinan terjadinya suatu kejadian. Nilai peluang berada antara 0 dan 1. Peluang 0 berarti mustahil, sedangkan peluang 1 berarti pasti terjadi.",
+        "Ruang sampel adalah himpunan semua hasil yang mungkin. Setiap hasil tunggal disebut titik sampel. Pada pelemparan satu dadu, ruang sampelnya adalah {1, 2, 3, 4, 5, 6}.",
+        "Untuk kejadian dengan titik sampel yang memiliki kesempatan sama, peluang kejadian A dirumuskan P(A) = banyak hasil yang mendukung A dibagi banyak seluruh hasil dalam ruang sampel.",
+        "Peluang dapat digunakan untuk memperkirakan kejadian, tetapi hasil percobaan nyata bisa berbeda. Semakin banyak percobaan dilakukan, biasanya frekuensi relatif semakin mendekati peluang teoretis.",
+      ].join("\n\n"),
+      sumber: SUMBER_MTK,
+      urlVideo: VIDEO_PELUANG,
+      gambar: [{ url: GAMBAR_PELUANG, ukuranFile: 22000 }],
+      soal: [
+        {
+          pertanyaan: "Nilai peluang selalu berada pada interval...",
+          opsi: ["0 sampai 1", "−1 sampai 1", "1 sampai 10", "0 sampai 100 tanpa pecahan"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Peluang suatu kejadian yang mustahil adalah...",
+          opsi: ["0", "1/2", "1", "2"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Peluang suatu kejadian yang pasti adalah...",
+          opsi: ["1", "0", "1/2", "−1"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Ruang sampel pelemparan satu dadu adalah...",
+          opsi: ["{1, 2, 3, 4, 5, 6}", "{0, 1}", "{genap}", "{merah, putih}"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Pada pelemparan satu dadu, peluang muncul angka genap adalah...",
+          opsi: ["1/2", "1/6", "1/3", "5/6"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Rumus peluang kejadian A adalah...",
+          opsi: ["banyak hasil yang mendukung dibagi banyak seluruh hasil", "banyak seluruh hasil dibagi hasil yang mendukung", "jumlah angka dikali dua", "hasil terbesar dikurangi hasil terkecil"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Satu koin dilempar sekali. Peluang muncul sisi gambar adalah...",
+          opsi: ["1/2", "1", "0", "2"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Jika sebuah kotak berisi 3 bola merah dan 2 bola biru, peluang mengambil bola merah adalah...",
+          opsi: ["3/5", "2/5", "3/2", "1/3"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Hasil percobaan dapat berbeda dari peluang teoretis karena...",
+          opsi: ["percobaan bersifat acak", "peluang selalu salah", "ruang sampel tidak pernah ada", "semua hasil harus sama"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Seorang siswa menyatakan peluang muncul angka 7 pada dadu biasa adalah 1/6. Kesalahannya adalah...",
+          opsi: ["angka 7 tidak termasuk ruang sampel dadu", "dadu memiliki tujuh sisi", "peluang harus lebih dari 1", "angka 7 pasti muncul"],
+          benar: 0,
+        },
+      ],
+    },
 
     // ── Bahasa Indonesia ────────────────────────────────────────────────
     {
@@ -329,6 +499,140 @@ export const paketC: PaketKonten = {
         {
           pertanyaan: "Isi teks biografi harus bersifat...",
           opsi: ["faktual", "imajinatif", "humor", "fiktif"],
+          benar: 0,
+        },
+      ],
+    },
+
+    // ── Materi tambahan Sesi 3: Bahasa Indonesia ─────────────────────────
+    {
+      mapel: "Bahasa Indonesia",
+      judul: "Puisi: diksi, imaji, dan majas",
+      ringkasan: "Unsur pembangun puisi, pemilihan kata, citraan, majas, serta cara menafsirkan makna puisi.",
+      konten: [
+        "Puisi adalah karya sastra yang mengungkapkan pikiran dan perasaan melalui bahasa yang padat, indah, dan bermakna. Penyair memilih kata dengan cermat agar bunyi, suasana, dan makna dapat dirasakan pembaca.",
+        "Unsur fisik puisi meliputi diksi, imaji, kata konkret, rima, tipografi, dan majas. Diksi adalah pilihan kata. Imaji atau citraan membuat pembaca seolah-olah melihat, mendengar, meraba, mencium, atau merasakan sesuatu.",
+        "Unsur batin puisi meliputi tema, rasa, nada, dan amanat. Majas dipakai untuk menyampaikan makna secara kias, misalnya personifikasi yang memberi sifat manusia kepada benda atau metafora yang membandingkan dua hal secara langsung.",
+        "Untuk menafsirkan puisi, bacalah keseluruhan bait, perhatikan kata-kata penting dan hubungan antarbaris, lalu simpulkan suasana serta pesan berdasarkan bukti dalam teks. Tafsiran harus didukung oleh kata atau larik puisi, bukan hanya dugaan.",
+      ].join("\n\n"),
+      sumber: SUMBER_BI,
+      urlVideo: VIDEO_PUISI,
+      gambar: [{ url: GAMBAR_PUISI, ukuranFile: 190000 }],
+      soal: [
+        {
+          pertanyaan: "Puisi mengungkapkan pikiran dan perasaan melalui bahasa yang...",
+          opsi: ["padat, indah, dan bermakna", "selalu berupa langkah kerja", "hanya berisi data angka", "tidak memiliki pilihan kata"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Diksi dalam puisi berarti...",
+          opsi: ["pilihan kata", "jumlah bait", "pola halaman", "nama pengarang"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Imaji berfungsi membuat pembaca...",
+          opsi: ["seolah-olah mengalami sesuatu melalui indra", "menghafal biografi penyair", "menghitung jumlah kata", "menemukan tokoh utama"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Majas yang memberi sifat manusia kepada benda disebut...",
+          opsi: ["personifikasi", "metafora", "ironi", "hiperbola"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Tema dan amanat termasuk unsur...",
+          opsi: ["batin puisi", "fisik puisi", "surat resmi", "teks prosedur"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Rima berkaitan dengan...",
+          opsi: ["pengulangan bunyi dalam puisi", "riwayat hidup penyair", "jumlah tokoh", "tempat kejadian"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Cara yang tepat untuk menafsirkan amanat puisi adalah...",
+          opsi: ["menghubungkan pesan dengan kata dan larik yang digunakan", "mengabaikan seluruh isi puisi", "hanya melihat judul", "menyalin pendapat orang tanpa membaca"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Larik 'angin berbisik di antara daun' menggunakan majas...",
+          opsi: ["personifikasi", "metonimia", "litotes", "repetisi"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Jika puisi banyak memakai kata 'sunyi', 'kelam', dan 'air mata', suasana yang mungkin dibangun adalah...",
+          opsi: ["sedih atau muram", "meriah", "lucu", "tegang karena pertandingan"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Tafsiran puisi yang hanya berdasarkan perasaan pembaca tanpa bukti larik perlu diperbaiki karena...",
+          opsi: ["tafsiran seharusnya didukung bukti dari teks", "puisi tidak boleh ditafsirkan", "semua puisi harus memiliki satu tokoh", "makna puisi hanya ditentukan rima"],
+          benar: 0,
+        },
+      ],
+    },
+    {
+      mapel: "Bahasa Indonesia",
+      judul: "Karya ilmiah: menyusun gagasan berdasarkan data",
+      ringkasan: "Ciri, struktur, bahasa, dan langkah menyusun karya ilmiah sederhana secara objektif.",
+      konten: [
+        "Karya ilmiah adalah tulisan yang membahas suatu masalah berdasarkan data, pengamatan, atau kajian sumber secara sistematis. Tujuannya menyampaikan pengetahuan atau hasil penelitian dengan cara yang dapat dipertanggungjawabkan.",
+        "Struktur karya ilmiah sederhana dapat terdiri atas judul, pendahuluan, pembahasan, penutup, dan daftar pustaka. Pendahuluan menjelaskan latar belakang serta tujuan, pembahasan memaparkan data dan analisis, sedangkan penutup berisi simpulan dan saran.",
+        "Bahasa karya ilmiah harus baku, objektif, logis, dan efektif. Penulis membedakan fakta dari pendapat, mencantumkan sumber ketika menggunakan gagasan orang lain, serta tidak mengubah data agar sesuai dengan keinginannya.",
+        "Langkah penyusunan karya ilmiah meliputi menentukan topik, merumuskan masalah, mengumpulkan data, mengolah dan menganalisis data, menulis laporan, lalu memeriksa kembali isi dan daftar pustaka. Simpulan harus menjawab masalah berdasarkan pembahasan.",
+      ].join("\n\n"),
+      sumber: SUMBER_BI,
+      urlVideo: VIDEO_KARYA_ILMIAH,
+      gambar: [{ url: GAMBAR_KARYA_ILMIAH, ukuranFile: 160000 }],
+      soal: [
+        {
+          pertanyaan: "Karya ilmiah disusun berdasarkan...",
+          opsi: ["data, pengamatan, atau kajian sumber", "khayalan tanpa bukti", "pendapat yang tidak perlu diperiksa", "dialog antartokoh"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Bagian yang menjelaskan latar belakang dan tujuan adalah...",
+          opsi: ["pendahuluan", "daftar pustaka", "judul saja", "lampiran foto"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Pembahasan dalam karya ilmiah berisi...",
+          opsi: ["data dan analisis", "salam pembuka", "tokoh dan alur", "daftar harga"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Bahasa karya ilmiah sebaiknya...",
+          opsi: ["baku, objektif, logis, dan efektif", "santai dan penuh singkatan", "emosional dan memihak", "berisi majas sebanyak mungkin"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Daftar pustaka digunakan untuk...",
+          opsi: ["mencantumkan sumber yang digunakan", "menyimpan semua data mentah", "menulis salam penutup", "menggantikan simpulan"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Langkah awal yang tepat dalam menyusun karya ilmiah adalah...",
+          opsi: ["menentukan topik", "menulis simpulan tanpa data", "menghapus sumber", "mengubah hasil pengamatan"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Mengapa data tidak boleh diubah agar sesuai keinginan penulis?",
+          opsi: ["Karya ilmiah harus objektif dan dapat dipertanggungjawabkan", "Agar tulisan menjadi fiksi", "Agar daftar pustaka lebih pendek", "Karena data tidak boleh dianalisis"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Simpulan yang baik harus...",
+          opsi: ["menjawab rumusan masalah berdasarkan pembahasan", "memuat topik baru yang tidak diteliti", "berisi pendapat tanpa data", "mengulang judul saja"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Seorang siswa mengambil gagasan dari buku tetapi tidak mencantumkan sumber. Perbaikan yang tepat adalah...",
+          opsi: ["mencantumkan sumber dalam kutipan atau daftar pustaka", "menghapus semua data penelitian", "menyatakan gagasan itu miliknya", "mengganti bahasa baku dengan bahasa gaul"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Urutan kegiatan yang paling logis adalah...",
+          opsi: ["menentukan topik, mengumpulkan data, menganalisis, menulis laporan", "menulis simpulan, menentukan topik, menghapus data, mencari judul", "menganalisis tanpa data, lalu mencari masalah", "menyalin tulisan, mengganti nama, lalu menerbitkan"],
           benar: 0,
         },
       ],
@@ -492,6 +796,140 @@ export const paketC: PaketKonten = {
       ],
     },
 
+    // ── Materi tambahan Sesi 3: Bahasa Inggris ───────────────────────────
+    {
+      mapel: "Bahasa Inggris",
+      judul: "Procedure text: explaining how to do something",
+      ringkasan: "Purpose, structure, imperative verbs, and sequence connectors in procedure texts.",
+      konten: [
+        "A procedure text explains how to make or do something through a clear sequence of steps. Its purpose is to help the reader achieve a result correctly and safely.",
+        "The structure usually consists of a goal, materials or ingredients, and steps. The materials section is needed when the procedure uses objects or ingredients.",
+        "Procedure texts use imperative verbs such as cut, mix, press, and turn. They also use sequence connectors such as first, next, then, after that, and finally.",
+        "Good instructions are specific and ordered. Check the result after each important step and add warnings when an action may be dangerous, for example when using heat or sharp tools.",
+      ].join("\n\n"),
+      sumber: SUMBER_ENG,
+      urlVideo: VIDEO_PROCEDURE,
+      gambar: [{ url: GAMBAR_PROCEDURE, ukuranFile: 170000 }],
+      soal: [
+        {
+          pertanyaan: "The purpose of a procedure text is to...",
+          opsi: ["explain how to make or do something", "describe a famous person", "tell a funny story", "report yesterday's news"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Which part tells the reader what the procedure will achieve?",
+          opsi: ["goal", "materials", "last step only", "contact person"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Which word is an imperative verb?",
+          opsi: ["mix", "beautiful", "carefully", "ingredient"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Complete: ..., wash the vegetables.",
+          opsi: ["First", "Because", "Although", "Yesterday"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "The materials section contains...",
+          opsi: ["objects or ingredients needed", "the writer's biography", "the moral of a story", "the final opinion only"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Which sentence is a clear instruction?",
+          opsi: ["Press the button once.", "The button is interesting.", "I pressed it yesterday.", "Maybe the button is blue."],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Why must procedure steps be in the correct order?",
+          opsi: ["So the reader can achieve the intended result", "So the text becomes a narrative", "So materials are unnecessary", "So every sentence becomes a question"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Which connector shows the final step?",
+          opsi: ["finally", "next", "first", "before"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "A recipe lists 'bake the cake' before 'pour the batter into the pan'. The problem is...",
+          opsi: ["the steps are in an illogical order", "the recipe has too many materials", "the imperative verb is missing", "the title must be a question"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "A warning is important in a procedure when...",
+          opsi: ["an action may be dangerous", "the reader already knows the title", "the text has a goal", "the materials are listed alphabetically"],
+          benar: 0,
+        },
+      ],
+    },
+    {
+      mapel: "Bahasa Inggris",
+      judul: "Giving opinions and presenting ideas",
+      ringkasan: "Expressions for stating opinions, agreeing, disagreeing politely, and presenting ideas.",
+      konten: [
+        "An opinion is what someone thinks or feels about a topic. Useful expressions include I think..., In my opinion..., and I believe....",
+        "To agree, say I agree, I think so too, or That's a good point. To disagree politely, say I see your point, but... or I am not sure I agree because....",
+        "A short presentation usually has an opening, the main points, and a closing. Start by greeting the audience and introducing the topic, then explain ideas in a clear order.",
+        "Support an opinion with a reason or example. Listen to other speakers, do not interrupt, and use polite language even when your opinion is different.",
+      ].join("\n\n"),
+      sumber: SUMBER_ENG,
+      urlVideo: VIDEO_PRESENTASI,
+      gambar: [{ url: GAMBAR_PRESENTASI, ukuranFile: 180000 }],
+      soal: [
+        {
+          pertanyaan: "An opinion is...",
+          opsi: ["what someone thinks or feels", "a confirmed measurement only", "a sequence of cooking steps", "a place on a map"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Which expression states an opinion?",
+          opsi: ["In my opinion...", "Open the door!", "Where is the bank?", "I was born in May."],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Which expression shows agreement?",
+          opsi: ["I agree.", "I disagree because...", "Please wait.", "I don't know where."],
+          benar: 0,
+        },
+        {
+          pertanyaan: "A polite way to disagree is...",
+          opsi: ["I see your point, but...", "You are stupid.", "Be quiet.", "That is impossible, stop talking."],
+          benar: 0,
+        },
+        {
+          pertanyaan: "A presentation usually begins with...",
+          opsi: ["a greeting and an introduction", "the final conclusion only", "an unrelated joke", "a list of questions without a topic"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "An opinion becomes stronger when it has...",
+          opsi: ["a reason or example", "a louder voice", "many interruptions", "no explanation"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Complete: I think recycling is important ... it reduces waste.",
+          opsi: ["because", "but", "or", "although"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "What should a good listener do during a presentation?",
+          opsi: ["listen and avoid interrupting", "talk louder than the speaker", "leave before the topic starts", "change the topic repeatedly"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "A student says 'I think uniforms are useful because they make students look neat.' The word because introduces...",
+          opsi: ["a reason", "a greeting", "a disagreement", "a closing"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Which presentation order is most logical?",
+          opsi: ["greeting, topic, main points, closing", "closing, greeting, unrelated topic, main points", "main points, goodbye, greeting, topic", "questions only, then no conclusion"],
+          benar: 0,
+        },
+      ],
+    },
+
     // ── Informatika ─────────────────────────────────────────────────────
     {
       mapel: "Informatika",
@@ -606,6 +1044,139 @@ export const paketC: PaketKonten = {
         {
           pertanyaan: "Enkripsi berfungsi untuk...",
           opsi: ["menyandikan data agar tidak dapat dibaca pihak yang tidak berhak", "mempercepat koneksi internet", "menghapus semua data", "menggandakan dokumen"],
+          benar: 0,
+        },
+      ],
+    },
+    // ── Materi tambahan Sesi 3: Informatika ──────────────────────────────
+    {
+      mapel: "Informatika",
+      judul: "Keamanan digital dan perlindungan data",
+      ringkasan: "Ancaman digital, kata sandi kuat, autentikasi, phishing, dan kebiasaan aman di internet.",
+      konten: [
+        "Keamanan digital adalah upaya melindungi perangkat, akun, jaringan, dan data saat menggunakan teknologi. Data pribadi meliputi nama lengkap, alamat, nomor telepon, kata sandi, kode OTP, dan informasi keuangan.",
+        "Gunakan kata sandi yang panjang, unik untuk setiap akun, dan sulit ditebak. Aktifkan autentikasi multifaktor jika tersedia. Jangan pernah membagikan kata sandi atau kode OTP kepada orang lain.",
+        "Phishing adalah penipuan yang mencoba mencuri informasi melalui pesan, situs, atau tautan palsu. Periksa alamat pengirim dan URL, waspadai permintaan yang mendesak, dan jangan mengunduh lampiran mencurigakan.",
+        "Perbarui sistem dan aplikasi, gunakan jaringan tepercaya, buat cadangan data penting, dan laporkan kejadian mencurigakan. Keamanan digital merupakan tanggung jawab bersama, bukan hanya tugas penyedia layanan.",
+      ].join("\n\n"),
+      sumber: SUMBER_INFO,
+      urlVideo: VIDEO_KEAMANAN,
+      gambar: [{ url: GAMBAR_KEAMANAN, ukuranFile: 130000 }],
+      soal: [
+        {
+          pertanyaan: "Keamanan digital bertujuan melindungi...",
+          opsi: ["perangkat, akun, jaringan, dan data", "warna layar saja", "semua berita agar menjadi benar", "kecepatan mengetik"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Contoh data pribadi yang harus dijaga adalah...",
+          opsi: ["kata sandi dan kode OTP", "warna favorit yang diumumkan", "nama mata pelajaran", "judul buku di perpustakaan"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Kata sandi yang baik seharusnya...",
+          opsi: ["panjang, unik, dan sulit ditebak", "sama untuk semua akun", "berisi tanggal lahir saja", "dibagikan kepada teman"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Autentikasi multifaktor menambah...",
+          opsi: ["lapisan verifikasi saat masuk akun", "jumlah iklan di layar", "kecepatan internet", "kapasitas baterai"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Phishing adalah...",
+          opsi: ["penipuan untuk mencuri informasi melalui pesan atau tautan palsu", "cara memperbarui aplikasi", "metode membuat cadangan data", "jaringan lokal di sekolah"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Jika mendapat pesan yang meminta kode OTP dengan segera, tindakan paling aman adalah...",
+          opsi: ["tidak membagikan OTP dan memeriksa kebenaran pesan", "langsung mengirim OTP", "meneruskan pesan kepada semua teman", "mengunduh semua lampiran"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Mengapa aplikasi perlu diperbarui?",
+          opsi: ["pembaruan dapat memperbaiki celah keamanan", "agar kata sandi menjadi publik", "agar data pribadi terhapus", "supaya semua tautan dapat dipercaya"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Tindakan yang membantu mencegah kehilangan data adalah...",
+          opsi: ["membuat cadangan data penting", "menggunakan satu kata sandi di semua akun", "menonaktifkan semua pembaruan", "membuka tautan tidak dikenal"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Seseorang mengirim tautan hadiah dengan alamat situs yang aneh dan meminta kata sandi. Ciri yang perlu dicurigai adalah...",
+          opsi: ["tautan dan permintaan informasinya mencurigakan", "hadiahnya pasti benar", "kata sandi boleh dibagikan", "semua situs memakai alamat yang sama"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Seorang siswa memakai kata sandi yang sama untuk semua akun. Risikonya adalah...",
+          opsi: ["satu kebocoran dapat membahayakan banyak akun", "semua akun menjadi lebih aman", "OTP tidak lagi diperlukan", "data otomatis dicadangkan"],
+          benar: 0,
+        },
+      ],
+    },
+    {
+      mapel: "Informatika",
+      judul: "Analisis data dan visualisasi informasi",
+      ringkasan: "Jenis data, pembersihan data, tabel, grafik, dan cara menarik kesimpulan secara tepat.",
+      konten: [
+        "Data adalah fakta atau keterangan yang dikumpulkan untuk menjawab pertanyaan. Data dapat berupa angka, teks, tanggal, gambar, atau kategori. Sebelum dianalisis, data perlu diperiksa agar lengkap dan sesuai tujuan.",
+        "Pembersihan data meliputi menghapus duplikasi, memperbaiki kesalahan penulisan, menangani data kosong, dan memastikan satuan atau formatnya konsisten. Data yang tidak rapi dapat menghasilkan kesimpulan yang menyesatkan.",
+        "Tabel menyajikan data dalam baris dan kolom. Diagram batang cocok untuk membandingkan kategori, diagram garis menunjukkan perubahan dari waktu ke waktu, sedangkan diagram lingkaran menunjukkan bagian terhadap keseluruhan.",
+        "Kesimpulan harus sesuai dengan data dan tidak melebih-lebihkan. Perhatikan judul, label sumbu, satuan, skala, serta sumber data sebelum membaca atau membuat visualisasi.",
+      ].join("\n\n"),
+      sumber: SUMBER_INFO,
+      urlVideo: VIDEO_DATA,
+      gambar: [{ url: GAMBAR_DATA, ukuranFile: 150000 }],
+      soal: [
+        {
+          pertanyaan: "Data adalah...",
+          opsi: ["fakta atau keterangan yang dikumpulkan", "pendapat yang selalu benar", "program komputer saja", "warna pada diagram"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Contoh data berbentuk kategori adalah...",
+          opsi: ["jenis transportasi: bus, sepeda, atau kereta", "tinggi badan dalam sentimeter", "jumlah buku sebanyak 12", "suhu 30 °C"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Menghapus data yang tercatat dua kali disebut...",
+          opsi: ["menghapus duplikasi", "membuat prediksi", "mengubah skala", "menggambar sumbu"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Diagram batang paling sesuai untuk...",
+          opsi: ["membandingkan beberapa kategori", "menunjukkan perubahan waktu secara terus-menerus saja", "menulis paragraf", "menyimpan kata sandi"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Diagram garis cocok untuk menunjukkan...",
+          opsi: ["perubahan data dari waktu ke waktu", "bagian dari keseluruhan saja", "daftar nama tanpa urutan", "langkah algoritma"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Sebelum menarik kesimpulan dari grafik, kita perlu memeriksa...",
+          opsi: ["judul, label, satuan, skala, dan sumber data", "warna favorit pembuat grafik", "panjang nama file saja", "jumlah gambar di halaman"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Mengapa data kosong perlu ditangani?",
+          opsi: ["Agar analisis tidak menghasilkan kesimpulan yang menyesatkan", "Agar semua data menjadi angka nol", "Agar sumber data dapat dihapus", "Agar grafik tidak memiliki judul"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Diagram lingkaran menunjukkan...",
+          opsi: ["bagian terhadap keseluruhan", "urutan langkah program", "perubahan suhu setiap menit saja", "nama kolom tabel"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Jika sumbu grafik tidak memiliki satuan, masalahnya adalah...",
+          opsi: ["pembaca sulit menafsirkan ukuran data dengan tepat", "data otomatis menjadi benar", "grafik berubah menjadi tabel", "semua kategori hilang"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Sebuah grafik memakai skala yang dipotong sehingga selisih kecil tampak sangat besar. Hal yang perlu dilakukan adalah...",
+          opsi: ["memeriksa skala sebelum menerima kesimpulan", "langsung menyebarkan grafik", "menghapus judul grafik", "menganggap semua data sama"],
           benar: 0,
         },
       ],
