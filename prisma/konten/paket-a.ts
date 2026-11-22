@@ -4,10 +4,19 @@ const SUMBER_BI =
   "https://buku.kemendikdasmen.go.id/katalog/bahasa-indonesia-lihat-sekitar-untuk-sdmi-kelas-iv-edisi-revisi";
 const SUMBER_MTK =
   "https://buku.kemendikdasmen.go.id/katalog/Matematika-untuk-SDMI-Kelas-IV";
-const GAMBAR_NARASI = "/materi/paket-a/narasi.svg";
-const GAMBAR_PETUNJUK = "/materi/paket-a/petunjuk.svg";
-const GAMBAR_BANGUN_DATAR = "/materi/paket-a/bangun-datar.svg";
-const GAMBAR_PENGUKURAN = "/materi/paket-a/pengukuran.svg";
+// Ilustrasi dari Wikimedia Commons (bukan aset buatan sendiri).
+// Plotmountain.jpg — public domain, Kaede4.
+const GAMBAR_NARASI = "https://upload.wikimedia.org/wikipedia/commons/2/24/Plotmountain.jpg";
+// Wash your hands.svg — CC BY-SA 3.0, Thibault fr.
+const GAMBAR_PETUNJUK = "https://upload.wikimedia.org/wikipedia/commons/c/c9/Wash_your_hands.svg";
+// Geometry Shapes and Solids.svg — CC0, C b grenouille.
+const GAMBAR_BANGUN_DATAR = "https://upload.wikimedia.org/wikipedia/commons/c/c1/Geometry_Shapes_and_Solids.svg";
+// Metric clock.JPG — CC0, Jpeterson101.
+const GAMBAR_WAKTU = "https://upload.wikimedia.org/wikipedia/commons/3/34/Metric_clock.JPG";
+// Ruler and coin.svg — CC BY-SA 4.0, Tomchen1989.
+const GAMBAR_UANG = "https://upload.wikimedia.org/wikipedia/commons/e/eb/Ruler_and_coin.svg";
+// FourMetricInstruments.JPG — CC BY-SA 3.0, Martinvl.
+const GAMBAR_BERAT = "https://upload.wikimedia.org/wikipedia/commons/c/c1/FourMetricInstruments.JPG";
 const VIDEO_NARASI = "https://www.youtube.com/watch?v=CfhmEyvUKTo";
 const VIDEO_PETUNJUK = "https://www.youtube.com/watch?v=mQ9jLcKFpgc";
 const VIDEO_BANGUN_DATAR = "https://www.youtube.com/watch?v=1ENevf_mFRs";
@@ -548,7 +557,11 @@ export const paketA: PaketKonten = {
       ringkasan: "Memilih satuan yang tepat, mengonversi pengukuran, serta menyelesaikan masalah sehari-hari tentang panjang, berat, waktu, dan uang.",
       urlVideo: VIDEO_PENGUKURAN,
       sumber: SUMBER_MTK,
-      gambar: [{ url: GAMBAR_PENGUKURAN, ukuranFile: 70000 }],
+      gambar: [
+        { url: GAMBAR_BERAT, ukuranFile: 1400000 },
+        { url: GAMBAR_WAKTU, ukuranFile: 24000 },
+        { url: GAMBAR_UANG, ukuranFile: 9000 },
+      ],
       konten: [
         "Pengukuran digunakan untuk mengetahui ukuran suatu benda atau lama suatu kegiatan dengan satuan yang disepakati. Panjang dapat diukur dengan milimeter, sentimeter, meter, atau kilometer. Gunakan milimeter atau sentimeter untuk benda kecil, meter untuk panjang ruangan atau halaman, dan kilometer untuk jarak antarkota.",
         "Hubungan satuan panjang yang penting adalah 1 cm = 10 mm, 1 m = 100 cm, dan 1 km = 1.000 m. Saat mengubah satuan besar ke satuan kecil, kalikan. Saat mengubah satuan kecil ke satuan besar, bagi. Contohnya 3 m = 300 cm dan 450 cm = 4,5 m. Sebelum menjumlahkan atau mengurangkan panjang, samakan satuannya terlebih dahulu.",

@@ -27,6 +27,62 @@ function idVideo(url: string): string | null {
   return match ? match[1] : null;
 }
 
+function labelGambar(url: string): string {
+  if (url.includes("Plotmountain")) return "Diagram struktur alur teks narasi";
+  if (url.includes("Wash_your_hands")) return "Ilustrasi langkah mencuci tangan";
+  if (url.includes("Geometry_Shapes")) return "Ilustrasi berbagai bangun datar dan bangun ruang";
+  if (url.includes("Metric_clock")) return "Contoh jam untuk mempelajari satuan waktu";
+  if (url.includes("Ruler_and_coin")) return "Contoh alat ukur panjang dan uang";
+  if (url.includes("FourMetricInstruments")) return "Contoh alat ukur dan satuan metrik";
+  return "Gambar materi pembelajaran";
+}
+
+function kreditGambar(url: string): { nama: string; lisensi: string; href: string } | null {
+  if (url.includes("Plotmountain")) {
+    return {
+      nama: "Kaede4",
+      lisensi: "domain publik",
+      href: "https://commons.wikimedia.org/wiki/File:Plotmountain.jpg",
+    };
+  }
+  if (url.includes("Wash_your_hands")) {
+    return {
+      nama: "Thibault fr",
+      lisensi: "CC BY-SA 3.0",
+      href: "https://commons.wikimedia.org/wiki/File:Wash_your_hands.svg",
+    };
+  }
+  if (url.includes("Geometry_Shapes")) {
+    return {
+      nama: "C b grenouille",
+      lisensi: "CC0",
+      href: "https://commons.wikimedia.org/wiki/File:Geometry_Shapes_and_Solids.svg",
+    };
+  }
+  if (url.includes("Metric_clock")) {
+    return {
+      nama: "Jpeterson101",
+      lisensi: "CC0",
+      href: "https://commons.wikimedia.org/wiki/File:Metric_clock.JPG",
+    };
+  }
+  if (url.includes("Ruler_and_coin")) {
+    return {
+      nama: "Tomchen1989",
+      lisensi: "CC BY-SA 4.0",
+      href: "https://commons.wikimedia.org/wiki/File:Ruler_and_coin.svg",
+    };
+  }
+  if (url.includes("FourMetricInstruments")) {
+    return {
+      nama: "Martinvl",
+      lisensi: "CC BY-SA 3.0",
+      href: "https://commons.wikimedia.org/wiki/File:FourMetricInstruments.JPG",
+    };
+  }
+  return null;
+}
+
 function VideoMateri({ url }: { url?: string }) {
   const id = url ? idVideo(url) : null;
   if (id) {
@@ -234,17 +290,34 @@ export default async function BabMateriPage({ searchParams }: Props) {
 
             {gambarBab.length > 0 && (
               <section className="mt-7 flex flex-col gap-5">
-                {gambarBab.map((g) => (
-                  <figure key={g.id} className="border border-line">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={g.url}
-                      alt="Gambar materi pembelajaran"
-                      className="w-full"
-                      loading="lazy"
-                    />
-                  </figure>
-                ))}
+                {gambarBab.map((g) => {
+                  const kredit = kreditGambar(g.url);
+                  return (
+                    <figure key={g.id} className="border border-line">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={g.url}
+                        alt={labelGambar(g.url)}
+                        className="w-full"
+                        loading="lazy"
+                      />
+                      {kredit && (
+                        <figcaption className="border-t border-line px-3 py-2 text-[10px] text-muted">
+                          Sumber ilustrasi: {" "}
+                          <a
+                            href={kredit.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="underline hover:text-coral"
+                          >
+                            {kredit.nama}
+                          </a>{" "}
+                          ({kredit.lisensi}) · Wikimedia Commons
+                        </figcaption>
+                      )}
+                    </figure>
+                  );
+                })}
               </section>
             )}
           </article>
