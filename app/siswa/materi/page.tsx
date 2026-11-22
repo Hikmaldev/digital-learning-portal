@@ -30,6 +30,12 @@ function idVideo(url: string): string | null {
 function labelGambar(url: string): string {
   if (url.includes("Miki_Sakurai")) return "Ilustrasi kegiatan bercerita kepada anak-anak";
   if (url.includes("Hand_washing_with_soap")) return "Foto langkah mencuci tangan dengan sabun";
+  if (url.includes("Icelandic_volcano_eruption")) return "Foto letusan gunung berapi untuk menjelaskan fenomena alam";
+  if (url.includes("Writing_a_letter")) return "Foto kegiatan menulis surat dengan pena";
+  if (url.includes("Balance_scale")) return "Ilustrasi timbangan untuk memahami persamaan yang setara";
+  if (url.includes("Basic_triangle")) return "Ilustrasi segitiga dasar";
+  if (url.includes("Boy_playing_with_ball")) return "Foto anak bermain bola sebagai contoh kegiatan waktu luang";
+  if (url.includes("Two_directions_sign")) return "Foto papan petunjuk arah";
   if (url.includes("Geometry_Shapes")) return "Ilustrasi berbagai bangun datar dan bangun ruang";
   if (url.includes("Metric_clock")) return "Contoh jam untuk mempelajari satuan waktu";
   if (url.includes("Ruler_and_coin")) return "Contoh alat ukur panjang dan uang";
@@ -50,6 +56,48 @@ function kreditGambar(url: string): { nama: string; lisensi: string; href: strin
       nama: "Justmee3001",
       lisensi: "CC BY-SA 4.0",
       href: "https://commons.wikimedia.org/wiki/File:Hand_washing_with_soap.jpg",
+    };
+  }
+  if (url.includes("Icelandic_volcano_eruption")) {
+    return {
+      nama: "Yuo7si",
+      lisensi: "CC BY 4.0",
+      href: "https://commons.wikimedia.org/wiki/File:Icelandic_volcano_eruption.jpg",
+    };
+  }
+  if (url.includes("Writing_a_letter")) {
+    return {
+      nama: "Petar Milošević",
+      lisensi: "CC BY-SA 3.0",
+      href: "https://commons.wikimedia.org/wiki/File:Writing_a_letter.jpg",
+    };
+  }
+  if (url.includes("Balance_scale")) {
+    return {
+      nama: "Phlsph7",
+      lisensi: "CC0",
+      href: "https://commons.wikimedia.org/wiki/File:Balance_scale.svg",
+    };
+  }
+  if (url.includes("Basic_triangle")) {
+    return {
+      nama: "Douglas Paul Perkins",
+      lisensi: "CC0",
+      href: "https://commons.wikimedia.org/wiki/File:Basic_triangle.svg",
+    };
+  }
+  if (url.includes("Boy_playing_with_ball")) {
+    return {
+      nama: "Shixart1985",
+      lisensi: "CC BY 2.0",
+      href: "https://commons.wikimedia.org/wiki/File:Boy_playing_with_ball_in_the_backyard.jpg",
+    };
+  }
+  if (url.includes("Two_directions_sign")) {
+    return {
+      nama: "Pablo Garcia Saldaña",
+      lisensi: "CC0",
+      href: "https://commons.wikimedia.org/wiki/File:Two_directions_sign_(Unsplash).jpg",
     };
   }
   if (url.includes("Geometry_Shapes")) {

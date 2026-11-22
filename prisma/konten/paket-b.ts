@@ -7,6 +7,33 @@ const SUMBER_MTK =
 const SUMBER_ENG =
   "https://buku.kemendikdasmen.go.id/katalog/English-for-Nusantara-untuk-SMPMTs-Kelas-VII";
 
+// Materi tambahan Sesi 2 menggunakan ilustrasi Wikimedia Commons berlisensi terbuka.
+// Icelandic volcano eruption.jpg — CC BY 4.0, Yuo7si.
+const GAMBAR_EKSPLANASI =
+  "https://upload.wikimedia.org/wikipedia/commons/6/61/Icelandic_volcano_eruption.jpg";
+// Writing a letter.jpg — CC BY-SA 3.0, Petar Milošević.
+const GAMBAR_SURAT =
+  "https://upload.wikimedia.org/wikipedia/commons/2/2c/Writing_a_letter.jpg";
+// Balance scale.svg — CC0, Phlsph7.
+const GAMBAR_PERSAMAAN =
+  "https://upload.wikimedia.org/wikipedia/commons/f/f0/Balance_scale.svg";
+// Basic triangle.svg — CC0, Douglas Paul Perkins.
+const GAMBAR_GEOMETRI =
+  "https://upload.wikimedia.org/wikipedia/commons/7/73/Basic_triangle.svg";
+// Boy playing with ball in the backyard.jpg — CC BY 2.0, Shixart1985.
+const GAMBAR_HOBI =
+  "https://upload.wikimedia.org/wikipedia/commons/6/6d/Boy_playing_with_ball_in_the_backyard.jpg";
+// Two directions sign (Unsplash).jpg — CC0, Pablo Garcia Saldaña.
+const GAMBAR_DIRECTIONS =
+  "https://upload.wikimedia.org/wikipedia/commons/2/27/Two_directions_sign_%28Unsplash%29.jpg";
+
+const VIDEO_EKSPLANASI = "https://www.youtube.com/watch?v=_tPi7NmdQAc";
+const VIDEO_SURAT = "https://www.youtube.com/watch?v=TyC_tZ0fQjU";
+const VIDEO_PERSAMAAN = "https://www.youtube.com/watch?v=OyynhZDrU-0";
+const VIDEO_GEOMETRI = "https://www.youtube.com/watch?v=GO-pUEzss8Y";
+const VIDEO_HOBI = "https://www.youtube.com/watch?v=f7KX1AwgZ3w";
+const VIDEO_DIRECTIONS = "https://www.youtube.com/watch?v=9XAJnf-7lAI";
+
 /**
  * Paket B — setara SMP/MTs (Fase D Kurikulum Merdeka; Keputusan BSKAP 046/H/KR/2025).
  * Topik mengikuti buku teks resmi Kemendikdasmen kelas VII.
@@ -174,6 +201,140 @@ export const paketB: PaketKonten = {
       ],
     },
 
+    // ── Materi tambahan Sesi 2: Bahasa Indonesia ─────────────────────────
+    {
+      mapel: "Bahasa Indonesia",
+      judul: "Teks eksplanasi: menjelaskan proses dan sebab-akibat",
+      ringkasan: "Tujuan, struktur, ciri kebahasaan, dan cara menyusun teks eksplanasi berdasarkan fakta.",
+      konten: [
+        "Teks eksplanasi adalah teks yang menjelaskan proses terjadinya suatu fenomena alam, sosial, atau budaya secara logis dan berdasarkan fakta. Contohnya adalah proses terjadinya hujan, gunung meletus, atau banjir.",
+        "Struktur teks eksplanasi terdiri atas pernyataan umum, deretan penjelas, dan interpretasi. Pernyataan umum mengenalkan fenomena, deretan penjelas menguraikan proses atau hubungan sebab-akibat secara berurutan, sedangkan interpretasi berisi simpulan atau tanggapan penulis yang bersifat pilihan.",
+        "Teks eksplanasi banyak memakai konjungsi kausalitas seperti karena, sebab, sehingga, dan akibatnya. Konjungsi kronologis seperti kemudian, setelah itu, dan akhirnya dipakai untuk menunjukkan urutan proses.",
+        "Informasi dalam teks eksplanasi harus dapat dibuktikan. Penulis sebaiknya menggunakan istilah khusus dan kalimat pasif jika diperlukan, tetapi tetap menyusun kalimat yang jelas agar pembaca memahami proses yang dijelaskan.",
+      ].join("\n\n"),
+      sumber: SUMBER_BI,
+      urlVideo: VIDEO_EKSPLANASI,
+      gambar: [{ url: GAMBAR_EKSPLANASI, ukuranFile: 180000 }],
+      soal: [
+        {
+          pertanyaan: "Teks eksplanasi bertujuan menjelaskan...",
+          opsi: ["proses terjadinya suatu fenomena", "langkah membuat kerajinan", "keindahan suatu tempat", "percakapan antartokoh"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Fenomena yang dapat dijelaskan dalam teks eksplanasi adalah...",
+          opsi: ["proses terjadinya hujan", "daftar belanja", "jadwal pelajaran", "dialog drama"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Bagian yang mengenalkan fenomena disebut...",
+          opsi: ["pernyataan umum", "deretan penjelas", "interpretasi", "orientasi tokoh"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Bagian yang menguraikan proses secara berurutan disebut...",
+          opsi: ["deretan penjelas", "judul", "pernyataan umum", "salam pembuka"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Kata yang menunjukkan hubungan sebab-akibat adalah...",
+          opsi: ["sehingga", "kemudian", "setelah itu", "akhirnya"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Kata kemudian dalam teks eksplanasi berfungsi menunjukkan...",
+          opsi: ["urutan waktu", "tempat", "tokoh", "perbandingan"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Mengapa teks eksplanasi harus berdasarkan fakta?",
+          opsi: ["Agar proses yang dijelaskan dapat dipercaya", "Agar ceritanya menjadi khayalan", "Agar kalimatnya selalu lucu", "Agar penulis tidak perlu melakukan pengamatan"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Urutan struktur teks eksplanasi yang tepat adalah...",
+          opsi: ["pernyataan umum, deretan penjelas, interpretasi", "interpretasi, judul, pernyataan umum", "deretan penjelas, orientasi, resolusi", "tujuan, alat, langkah-langkah"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Kalimat yang paling sesuai untuk deretan penjelas adalah...",
+          opsi: ["Uap air naik dan berkumpul membentuk awan.", "Hujan adalah fenomena yang sangat indah menurut saya.", "Ayo, kita membuat hujan buatan!", "Pada suatu hari, hiduplah awan yang sedih."],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Jika sebuah teks hanya berisi pendapat tanpa menjelaskan proses dan fakta, teks itu belum tepat disebut teks eksplanasi karena...",
+          opsi: ["teks eksplanasi harus menjelaskan fenomena secara logis dan faktual", "teks eksplanasi harus selalu berbentuk dialog", "teks eksplanasi hanya boleh membahas tokoh", "teks eksplanasi tidak boleh memakai konjungsi"],
+          benar: 0,
+        },
+      ],
+    },
+    {
+      mapel: "Bahasa Indonesia",
+      judul: "Surat pribadi dan surat resmi",
+      ringkasan: "Tujuan, bagian, perbedaan bahasa, dan etika menulis surat pribadi serta surat resmi.",
+      konten: [
+        "Surat adalah sarana komunikasi tertulis. Surat pribadi ditujukan kepada orang yang memiliki hubungan personal, seperti teman atau keluarga, sedangkan surat resmi digunakan untuk keperluan kedinasan atau organisasi.",
+        "Surat pribadi biasanya memakai bahasa yang akrab, tetapi tetap sopan. Bagian surat pribadi dapat berupa tempat dan tanggal, alamat tujuan, salam pembuka, isi, salam penutup, dan nama pengirim.",
+        "Surat resmi menggunakan bahasa baku dan struktur yang lebih lengkap. Bagian-bagiannya dapat meliputi kop surat, nomor, lampiran, perihal, alamat tujuan, salam pembuka, isi surat, penutup, tanda tangan, dan nama atau jabatan pengirim.",
+        "Isi surat harus disesuaikan dengan penerima dan tujuan. Sebelum dikirim, periksa kembali nama penerima, alamat, tanggal, ejaan, serta kesantunan bahasa agar tidak terjadi salah paham.",
+      ].join("\n\n"),
+      sumber: SUMBER_BI,
+      urlVideo: VIDEO_SURAT,
+      gambar: [{ url: GAMBAR_SURAT, ukuranFile: 120000 }],
+      soal: [
+        {
+          pertanyaan: "Surat pribadi biasanya ditujukan kepada...",
+          opsi: ["teman atau anggota keluarga", "kepala dinas untuk urusan kantor", "sebuah perusahaan sebagai laporan resmi", "instansi untuk mengajukan keputusan"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Surat resmi digunakan untuk...",
+          opsi: ["keperluan kedinasan atau organisasi", "menulis cerita fantasi", "mencatat resep makanan", "mengirim pesan rahasia kepada sahabat"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Bahasa yang tepat untuk surat resmi adalah bahasa...",
+          opsi: ["baku dan sopan", "gaul dan bebas", "penuh singkatan tidak umum", "berupa bahasa percakapan saja"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Bagian surat resmi yang memuat identitas instansi disebut...",
+          opsi: ["kop surat", "salam penutup", "isi surat", "alamat pengirim pribadi"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Bagian surat yang menjelaskan pokok pesan adalah...",
+          opsi: ["isi surat", "kop surat", "tanggal surat", "tanda tangan"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Kalimat pembuka yang paling sesuai untuk surat pribadi kepada teman adalah...",
+          opsi: ["Hai, Raka, apa kabarmu?", "Dengan hormat, berdasarkan surat keputusan...", "Yang bertanda tangan di bawah ini...", "Sehubungan dengan rapat dinas..."],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Mengapa nama dan alamat penerima harus diperiksa sebelum surat dikirim?",
+          opsi: ["Agar surat sampai kepada orang yang tepat", "Agar surat menjadi lebih panjang", "Agar kop surat tidak diperlukan", "Agar isi surat dapat dihilangkan"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Perbedaan utama surat pribadi dan surat resmi adalah...",
+          opsi: ["tujuan, penerima, dan ragam bahasanya", "jumlah halaman dan warna kertasnya saja", "ukuran amplopnya saja", "keduanya tidak memiliki isi"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Jika siswa mengundang kepala sekolah untuk acara resmi, jenis surat yang paling tepat adalah...",
+          opsi: ["surat resmi", "surat pribadi yang sangat santai", "catatan harian", "pesan tanpa alamat"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Kesalahan yang perlu diperbaiki dalam surat resmi adalah...",
+          opsi: ["menggunakan banyak singkatan gaul dan tidak mencantumkan tujuan surat", "mencantumkan tanggal dan nama penerima", "menggunakan salam pembuka yang sopan", "memeriksa ejaan sebelum mengirim"],
+          benar: 0,
+        },
+      ],
+    },
+
     // ── Matematika ──────────────────────────────────────────────────────
     {
       mapel: "Matematika",
@@ -332,6 +493,140 @@ export const paketB: PaketKonten = {
       ],
     },
 
+    // ── Materi tambahan Sesi 2: Matematika ───────────────────────────────
+    {
+      mapel: "Matematika",
+      judul: "Persamaan linear satu variabel",
+      ringkasan: "Pengertian persamaan, langkah menentukan nilai variabel, dan penerapannya dalam masalah sehari-hari.",
+      konten: [
+        "Persamaan linear satu variabel (PLSV) adalah kalimat matematika yang memuat tanda sama dengan dan satu variabel berpangkat satu. Contohnya 3x + 2 = 11. Huruf x disebut variabel, sedangkan bilangan yang diketahui disebut konstanta.",
+        "Tujuan menyelesaikan persamaan adalah menemukan nilai variabel yang membuat ruas kiri dan ruas kanan bernilai sama. Untuk menjaga kesetaraan, operasi yang dilakukan pada satu ruas harus dilakukan juga pada ruas lainnya.",
+        "Gunakan operasi kebalikan secara bertahap. Pada 3x + 2 = 11, kurangi 2 pada kedua ruas sehingga 3x = 9, lalu bagi kedua ruas dengan 3 sehingga x = 3. Pemeriksaan dilakukan dengan memasukkan nilai x ke persamaan awal.",
+        "PLSV dapat digunakan untuk memodelkan masalah. Jika tiga buku dan biaya pengiriman Rp2.000 berharga Rp17.000, modelnya 3x + 2.000 = 17.000, dengan x sebagai harga satu buku.",
+      ].join("\n\n"),
+      sumber: SUMBER_MTK,
+      urlVideo: VIDEO_PERSAMAAN,
+      gambar: [{ url: GAMBAR_PERSAMAAN, ukuranFile: 24000 }],
+      soal: [
+        {
+          pertanyaan: "Persamaan linear satu variabel memuat...",
+          opsi: ["satu variabel berpangkat satu", "dua variabel berpangkat dua", "hanya bilangan tanpa tanda sama dengan", "gambar bangun ruang"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Pada persamaan 4x + 3 = 15, variabelnya adalah...",
+          opsi: ["x", "4", "3", "15"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Nilai x pada x + 7 = 12 adalah...",
+          opsi: ["5", "7", "12", "19"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Nilai x pada 3x = 18 adalah...",
+          opsi: ["6", "15", "21", "54"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Langkah pertama yang tepat untuk 2x + 5 = 17 adalah...",
+          opsi: ["mengurangi 5 pada kedua ruas", "menambah 5 hanya pada ruas kiri", "membagi 17 dengan 2 tanpa mengurangi 5", "mengalikan kedua ruas dengan 5"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Penyelesaian 5x − 4 = 21 adalah...",
+          opsi: ["x = 5", "x = 4", "x = 17", "x = 25"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Mengapa operasi harus dilakukan pada kedua ruas persamaan?",
+          opsi: ["Agar kesetaraan kedua ruas tetap terjaga", "Agar variabel selalu hilang", "Agar persamaan berubah menjadi pecahan", "Agar hanya ruas kiri yang berubah"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Model matematika dari 'dua kali suatu bilangan ditambah 3 sama dengan 13' adalah...",
+          opsi: ["2x + 3 = 13", "2 + 3x = 13", "x + 3 = 26", "2x − 3 = 13"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Dina membeli 3 pensil dengan harga sama dan sebuah penghapus Rp2.000. Totalnya Rp11.000. Harga satu pensil adalah...",
+          opsi: ["Rp3.000", "Rp2.000", "Rp4.000", "Rp9.000"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Cara terbaik memeriksa jawaban PLSV adalah...",
+          opsi: ["memasukkan nilai variabel ke persamaan awal", "menghapus semua angka", "mengganti tanda sama dengan dengan tanda tambah", "membandingkan panjang kedua ruas"],
+          benar: 0,
+        },
+      ],
+    },
+    {
+      mapel: "Matematika",
+      judul: "Segitiga dan segiempat",
+      ringkasan: "Jenis, sifat, keliling, dan luas segitiga serta berbagai segiempat.",
+      konten: [
+        "Segitiga adalah bangun datar yang memiliki tiga sisi dan tiga sudut. Berdasarkan panjang sisinya, segitiga dapat berupa sama sisi, sama kaki, atau sembarang. Berdasarkan sudutnya, segitiga dapat berupa lancip, siku-siku, atau tumpul.",
+        "Segiempat adalah bangun datar yang memiliki empat sisi dan empat sudut. Persegi memiliki empat sisi sama panjang dan empat sudut siku-siku. Persegi panjang memiliki sisi berhadapan sama panjang dan empat sudut siku-siku.",
+        "Jajar genjang memiliki dua pasang sisi berhadapan sejajar dan sama panjang. Trapesium memiliki setidaknya satu pasang sisi sejajar. Belah ketupat memiliki empat sisi sama panjang, sedangkan layang-layang memiliki dua pasang sisi berdekatan sama panjang.",
+        "Keliling diperoleh dengan menjumlahkan seluruh sisi. Luas segitiga adalah 1/2 × alas × tinggi, sedangkan luas persegi panjang adalah panjang × lebar. Satuan luas ditulis dalam satuan persegi, misalnya cm².",
+      ].join("\n\n"),
+      sumber: SUMBER_MTK,
+      urlVideo: VIDEO_GEOMETRI,
+      gambar: [{ url: GAMBAR_GEOMETRI, ukuranFile: 18000 }],
+      soal: [
+        {
+          pertanyaan: "Segitiga memiliki...",
+          opsi: ["tiga sisi dan tiga sudut", "empat sisi dan tiga sudut", "tiga sisi dan empat sudut", "empat sisi dan empat sudut"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Segitiga yang ketiga sisinya sama panjang disebut segitiga...",
+          opsi: ["sama sisi", "sama kaki", "sembarang", "siku-siku"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Ciri persegi adalah...",
+          opsi: ["empat sisi sama panjang dan empat sudut siku-siku", "hanya satu pasang sisi sejajar", "sisi berhadapan berbeda panjang", "tidak memiliki sudut"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Bangun yang memiliki sisi berhadapan sama panjang dan empat sudut siku-siku adalah...",
+          opsi: ["persegi panjang", "layang-layang", "trapesium", "segitiga"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Rumus luas segitiga adalah...",
+          opsi: ["1/2 × alas × tinggi", "alas + tinggi", "sisi × sisi × sisi", "2 × (alas + tinggi)"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Luas segitiga dengan alas 10 cm dan tinggi 6 cm adalah...",
+          opsi: ["30 cm²", "16 cm²", "60 cm²", "120 cm²"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Keliling persegi dengan sisi 8 cm adalah...",
+          opsi: ["32 cm", "16 cm", "24 cm", "64 cm"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Jajar genjang memiliki...",
+          opsi: ["dua pasang sisi berhadapan sejajar", "tiga sisi sama panjang", "empat diagonal sama panjang selalu", "tidak memiliki sisi sejajar"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Sebuah persegi panjang berukuran 12 cm × 5 cm. Luasnya adalah...",
+          opsi: ["60 cm²", "34 cm²", "17 cm²", "120 cm²"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Seorang siswa menghitung luas segitiga dengan rumus alas × tinggi tanpa membagi dua. Kesalahannya adalah...",
+          opsi: ["lupa faktor 1/2 pada rumus luas segitiga", "menggunakan satuan panjang", "menganggap segitiga memiliki empat sisi", "menjumlahkan seluruh sisi"],
+          benar: 0,
+        },
+      ],
+    },
+
     // ── Bahasa Inggris ──────────────────────────────────────────────────
     {
       mapel: "Bahasa Inggris",
@@ -446,6 +741,138 @@ export const paketB: PaketKonten = {
         {
           pertanyaan: "The correct sentence is...",
           opsi: ["There are two chairs in the living room.", "There is two chairs in the living room.", "There are a chair in the living room.", "There two chairs in living room."],
+          benar: 0,
+        },
+      ],
+    },
+    {
+      mapel: "Bahasa Inggris",
+      judul: "Hobbies and free-time activities",
+      ringkasan: "Kosakata hobi, pola like/love/enjoy, dan cara membicarakan kegiatan waktu luang.",
+      konten: [
+        "A hobby is an activity that we enjoy in our free time. Examples are reading, drawing, playing football, swimming, cooking, and listening to music.",
+        "To talk about likes, use: I like reading. She likes drawing. After like, love, or enjoy, an activity often uses the -ing form: playing, swimming, or cooking.",
+        "To ask about a hobby, say: What do you like doing in your free time? A suitable answer is: I like playing badminton. You can also ask: Do you like reading? — Yes, I do. / No, I don't.",
+        "Use simple present tense for regular activities. Remember that he, she, and it usually take -s or -es: He plays chess every Saturday. She watches films at home.",
+      ].join("\n\n"),
+      sumber: SUMBER_ENG,
+      urlVideo: VIDEO_HOBI,
+      gambar: [{ url: GAMBAR_HOBI, ukuranFile: 210000 }],
+      soal: [
+        {
+          pertanyaan: "A hobby is an activity we enjoy in our...",
+          opsi: ["free time", "classroom test", "sleeping time only", "school uniform"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Which word is a hobby?",
+          opsi: ["drawing", "Monday", "bedroom", "hungry"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Complete: I like ... football.",
+          opsi: ["playing", "plays", "play", "played"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Complete: She ... drawing.",
+          opsi: ["likes", "like", "liking", "liked"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "The correct question about a hobby is...",
+          opsi: ["What do you like doing in your free time?", "Where is your pencil?", "How old is your bag?", "What colour are you hobby?"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "The best answer to 'Do you like reading?' is...",
+          opsi: ["Yes, I do.", "Yes, I am.", "Yes, I can do.", "Yes, I like."],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Complete: He ... chess every Saturday.",
+          opsi: ["plays", "play", "playing", "played"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Which sentence is correct?",
+          opsi: ["They enjoy swimming.", "They enjoys swimming.", "They enjoy swim.", "They enjoying swimming."],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Rina likes cooking and Budi likes cycling. What do they have in common?",
+          opsi: ["They both have hobbies.", "They both dislike activities.", "They both go to school at night.", "They both are rooms."],
+          benar: 0,
+        },
+        {
+          pertanyaan: "A student writes 'She like read books.' The correct sentence is...",
+          opsi: ["She likes reading books.", "She like reading books.", "She likes read books.", "She liking reads books."],
+          benar: 0,
+        },
+      ],
+    },
+    {
+      mapel: "Bahasa Inggris",
+      judul: "Asking for and giving directions",
+      ringkasan: "Nama tempat, ungkapan meminta petunjuk, dan arah dalam bahasa Inggris.",
+      konten: [
+        "Directions help us find a place. Common places in town are school, library, hospital, supermarket, bank, park, and bus station.",
+        "To ask for directions, say: Excuse me, where is the library? or How can I get to the hospital? Use polite words such as excuse me and thank you.",
+        "Useful direction phrases are go straight, turn left, turn right, cross the street, next to, in front of, behind, and opposite. Example: Go straight and turn left at the bank.",
+        "Read directions in order and identify landmarks. If the instruction says 'The library is next to the park', the library and the park are beside each other. A simple map can help us check whether the route is correct.",
+      ].join("\n\n"),
+      sumber: SUMBER_ENG,
+      urlVideo: VIDEO_DIRECTIONS,
+      gambar: [{ url: GAMBAR_DIRECTIONS, ukuranFile: 170000 }],
+      soal: [
+        {
+          pertanyaan: "Which place is commonly found in a town?",
+          opsi: ["library", "triangle", "breakfast", "happy"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "The polite expression to start asking for directions is...",
+          opsi: ["Excuse me", "Go away", "Be quiet", "I am sleeping"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Complete: How can I ... to the hospital?",
+          opsi: ["get", "gets", "getting", "got"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Turn left means...",
+          opsi: ["belok kiri", "belok kanan", "jalan lurus", "menyeberang jalan"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Go straight means...",
+          opsi: ["jalan lurus", "belok kiri", "berhenti di belakang", "berputar di tempat"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "If the bank is next to the park, the bank is ... the park.",
+          opsi: ["beside", "inside", "under", "far above"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Which sentence gives a direction?",
+          opsi: ["Turn right at the school.", "I like the school.", "The school is beautiful.", "I study English."],
+          benar: 0,
+        },
+        {
+          pertanyaan: "A person says 'Go straight and turn right at the bank.' What should you do first?",
+          opsi: ["Go straight", "Turn right", "Cross the street twice", "Go behind the bank"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "Why are landmarks useful when following directions?",
+          opsi: ["They help us recognize where to turn or stop", "They make every route longer", "They replace all verbs", "They tell us the weather"],
+          benar: 0,
+        },
+        {
+          pertanyaan: "A student says 'Turn left' but turns right. The mistake is...",
+          opsi: ["the student did not follow the direction correctly", "the map must have no places", "turn left means go straight", "the instruction needs no order"],
           benar: 0,
         },
       ],
